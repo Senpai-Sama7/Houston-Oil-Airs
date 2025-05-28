@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Houston Oil Airs - Advanced AI Research Visualization</title>
+    
+    <!-- Performance and SEO meta tags -->
+    <meta name="description" content="Houston Oil Airs - Advancing responsible AI through cutting-edge research visualization and interactive analytics">
+    <meta name="keywords" content="AI research, machine learning, ethics, visualization, Houston">
+    <meta name="author" content="Houston Oil Airs">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/fonts/inter-v12-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/css/critical.css" as="style">
+    <link rel="preload" href="/js/main.js" as="script">
+    
+    <!-- Critical CSS -->
+    <link rel="stylesheet" href="/css/critical.css">
+    
+    <!-- Favicon and app icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    
+    <!-- Progressive Web App manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Open Graph meta tags -->
+    <meta property="og:title" content="Houston Oil Airs - Advanced AI Research">
+    <meta property="og:description" content="Exploring responsible AI development through immersive data visualization">
+    <meta property="og:image" content="/og-image.jpg">
+    <meta property="og:url" content="https://houstonoilairs.org">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card meta tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Houston Oil Airs - Advanced AI Research">
+    <meta name="twitter:description" content="Exploring responsible AI development through immersive data visualization">
+    <meta name="twitter:image" content="/twitter-image.jpg">
+    
+    <!-- Critical inline styles for above-the-fold content -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #0a0a0a, #1a1a2e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        .loading-animation {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #00d4ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hero-section {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(ellipse at center, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+        }
+        
+        .hero-content h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00d4ff, #ff6b6b, #4ecdc4);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 3s ease-in-out infinite;
+        }
+        
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .hero-content p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-animation"></div>
+    </div>
+    
+    <!-- Three.js Canvas -->
+    <canvas id="three-canvas"></canvas>
+    
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-content">
+            <div class="logo">
+                <h2>Houston Oil Airs</h2>
+            </div>
+            <div class="nav-links">
+                <a href="#research" data-nav="research">Research</a>
+                <a href="#visualization" data-nav="visualization">Visualization</a>
+                <a href="#network" data-nav="network">Network</a>
+                <a href="#analytics" data-nav="analytics">Analytics</a>
+                <a href="#about" data-nav="about">About</a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section id="hero" class="hero-section">
+            <div class="hero-content">
+                <h1>Advancing Responsible AI</h1>
+                <p>Exploring the frontiers of artificial intelligence through immersive data visualization, ethical research, and collaborative innovation.</p>
+                <div class="hero-actions">
+                    <button class="cta-button primary" data-action="explore-research">
+                        Explore Research
+                    </button>
+                    <button class="cta-button secondary" data-action="view-network">
+                        View Network
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Research Visualization Section -->
+        <section id="research" class="section research-section">
+            <div class="container">
+                <h2>Research Domains</h2>
+                <div class="research-grid">
+                    <div class="research-card" data-category="alignment">
+                        <h3>AI Alignment</h3>
+                        <p>Ensuring AI systems pursue intended objectives and remain aligned with human values.</p>
+                        <div class="metrics-preview" id="alignment-metrics"></div>
+                    </div>
+                    <div class="research-card" data-category="fairness">
+                        <h3>Fairness & Representation</h3>
+                        <p>Developing frameworks for equitable AI deployment across diverse communities.</p>
+                        <div class="metrics-preview" id="fairness-metrics"></div>
+                    </div>
+                    <div class="research-card" data-category="interpretability">
+                        <h3>Interpretability</h3>
+                        <p>Making AI decision processes transparent and understandable to human overseers.</p>
+                        <div class="metrics-preview" id="interpretability-metrics"></div>
+                    </div>
+                    <div class="research-card" data-category="robustness">
+                        <h3>Robustness</h3>
+                        <p>Ensuring reliable AI performance across varied and challenging conditions.</p>
+                        <div class="metrics-preview" id="robustness-metrics"></div>
+                    </div>
+                    <div class="research-card" data-category="safety">
+                        <h3>AI Safety</h3>
+                        <p>Preventing harmful behaviors and ensuring safe AI system deployment.</p>
+                        <div class="metrics-preview" id="safety-metrics"></div>
+                    </div>
+                    <div class="research-card" data-category="ethics">
+                        <h3>Ethics</h3>
+                        <p>Integrating ethical considerations throughout AI development and deployment.</p>
+                        <div class="metrics-preview" id="ethics-metrics"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Interactive Visualization Section -->
+        <section id="visualization" class="section visualization-section">
+            <div class="container">
+                <h2>Interactive Data Visualization</h2>
+                <div class="visualization-controls">
+                    <div class="control-group">
+                        <label>Research Category</label>
+                        <select id="category-selector">
+                            <option value="all">All Categories</option>
+                            <option value="alignment">AI Alignment</option>
+                            <option value="fairness">Fairness & Representation</option>
+                            <option value="interpretability">Interpretability</option>
+                            <option value="robustness">Robustness</option>
+                            <option value="safety">AI Safety</option>
+                            <option value="ethics">Ethics</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Time Range</label>
+                        <select id="time-range-selector">
+                            <option value="24">Last 24 Hours</option>
+                            <option value="168">Last Week</option>
+                            <option value="720">Last Month</option>
+                            <option value="8760">Last Year</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Visualization Mode</label>
+                        <select id="viz-mode-selector">
+                            <option value="particles">Particle Cloud</option>
+                            <option value="network">Network Graph</option>
+                            <option value="heatmap">Impact Heatmap</option>
+                            <option value="flow">Data Flow</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="visualization-container" class="visualization-container">
+                    <!-- Three.js visualization will be rendered here -->
+                </div>
+                <div class="visualization-info">
+                    <div class="info-panel">
+                        <h4>Visualization Statistics</h4>
+                        <div id="viz-stats" class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-value" id="data-points-count">0</span>
+                                <span class="stat-label">Data Points</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="network-density">0%</span>
+                                <span class="stat-label">Network Density</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="processing-speed">0ms</span>
+                                <span class="stat-label">Processing Speed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Network Analysis Section -->
+        <section id="network" class="section network-section">
+            <div class="container">
+                <h2>Research Network Analysis</h2>
+                <div id="network-visualization" class="network-container">
+                    <!-- Network visualization will be rendered here -->
+                </div>
+                <div class="network-controls">
+                    <button class="control-btn" data-action="center-network">Center View</button>
+                    <button class="control-btn" data-action="highlight-connections">Highlight Connections</button>
+                    <button class="control-btn" data-action="filter-influence">Filter by Influence</button>
+                    <button class="control-btn" data-action="animate-flow">Animate Data Flow</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Real-time Analytics Dashboard -->
+        <section id="analytics" class="section analytics-section">
+            <div class="container">
+                <h2>Real-time Analytics Dashboard</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Research Impact Metrics</h3>
+                        <canvas id="impact-chart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Collaboration Network</h3>
+                        <div id="collaboration-viz" class="mini-viz"></div>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Publication Timeline</h3>
+                        <canvas id="timeline-chart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3>Geographic Distribution</h3>
+                        <div id="geo-viz" class="mini-viz"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- About Section -->
+        <section id="about" class="section about-section">
+            <div class="container">
+                <h2>About Houston Oil Airs</h2>
+                <div class="about-content">
+                    <div class="about-text">
+                        <p>Houston Oil Airs stands at the forefront of responsible AI research, combining cutting-edge technology with ethical considerations to advance our understanding of artificial intelligence systems.</p>
+                        <p>Our mission encompasses research across multiple domains, from AI alignment and fairness to interpretability and safety, all visualized through immersive, interactive experiences.</p>
+                    </div>
+                    <div class="about-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">50,000+</span>
+                            <span class="stat-description">Research Data Points</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">12</span>
+                            <span class="stat-description">Active Research Domains</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">100+</span>
+                            <span class="stat-description">Collaboration Partners</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Floating Action Button -->
+    <div class="fab-container">
+        <button id="fab" class="fab" title="Quick Actions">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+        </button>
+        <div class="fab-menu" id="fab-menu">
+            <button class="fab-item" data-action="fullscreen">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                </svg>
+            </button>
+            <button class="fab-item" data-action="export-data">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                </svg>
+            </button>
+            <button class="fab-item" data-action="share">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18,16.08C17.24,16.08 16.56,16.38 16.04,16.85L8.91,12.7C8.96,12.47 9,12.24 9,12C9,11.76 8.96,11.53 8.91,11.3L15.96,7.19C16.5,7.69 17.21,8 18,8A3,3 0 0,0 21,5A3,3 0 0,0 18,2A3,3 0 0,0 15,5C15,5.24 15.04,5.47 15.09,5.7L8.04,9.81C7.5,9.31 6.79,9 6,9A3,3 0 0,0 3,12A3,3 0 0,0 6,15C6.79,15 7.5,14.69 8.04,14.19L15.16,18.34C15.11,18.55 15.08,18.77 15.08,19C15.08,20.61 16.39,21.91 18,21.91C19.61,21.91 20.92,20.61 20.92,19A2.92,2.92 0 0,0 18,16.08Z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="/js/main.js" defer></script>
+    <script src="/js/visualization.js" defer></script>
+    <script src="/js/network.js" defer></script>
+    <script src="/js/analytics.js" defer></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => console.log('SW registered'))
+                .catch(error => console.log('SW registration failed'));
+        }
+    </script>
+</body>
+</html>

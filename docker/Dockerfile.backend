@@ -1,0 +1,95 @@
+# Multi-stage Dockerfile for Houston Oil Airs Backend Services
+FROM ubuntu:22.04 as cpp-builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    ninja-build \
+    libjsoncpp-dev \
+    libboost-all-dev \
+    pkg-config \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up working directory
+WORKDIR /app/cpp-engine
+
+# Copy C++ source files
+COPY backend/cpp-engine/ .
+
+# Build C++ components
+RUN mkdir build && cd build && \
+    cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 && \
+    ninja
+
+# Java stage
+FROM openjdk:17-jdk-slim as java-builder
+
+WORKDIR /app/java-services
+
+# Copy Java source and build files
+COPY backend/java-services/ .
+
+# Build Java services
+RUN ./gradlew build -x test --no-daemon
+
+# Node.js stage
+FROM node:18-alpine as node-builder
+
+WORKDIR /app/node-server
+
+# Copy package files
+COPY backend/node-server/package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy source files
+COPY backend/node-server/ .
+
+# Final production stage
+FROM node:18-alpine
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    openjdk17-jre \
+    libc6-compat \
+    redis \
+    supervisor
+
+# Create app directory
+WORKDIR /app
+
+# Copy built artifacts
+COPY --from=cpp-builder /app/cpp-engine/build/libdata_processor.so /app/lib/
+COPY --from=java-builder /app/java-services/build/libs/*.jar /app/java/
+COPY --from=node-builder /app/node-server /app/node/
+
+# Copy configuration files
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/redis.conf /etc/redis/redis.conf
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV JAVA_OPTS="-Xmx2g -XX:+UseG1GC"
+ENV LD_LIBRARY_PATH=/app/lib:$LD_LIBRARY_PATH
+
+# Create non-root user
+RUN addgroup -g 1001 -S houston && \
+    adduser -S houston -u 1001 -G houston
+
+# Change ownership
+RUN chown -R houston:houston /app
+
+USER houston
+
+# Expose ports
+EXPOSE 3001 8080 6379
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:3001/health || exit 1
+
+# Start services using supervisor
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
