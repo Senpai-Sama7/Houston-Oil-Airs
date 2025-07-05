@@ -1,6 +1,6 @@
 # 🌟 Houston Oil Airs - Advanced AI Research Platform
 
-[![CI/CD Pipeline](https://github.com/Senpai-Sama7/houston-oil-airs/actions/workflows/ci.yml/badge.svg)](https://github.com/Senpai-Sama7/houston-oil-airs/actions/workflows/ci.yml)
+
 [![Security Scan](https://github.com/Senpai-Sama7/houston-oil-airs/actions/workflows/security.yml/badge.svg)](https://github.com/Senpai-Sama7/houston-oil-airs/actions/workflows/security.yml)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](docker/)
