@@ -333,7 +333,7 @@ class AnalyticsController {
         return analyzer.analyzeResearchTrends(category, timeframe).thenApply(metrics -> {
             logger.info("Research trends response: {}", metrics);
             if (metrics.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No metrics found for the given category and timeframe.");
+                return Collections.emptyList(); // Return empty list instead of throwing NO_CONTENT
             }
             return metrics;
         });
@@ -345,7 +345,7 @@ class AnalyticsController {
         return analyzer.performNetworkAnalysis(categories).thenApply(analysis -> {
             logger.info("Network analysis response: {}", analysis);
             if (analysis.getNodes().isEmpty() || analysis.getEdges().isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NO_CONTENT, "No network data generated for the given categories.");
+                return new AIResearchAnalyzer.NetworkAnalysis(); // Return empty analysis instead of throwing NO_CONTENT
             }
             return analysis;
         });
