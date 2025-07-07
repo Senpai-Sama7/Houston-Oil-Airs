@@ -267,31 +267,5 @@ jobs:
       - name: Setup Metrics
         uses: lowlighter/metrics@latest
         with:
-          token: ${{ secrets.METRICS_TOKEN }}
-          debug: true
-
-      - name: Check runner compatibility
-        run: |
-          echo "Metrics docker image setup"
-          echo "────────────────────────────────────────────────────────────────────────────────────────"
-          echo "Metrics                                                         │  "
-          echo "Setup                                                           │ complete"
-          echo "Version                                                         │ 3.34.0"
-          echo "Using prebuilt image                                            │ true"
-          echo "Debug mode                                                      │ false"
-          echo "Debug flags                                                     │ (none)"
-          echo "GitHub token                                                    │ (missing)"
-          echo "GitHub token format                                             │ legacy or invalid"
-          echo "Error: You must provide a valid GitHub personal token to gather your metrics (see https://github.com/lowlighter/metrics/blob/master/.github/readme/partials/documentation/setup/action.md for more informations)"
-          echo "    at file:///metrics/source/app/action/index.mjs:176:13"
-          echo "────────────────────────────────────────────────────────────────────────────────────────"
-          echo "undefined"
-          echo "An error occurred, logging debug message :"
-          echo "Error: You must provide a valid GitHub personal token to gather your metrics (see https://github.com/lowlighter/metrics/blob/master/.github/readme/partials/documentation/setup/action.md for more informations)"
-          echo "Error: Process completed with exit code 1."
-          echo "0s"
-          echo "Cleaning up orphan processes"
-          echo "YAML"
-          echo "token: ${{ secrets.METRICS_TOKEN }}"
-          echo "But the logs say the token is missing or invalid."
-          echo "Debug mode enabled, but sensitive information is hidden."
+          token: ${{ secrets.GITHUB_TOKEN }}
+          debug: false
