@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="assets/logo.png" alt="HOUSTON OIL AIRSr" width="300"/>
+  <img src="frontend/IMAGE.jpeg" alt="Houston Oil Airs" width="300"/>
 </p>
 
 # 🌟 Houston Oil Airs - Advanced AI Research Platform
