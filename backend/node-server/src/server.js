@@ -46,8 +46,8 @@ class HighPerformanceWebServer {
             contentSecurityPolicy: {
                 directives: {
                     defaultSrc: ["'self'"],
-                    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-                    styleSrc: ["'self'", "'unsafe-inline'"],
+                    scriptSrc: ["'self'"],
+                    styleSrc: ["'self'", "https:"],
                     imgSrc: ["'self'", "data:", "https:"],
                     connectSrc: ["'self'", "ws:", "wss:"]
                 }

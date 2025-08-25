@@ -10,8 +10,6 @@ import java.time.temporal.ChronoUnit;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -327,36 +325,45 @@ class AnalyticsController {
     }
 
     @GetMapping(value = "/research-trends", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<List<AIResearchAnalyzer.ResearchMetric>> getResearchTrends(
+    public CompletableFuture<org.springframework.http.ResponseEntity<List<AIResearchAnalyzer.ResearchMetric>>> getResearchTrends(
             @RequestParam String category,
             @RequestParam(defaultValue = "24") int timeframe) {
         return analyzer.analyzeResearchTrends(category, timeframe).thenApply(metrics -> {
             logger.info("Research trends response: {}", metrics);
             if (metrics.isEmpty()) {
-                return Collections.emptyList(); // Return empty list instead of throwing NO_CONTENT
+                return org.springframework.http.ResponseEntity.noContent().build();
             }
-            return metrics;
+            return org.springframework.http.ResponseEntity
+                    .ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(metrics);
         });
     }
 
     @PostMapping(value = "/network-analysis", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<AIResearchAnalyzer.NetworkAnalysis> performNetworkAnalysis(
+    public CompletableFuture<org.springframework.http.ResponseEntity<AIResearchAnalyzer.NetworkAnalysis>> performNetworkAnalysis(
             @RequestBody List<String> categories) {
         return analyzer.performNetworkAnalysis(categories).thenApply(analysis -> {
             logger.info("Network analysis response: {}", analysis);
-            if (analysis.getNodes().isEmpty() || analysis.getEdges().isEmpty()) {
-                return new AIResearchAnalyzer.NetworkAnalysis(); // Return empty analysis instead of throwing NO_CONTENT
+            if (analysis.getNodes().isEmpty()) {
+                return org.springframework.http.ResponseEntity.noContent().build();
             }
-            return analysis;
+            return org.springframework.http.ResponseEntity
+                    .ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(analysis);
         });
     }
 
     @GetMapping(value = "/health", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, Object> healthCheck() {
+    public org.springframework.http.ResponseEntity<Map<String, Object>> healthCheck() {
         Map<String, Object> status = new HashMap<>();
         status.put("status", "healthy");
         status.put("timestamp", Instant.now());
         status.put("service", "AI Research Analytics");
-        return status;
+        return org.springframework.http.ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(status);
     }
 }
