@@ -345,7 +345,7 @@ class AnalyticsController {
             @RequestBody List<String> categories) {
         return analyzer.performNetworkAnalysis(categories).thenApply(analysis -> {
             logger.info("Network analysis response: {}", analysis);
-            if (analysis.getNodes().isEmpty()) {
+            if (analysis.getNodes().isEmpty() || analysis.getEdges().isEmpty()) {
                 return org.springframework.http.ResponseEntity.noContent().build();
             }
             return org.springframework.http.ResponseEntity

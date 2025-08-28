@@ -32,6 +32,10 @@ class HighPerformanceWebServer {
             host: process.env.REDIS_HOST || 'localhost',
             port: process.env.REDIS_PORT || 6379
         });
+
+        this.redis.on('error', (err) => console.error('Redis error:', err));
+        this.redis.on('reconnecting', () => console.log('Redis reconnecting'));
+        this.redis.connect().catch(err => console.error('Redis connection error:', err));
         
         this.dataProcessor = nativeProcessor.create_processor();
         this.setupMiddleware();
@@ -153,6 +157,9 @@ class HighPerformanceWebServer {
                 const response = await fetch(
                     `${process.env.JAVA_SERVICE_URL}/api/analytics/research-trends?category=${req.params.category}&timeframe=${req.query.timeframe || 24}`
                 );
+                if (!response.ok) {
+                    return res.status(response.status).json({ error: 'Analytics service error' });
+                }
                 const data = await response.json();
                 res.json(data);
             } catch (error) {
@@ -201,7 +208,7 @@ class HighPerformanceWebServer {
     
     setupRealTimeDataStreaming() {
         // Simulate real-time data updates
-        setInterval(async () => {
+        this.streamingInterval = setInterval(async () => {
             try {
                 const categories = ['alignment', 'fairness', 'interpretability', 'robustness', 'safety'];
                 
@@ -309,6 +316,7 @@ class HighPerformanceWebServer {
         console.log('Shutting down server...');
         nativeProcessor.destroy_processor(this.dataProcessor);
         this.redis.quit();
+        clearInterval(this.streamingInterval);
         this.server.close();
     }
 }
@@ -326,7 +334,9 @@ process.on('SIGTERM', () => {
     process.exit(0);
 });
 
-const server = new HighPerformanceWebServer();
-server.start();
+if (require.main === module) {
+    const server = new HighPerformanceWebServer();
+    server.start();
+}
 
 module.exports = HighPerformanceWebServer;
