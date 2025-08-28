@@ -6,16 +6,26 @@ const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const Redis = require('redis');
-const ffi = require('ffi-napi');
-const ref = require('ref-napi');
-
-// Import native C++ module
-const nativeProcessor = ffi.Library('./cpp-engine/build/libdata_processor.so', {
-    'create_processor': ['pointer', []],
-    'destroy_processor': ['void', ['pointer']],
-    'get_visualization_data': ['string', ['pointer', 'string']],
-    'update_real_time_data': ['void', ['pointer', 'pointer', 'int']]
-});
+let ffi;
+let nativeProcessor;
+try {
+    ffi = require('ffi-napi');
+    require('ref-napi');
+    nativeProcessor = ffi.Library('../cpp-engine/build/libdata_processor.so', {
+        'create_processor': ['pointer', []],
+        'destroy_processor': ['void', ['pointer']],
+        'get_visualization_data': ['string', ['pointer', 'string']],
+        'update_real_time_data': ['void', ['pointer', 'pointer', 'int']]
+    });
+} catch (err) {
+    console.warn('Native module not loaded, using stub implementation');
+    nativeProcessor = {
+        create_processor: () => null,
+        destroy_processor: () => {},
+        get_visualization_data: () => '{}',
+        update_real_time_data: () => {}
+    };
+}
 
 class HighPerformanceWebServer {
     constructor() {
@@ -29,15 +39,21 @@ class HighPerformanceWebServer {
         });
         
         this.redis = Redis.createClient({
-            host: process.env.REDIS_HOST || 'localhost',
-            port: process.env.REDIS_PORT || 6379
+            url: `redis://${process.env.REDIS_HOST || 'localhost'}:${process.env.REDIS_PORT || 6379}`
         });
+        this.redis.on('error', (err) => console.error('Redis error', err));
+        this.redis.on('reconnecting', () => console.warn('Redis reconnecting'));
+        if (process.env.NODE_ENV !== 'test') {
+            this.redis.connect().catch(err => console.error('Redis connection error', err));
+        }
         
         this.dataProcessor = nativeProcessor.create_processor();
         this.setupMiddleware();
         this.setupRoutes();
         this.setupWebSocket();
-        this.setupRealTimeDataStreaming();
+        if (process.env.NODE_ENV !== 'test') {
+            this.setupRealTimeDataStreaming();
+        }
     }
     
     setupMiddleware() {
@@ -46,8 +62,8 @@ class HighPerformanceWebServer {
             contentSecurityPolicy: {
                 directives: {
                     defaultSrc: ["'self'"],
-                    scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-                    styleSrc: ["'self'", "'unsafe-inline'"],
+                    scriptSrc: ["'self'"],
+                    styleSrc: ["'self'", "https:"],
                     imgSrc: ["'self'", "data:", "https:"],
                     connectSrc: ["'self'", "ws:", "wss:"]
                 }
@@ -153,6 +169,9 @@ class HighPerformanceWebServer {
                 const response = await fetch(
                     `${process.env.JAVA_SERVICE_URL}/api/analytics/research-trends?category=${req.params.category}&timeframe=${req.query.timeframe || 24}`
                 );
+                if (!response.ok) {
+                    return res.status(response.status).json({ error: 'Analytics service error' });
+                }
                 const data = await response.json();
                 res.json(data);
             } catch (error) {
@@ -308,25 +327,28 @@ class HighPerformanceWebServer {
     shutdown() {
         console.log('Shutting down server...');
         nativeProcessor.destroy_processor(this.dataProcessor);
-        this.redis.quit();
+        if (this.redis.isOpen) {
+            this.redis.quit();
+        }
         this.server.close();
     }
 }
 
-// Graceful shutdown
-process.on('SIGINT', () => {
-    console.log('Received SIGINT, shutting down gracefully...');
-    server.shutdown();
-    process.exit(0);
-});
+if (require.main === module) {
+    const server = new HighPerformanceWebServer();
+    server.start();
 
-process.on('SIGTERM', () => {
-    console.log('Received SIGTERM, shutting down gracefully...');
-    server.shutdown();
-    process.exit(0);
-});
+    process.on('SIGINT', () => {
+        console.log('Received SIGINT, shutting down gracefully...');
+        server.shutdown();
+        process.exit(0);
+    });
 
-const server = new HighPerformanceWebServer();
-server.start();
+    process.on('SIGTERM', () => {
+        console.log('Received SIGTERM, shutting down gracefully...');
+        server.shutdown();
+        process.exit(0);
+    });
+}
 
 module.exports = HighPerformanceWebServer;
