@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Houston Oil Airs — Project Graph Viewer</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 0; color: #e6eef7; background: #0b1220; }
+    header { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.08); background: rgba(6,20,36,.6); position: sticky; top: 0; }
+    main { display: grid; grid-template-columns: 320px 1fr; gap: 10px; height: calc(100vh - 52px); }
+    #sidebar { border-right: 1px solid rgba(255,255,255,.08); padding: 10px; overflow: auto; }
+    #content { padding: 10px; overflow: auto; }
+    input, select { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); color: #fff; padding: 6px 8px; border-radius: 8px; }
+    .node { padding: 6px 8px; border: 1px solid rgba(255,255,255,.12); border-radius: 8px; margin: 6px 0; cursor: pointer; background: rgba(255,255,255,.03); }
+    .node:hover { background: rgba(255,255,255,.08); }
+    .pill { display: inline-block; padding: 2px 6px; font-size: 11px; border-radius: 999px; background: rgba(0,212,255,.18); border:1px solid rgba(0,212,255,.35); margin-left: 6px; }
+    .edge { margin: 4px 0; font-family: ui-monospace, Menlo, Consolas, monospace; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .card { border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: 10px; background: rgba(255,255,255,.03); }
+    a { color: #7fd2ff; }
+  </style>
+  <script>
+    function getParam(name, defVal) {
+      const u = new URL(location.href);
+      return u.searchParams.get(name) || defVal;
+    }
+    async function loadGraph() {
+      const src = getParam('src', 'project-graph.json');
+      const res = await fetch('./' + src);
+      if (!res.ok) throw new Error('Failed to load graph');
+      return await res.json();
+    }
+    function indexGraph(graph) {
+      const nodeById = new Map(graph.nodes.map(n => [n.id, n]));
+      const outEdges = new Map();
+      const inEdges = new Map();
+      for (const e of graph.edges) {
+        if (!outEdges.has(e.from)) outEdges.set(e.from, []);
+        if (!inEdges.has(e.to)) inEdges.set(e.to, []);
+        outEdges.get(e.from).push(e);
+        inEdges.get(e.to).push(e);
+      }
+      return { nodeById, outEdges, inEdges };
+    }
+    function renderNodeList(container, graph, idx, filter) {
+      container.innerHTML = '';
+      const frag = document.createDocumentFragment();
+      const q = (filter.q || '').toLowerCase();
+      for (const n of graph.nodes) {
+        if (filter.type && n.type !== filter.type) continue;
+        if (q && !(n.name || '').toLowerCase().includes(q) && !n.id.toLowerCase().includes(q)) continue;
+        const div = document.createElement('div');
+        div.className = 'node';
+        div.textContent = n.name || n.id;
+        const pill = document.createElement('span'); pill.className = 'pill'; pill.textContent = n.type; div.appendChild(pill);
+        div.onclick = () => showDetails(n, graph, idx);
+        frag.appendChild(div);
+      }
+      container.appendChild(frag);
+    }
+    function edgeLine(e) { return `${e.from} -[${e.type}]-> ${e.to}`; }
+    function showDetails(node, graph, idx) {
+      const out = idx.outEdges.get(node.id) || [];
+      const inc = idx.inEdges.get(node.id) || [];
+      const content = document.getElementById('content');
+      content.innerHTML = `
+        <div class="card">
+          <h2>${node.name || node.id} <span class="pill">${node.type}</span></h2>
+          ${node.file ? `<div>File: <code>${node.file}</code></div>` : ''}
+          ${node.dir ? `<div>Dir: <code>${node.dir}</code></div>` : ''}
+          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+            <button id="btn-vis-ego">Visualize Neighborhood</button>
+          </div>
+        </div>
+        <div class="grid" style="margin-top:10px;">
+          <div class="card">
+            <h3>Outgoing</h3>
+            ${out.map(e => `<div class="edge">${edgeLine(e)}</div>`).join('') || '<div>No outgoing edges</div>'}
+          </div>
+          <div class="card">
+            <h3>Incoming</h3>
+            ${inc.map(e => `<div class="edge">${edgeLine(e)}</div>`).join('') || '<div>No incoming edges</div>'}
+          </div>
+        </div>
+        <div class="card" style="margin-top:10px;">
+          <h3>Neighborhood Graph</h3>
+          <svg id="viz" width="800" height="480" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.12);border-radius:8px;"></svg>
+        </div>
+      `;
+      document.getElementById('btn-vis-ego').onclick = () => drawNeighborhood(node, graph, idx);
+    }
+    function drawNeighborhood(center, graph, idx) {
+      const svg = document.getElementById('viz');
+      if (!svg) return;
+      const width = svg.clientWidth || 800; const height = svg.clientHeight || 480;
+      svg.innerHTML = '';
+      const out = idx.outEdges.get(center.id) || [];
+      const inc = idx.inEdges.get(center.id) || [];
+      const nodes = new Map();
+      nodes.set(center.id, { id: center.id, type: center.type, name: center.name });
+      const edges = [];
+      for (const e of out) { nodes.set(e.to, graph.nodes.find(n=>n.id===e.to)); edges.push(e); }
+      for (const e of inc) { nodes.set(e.from, graph.nodes.find(n=>n.id===e.from)); edges.push(e); }
+      const arr = Array.from(nodes.values());
+      // Init positions
+      const pos = new Map(arr.map((n,i)=>[n.id,{ x: (Math.random()*0.8+0.1)*width, y: (Math.random()*0.8+0.1)*height, vx:0, vy:0 } ]));
+      const centerPos = pos.get(center.id); centerPos.x = width/2; centerPos.y = height/2;
+      const alpha = 0.9; const charge = -800; const spring = 0.02; const springLen = 120; const damping = 0.85;
+      const steps = 300;
+      for (let t=0;t<steps;t++){
+        // repulsion
+        for (let i=0;i<arr.length;i++){
+          for (let j=i+1;j<arr.length;j++){
+            const a = pos.get(arr[i].id), b = pos.get(arr[j].id);
+            let dx=a.x-b.x, dy=a.y-b.y; let d2=dx*dx+dy*dy; if (d2<1) d2=1; let f = charge/d2;
+            let invd = 1/Math.sqrt(d2); let fx=f*dx*invd, fy=f*dy*invd;
+            a.vx += fx; a.vy += fy; b.vx -= fx; b.vy -= fy;
+          }
+        }
+        // springs
+        for (const e of edges){
+          const a = pos.get(e.from), b = pos.get(e.to);
+          let dx=a.x-b.x, dy=a.y-b.y; let d=Math.max(1,Math.sqrt(dx*dx+dy*dy));
+          let f = spring*(d - springLen);
+          let fx=f*dx/d, fy=f*dy/d;
+          a.vx -= fx; a.vy -= fy; b.vx += fx; b.vy += fy;
+        }
+        // integrate
+        for (const n of arr){
+          const p = pos.get(n.id);
+          p.vx *= damping; p.vy *= damping;
+          p.x += p.vx*alpha; p.y += p.vy*alpha;
+          p.x = Math.max(20, Math.min(width-20, p.x));
+          p.y = Math.max(20, Math.min(height-20, p.y));
+        }
+      }
+      // draw
+      const ns = document.createElementNS('http://www.w3.org/2000/svg','g');
+      const es = document.createElementNS('http://www.w3.org/2000/svg','g');
+      svg.appendChild(es); svg.appendChild(ns);
+      // edges
+      for (const e of edges){
+        const a = pos.get(e.from), b = pos.get(e.to);
+        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1', a.x); line.setAttribute('y1', a.y);
+        line.setAttribute('x2', b.x); line.setAttribute('y2', b.y);
+        line.setAttribute('stroke', 'rgba(127,210,255,0.6)'); line.setAttribute('stroke-width','1.5');
+        es.appendChild(line);
+      }
+      // nodes
+      for (const n of arr){
+        const p = pos.get(n.id);
+        const r = n.id===center.id? 10 : 6;
+        const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); c.setAttribute('r', r);
+        c.setAttribute('fill', n.id===center.id ? '#00d4ff' : '#7aa7ff');
+        c.setAttribute('stroke', 'rgba(255,255,255,0.25)'); c.setAttribute('stroke-width','1');
+        ns.appendChild(c);
+        const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+        label.setAttribute('x', p.x + 10); label.setAttribute('y', p.y - 10);
+        label.setAttribute('fill', '#cfe9ff'); label.setAttribute('font-size','11');
+        label.textContent = (n.name || n.id).slice(0,40);
+        ns.appendChild(label);
+      }
+    }
+    async function init() {
+      const graph = await loadGraph();
+      const idx = indexGraph(graph);
+      const list = document.getElementById('list');
+      const q = document.getElementById('q');
+      const typeSel = document.getElementById('type');
+      const filter = { q: '', type: '' };
+      function refresh() { renderNodeList(list, graph, idx, filter); }
+      q.oninput = () => { filter.q = q.value; refresh(); };
+      typeSel.onchange = () => { filter.type = typeSel.value; refresh(); };
+      refresh();
+    }
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</head>
+<body>
+  <header>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <strong>Project Graph Viewer</strong>
+      <input id="q" placeholder="Search name or id..." style="flex:1;max-width:380px;" />
+      <label>Type
+        <select id="type">
+          <option value="">(any)</option>
+          <option>repository</option>
+          <option>frontend</option>
+          <option>service</option>
+          <option>native</option>
+          <option>workflow</option>
+          <option>file</option>
+          <option>class</option>
+          <option>method</option>
+          <option>endpoint</option>
+          <option>symbol</option>
+        </select>
+      </label>
+      <label>Source
+        <select id="srcsel" onchange="location.href='graph-viewer.html?src='+this.value">
+          <option value="project-graph.json">Full</option>
+          <option value="project-graph.frontend.json">Frontend</option>
+          <option value="project-graph.node.json">Node</option>
+          <option value="project-graph.java.json">Java</option>
+          <option value="project-graph.cpp.json">C++</option>
+        </select>
+      </label>
+      <a href="./project-graph.json" target="_blank">JSON</a>
+      <a href="./project-graph.dot" target="_blank">DOT</a>
+      <a href="./project-graph.graphml" target="_blank">GraphML</a>
+      <a href="./project-graph.mmd" target="_blank">Mermaid</a>
+    </div>
+  </header>
+  <main>
+    <aside id="sidebar">
+      <div id="list"></div>
+    </aside>
+    <section id="content">
+      <div class="card">
+        <h2>Welcome</h2>
+        <p>Use the search/type filter to find nodes. Click a node to inspect its incoming/outgoing edges.</p>
+        <p>The viewer reads <code>docs/project-graph.json</code>; run <code>make project-graph</code> to regenerate.</p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

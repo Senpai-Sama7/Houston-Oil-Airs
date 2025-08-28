@@ -1,66 +1,32 @@
-# Dependencies
+# Node
 node_modules/
-*/node_modules/
-
-# Build outputs
+npm-debug.log*
+pnpm-lock.yaml
+yarn.lock
 dist/
-build/
-*/dist/
-*/build/
+.vite/
 
-# Environment files
-.env
-.env.local
-.env.production
-.env.staging
+# Java/Maven
+backend/java-services/target/
+
+# C++ build
+backend/cpp-engine/build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# OS/editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Coverage/Reports
+coverage/
+reports/
 
 # Logs
 *.log
 logs/
-npm-debug.log*
-
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Docker
-.dockerignore
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-
-# Test coverage
-coverage/
-.nyc_output/
-
-# C++ build files
-*.o
-*.so
-*.dylib
-*.exe
-cmake_cache/
-CMakeFiles/
-
-# Java build files
-*.class
-*.jar
-.gradle/
-gradle/
-
-# Backup files
-*.bak
-*.backup

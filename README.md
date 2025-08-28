@@ -29,6 +29,8 @@
 - ⚡ **High Performance** - Native C++, Java, and Node.js backend architecture
 - 🔒 **Enterprise Security** - Advanced authentication and data protection
 - 📱 **Responsive Design** - Optimized for all devices and screen sizes
+ - 📈 **Observability** - Liveness/Readiness + Prometheus metrics out of the box
+ - 🧠 **Architecture Graph** - Auto-generated, queryable project graph (JSON/DOT/GraphML/Mermaid) + HTML viewer
 
 ---
 
@@ -58,6 +60,8 @@
 - **Backend**: Multi-language architecture using C++, Java, and Node.js for high performance and scalability.
 - **Deployment**: Dockerized containers with Kubernetes orchestration for seamless scaling.
 - **Database**: Optimized relational and NoSQL databases for efficient data storage and retrieval.
+ - **Observability**: `/live`, `/ready` (readiness), `/metrics` (Prometheus), `/metrics.json` (JSON)
+ - **Knowledge Graph**: Repo-indexed project graph with classes, methods, endpoints, imports, and calls
 
 ---
 
@@ -118,6 +122,13 @@
    - Frontend: [http://localhost:3000](http://localhost:3000)
    - Backend API: [http://localhost:8080/api](http://localhost:8080/api)
 
+Optional: disable native C++ FFI processing and use JS fallback
+
+```
+export CPP_ENGINE_ENABLED=0
+cd backend/node-server && node src/server.js
+```
+
 ---
 
 ## 🧪 **Testing**
@@ -140,6 +151,16 @@ cd frontend
 npm test
 ```
 
+### E2E (Playwright)
+
+```
+cd frontend
+npx playwright install --with-deps
+npm run test:e2e
+```
+
+Press `n` in the running app (network mode) to open a node’s details panel (useful in demos/tests).
+
 ---
 
 ## 🌍 **Contributing**
@@ -157,3 +178,59 @@ For inquiries, please contact us at [support@houstonoilairs.org](mailto:support@
 ## 📜 **License**
 
 This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## 🔎 Architectural Graph & Queries
+
+We ship a detailed, queryable project knowledge graph capturing services, files, classes, methods, endpoints, imports/includes, and call symbols.
+
+- Builder: `tools/project-graph/build-graph.js`
+- Query: `tools/project-graph/query-graph.js`
+- Outputs (in `docs/`): JSON, Graphviz DOT, GraphML, Mermaid
+- Viewer: `docs/graph-viewer.html`
+
+Build full graph (all formats):
+
+```
+make project-graph
+```
+
+Build a subset graph (e.g., frontend scope up to 6 hops) and view it:
+
+```
+make graph-subset ARGS="--root=app:frontend --depth=6 --outfile=project-graph.frontend"
+make graph-serve
+# open http://localhost:8088/graph-viewer.html?src=project-graph.frontend.json
+```
+
+Query examples:
+
+```
+make graph-query ARGS="--type=endpoint"
+make graph-query ARGS="--edge=imports --from=file:frontend/src/js/main.js"
+make graph-query ARGS="--name=VisualizationEngine"
+```
+
+Export to Neo4j (Cypher):
+
+```
+make graph-cypher
+# Then: cat docs/project-graph.cypher | cypher-shell -u neo4j -p password
+```
+
+---
+
+## 📊 Health, Readiness, and Metrics
+
+- Liveness: `GET /live` → `{ status: "alive" }`
+- Readiness: `GET /ready` → includes Redis and native mode status (HTTP 200/503)
+- Health (alias): `GET /health` → redirects to `/ready`
+- Metrics (Prometheus): `GET /metrics` → counters, errors, duration histograms per route
+- Metrics (JSON): `GET /metrics.json`
+
+Prometheus keys include:
+
+- `app_requests_total`, `app_uptime_seconds`, `app_memory_rss_megabytes`, `app_native_mode`
+- `app_route_requests_total{route=...}`, `app_route_errors_total{route=...}`
+- `app_route_duration_seconds_bucket{route=...,le="..."}`

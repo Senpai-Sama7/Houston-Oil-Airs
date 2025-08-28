@@ -4,9 +4,10 @@ jest.mock('redis', () => ({
   createClient: () => ({
     connect: jest.fn().mockResolvedValue(),
     get: jest.fn().mockResolvedValue(null),
-    setex: jest.fn().mockResolvedValue(),
+    setEx: jest.fn().mockResolvedValue(),
     on: jest.fn(),
-    quit: jest.fn()
+    quit: jest.fn(),
+    isOpen: true
   })
 }), { virtual: true });
 
@@ -36,10 +37,24 @@ describe('HighPerformanceWebServer', () => {
     server.shutdown();
   });
 
-  test('health endpoint returns status', async () => {
-    const res = await request(app).get('/health');
+  test('liveness endpoint returns alive', async () => {
+    const res = await request(app).get('/live');
     expect(res.status).toBe(200);
-    expect(res.body.status).toBe('healthy');
+    expect(res.body.status).toBe('alive');
+  });
+
+  test('readiness endpoint returns ready when dependencies OK', async () => {
+    const res = await request(app).get('/ready');
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe('ready');
+    expect(['available', 'fallback']).toContain(res.body.native);
+  });
+
+  test('metrics endpoint returns prometheus text', async () => {
+    const res = await request(app).get('/metrics');
+    expect(res.status).toBe(200);
+    expect(res.headers['content-type']).toContain('text/plain');
+    expect(res.text).toContain('app_requests_total');
   });
 
   test('analytics endpoint forwards upstream errors', async () => {

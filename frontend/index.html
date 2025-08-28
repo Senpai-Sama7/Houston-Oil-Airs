@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Houston Oil Airs — Vite App</title>
+    <link rel="preload" href="/css/critical.css" as="style" />
+    <link rel="stylesheet" href="/css/critical.css" />
+    <style>
+      #health-indicator { position: fixed; right: 12px; top: 12px; z-index: 1000; padding: 6px 10px; border-radius: 999px; font-size: 12px; backdrop-filter: blur(6px); background: rgba(0,0,0,0.35); color: #fff; border: 1px solid rgba(255,255,255,0.15); }
+      #health-indicator.healthy { box-shadow: 0 0 12px rgba(0, 212, 255, 0.5) inset; border-color: rgba(0,212,255,0.6); }
+      #health-indicator.unhealthy { box-shadow: 0 0 12px rgba(255, 107, 107, 0.5) inset; border-color: rgba(255,107,107,0.6); }
+    </style>
+  </head>
+  <body>
+    <div id="app-root"></div>
+    <div id="loading-screen" class="loading-screen">
+      <div class="loading-animation"></div>
+    </div>
+    <div id="health-indicator" class="unhealthy">Backend: checking…</div>
+    <div id="viz-stats" style="position:fixed;left:12px;top:12px;z-index:1000;padding:8px 12px;border-radius:12px;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:12px;">
+      <div><strong>Data Points:</strong> <span id="data-points-count">0</span></div>
+      <div><strong>Network Density:</strong> <span id="network-density">0%</span></div>
+    </div>
+    <div id="viz-controls" style="position:fixed;left:12px;bottom:12px;z-index:1000;padding:10px 12px;border-radius:12px;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:12px;display:flex;gap:10px;align-items:center;">
+      <label>Mode
+        <select id="mode-select">
+          <option value="particles">Particles</option>
+          <option value="network">Network</option>
+        </select>
+      </label>
+      <button id="btn-center">Center</button>
+      <label>Influence
+        <input id="influence-range" type="range" min="0" max="1" step="0.05" value="0.5" />
+      </label>
+      <span id="influence-value">0.5</span>
+    </div>
+    <div id="details-panel" style="position:fixed;right:12px;bottom:12px;z-index:1000;padding:10px 12px;border-radius:12px;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.12);color:#fff;font-size:12px;min-width:220px;display:none;">
+      <div style="font-weight:700;margin-bottom:6px;">Node Details</div>
+      <div><strong>ID:</strong> <span id="detail-id">—</span></div>
+      <div><strong>Category:</strong> <span id="detail-category">—</span></div>
+      <div><strong>Influence:</strong> <span id="detail-influence">—</span></div>
+    </div>
+    <script type="module" src="/src/js/main.js"></script>
+    <div style="position:fixed;right:12px;top:48px;z-index:1000;">
+      <a href="/docs/graph-viewer.html" style="font-size:12px;color:#7fd2ff;border:1px solid rgba(255,255,255,.12);padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.03);text-decoration:none;">Project Graph</a>
+    </div>
+  </body>
+  </html>

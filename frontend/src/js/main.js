@@ -1,3 +1,6 @@
+import * as THREE from 'three';
+import VisualizationEngine from './visualization.js';
+
 class VisualizationApp {
     constructor() {
         this.performance = {
@@ -15,6 +18,175 @@ class VisualizationApp {
         this.visualizationEngine = null;
         this.analyticsManager = null;
         this.socket = null;
+    }
+
+    async initialize() {
+        try {
+            this.dataProcessor = new DataProcessor();
+            await this.dataProcessor.initialize().catch(() => {});
+        } catch (e) {
+            console.warn('Data processor init failed:', e);
+        }
+
+        // Setup minimal Three.js if WebGL is available
+        if (VisualizationApp.isWebGLAvailable()) {
+            await this.setupThree();
+        } else {
+            console.warn('WebGL not available. Running in degraded mode.');
+        }
+
+        this.isInitialized = true;
+        this.bindUI();
+        this.hideLoadingScreen();
+        return this;
+    }
+
+    static isWebGLAvailable() {
+        try {
+            const canvas = document.createElement('canvas');
+            return !!(
+                window.WebGLRenderingContext &&
+                (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+            );
+        } catch (e) {
+            return false;
+        }
+    }
+
+    async setupThree() {
+        // Create minimal renderer/scene/camera so the app can render
+        this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        document.body.appendChild(this.renderer.domElement);
+
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+        this.camera.position.set(0, 0, 10);
+
+        // Basic ambient light
+        const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+        this.scene.add(ambient);
+
+        // Provide a minimal no-op controls object to avoid null checks everywhere
+        this.controls = { update: () => {}, reset: () => {} };
+
+        // Visual sanity check: rotating cube
+        const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
+        const cubeMat = new THREE.MeshStandardMaterial({ color: 0x00d4ff, roughness: 0.4, metalness: 0.2 });
+        this._demoCube = new THREE.Mesh(cubeGeo, cubeMat);
+        this._demoCube.position.set(-2, 0, 0);
+        this.scene.add(this._demoCube);
+
+        // Initialize visualization engine in a safe way
+        this.visualizationEngine = new VisualizationEngine();
+        await this.visualizationEngine.initialize(this.scene, this.camera, this.renderer);
+        this.visualizationEngine.setDataProvider(this.dataProcessor);
+        // Initialize with a sensible default category to fetch real data
+        await this.visualizationEngine.changeCategory('alignment');
+
+        // Attach canvas interactions
+        this.renderer.domElement.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+        this.renderer.domElement.addEventListener('click', (e) => this.handleCanvasClick(e));
+
+        this.startRenderLoop();
+    }
+
+    startHealthChecks() {
+        const el = document.getElementById('health-indicator');
+        const check = async () => {
+            if (!el) return;
+            try {
+                // Try relative first (works if proxy set), then explicit dev URL
+                let res = await fetch('/health').catch(() => null);
+                if (!res || !res.ok) {
+                    res = await fetch('http://localhost:3001/health');
+                }
+                const data = await res.json();
+                const ok = data && data.status === 'healthy';
+                el.textContent = ok ? 'Backend: healthy' : 'Backend: degraded';
+                el.classList.toggle('healthy', !!ok);
+                el.classList.toggle('unhealthy', !ok);
+                // Update status tray with metrics
+                const tray = document.getElementById('viz-stats');
+                if (tray) {
+                    // Fetch metrics.json for counts
+                    let mres = await fetch('/metrics.json').catch(() => null);
+                    if (!mres || !mres.ok) mres = await fetch('http://localhost:3001/metrics.json');
+                    const m = await mres.json();
+                    // update data points and density via existing engine too
+                    this.visualizationEngine?.updateVisualizationStats?.();
+                }
+            } catch (e) {
+                if (el) {
+                    el.textContent = 'Backend: unreachable';
+                    el.classList.remove('healthy');
+                    el.classList.add('unhealthy');
+                }
+            }
+        };
+        check();
+        this._healthTimer = setInterval(check, 10000);
+    }
+
+    bindUI() {
+        // Safe event bindings only if elements exist
+        document.querySelectorAll('[data-nav]').forEach(el => {
+            el.addEventListener('click', (e) => this.handleNavigation(e));
+        });
+
+        const fab = document.getElementById('fab');
+        if (fab) fab.addEventListener('click', () => this.toggleFabMenu());
+
+        document.querySelectorAll('.research-card').forEach(card => {
+            card.addEventListener('click', (e) => this.handleResearchCardClick(e));
+            card.addEventListener('mouseenter', (e) => this.handleResearchCardHover(e));
+            card.addEventListener('mouseleave', (e) => this.handleResearchCardLeave(e));
+        });
+
+        const categorySelector = document.getElementById('category-selector');
+        if (categorySelector) categorySelector.addEventListener('change', (e) => this.handleCategoryChange(e));
+
+        const timeRangeSelector = document.getElementById('time-range-selector');
+        if (timeRangeSelector) timeRangeSelector.addEventListener('change', (e) => this.handleTimeRangeChange(e));
+
+        const vizModeSelector = document.getElementById('viz-mode-selector');
+        if (vizModeSelector) vizModeSelector.addEventListener('change', (e) => this.handleVisualizationModeChange(e));
+
+        window.addEventListener('resize', () => this.handleResize());
+        window.addEventListener('scroll', () => this.handleScroll());
+        window.addEventListener('keydown', (e) => this.handleKeyboard(e));
+        this.startHealthChecks();
+
+        // Minimal global controls
+        const modeSelect = document.getElementById('mode-select');
+        if (modeSelect) {
+            modeSelect.addEventListener('change', async (e) => {
+                const val = e.target.value;
+                await this.visualizationEngine?.changeMode?.(val);
+            });
+        }
+        const btnCenter = document.getElementById('btn-center');
+        if (btnCenter) {
+            btnCenter.addEventListener('click', () => {
+                if (this.visualizationEngine?.currentMode === 'network') {
+                    this.visualizationEngine.networkSystem?.centerView?.(this.camera);
+                } else {
+                    this.visualizationEngine?.reset?.();
+                }
+            });
+        }
+        const influenceRange = document.getElementById('influence-range');
+        const influenceValue = document.getElementById('influence-value');
+        if (influenceRange) {
+            influenceRange.addEventListener('input', (e) => {
+                const v = Number(e.target.value);
+                if (influenceValue) influenceValue.textContent = v.toFixed(2);
+                if (this.visualizationEngine?.currentMode === 'network') {
+                    this.visualizationEngine.networkSystem?.filterByInfluence?.(v);
+                }
+            });
+        }
     }
 
     optimizeMemoryUsage() {
@@ -44,13 +216,19 @@ class VisualizationApp {
                 // Update performance display logic here
             }
 
-            this.controls.update();
+            this.controls?.update?.();
 
             if (this.backgroundParticles?.material?.uniforms) {
                 this.backgroundParticles.material.uniforms.time.value = currentTime * 0.001;
             }
 
-            this.renderer.render(this.scene, this.camera);
+            // Allow the engine to tick if present
+            this.visualizationEngine?.update?.(currentTime);
+            if (this._demoCube) {
+                this._demoCube.rotation.x += 0.01;
+                this._demoCube.rotation.y += 0.015;
+            }
+            this.renderer?.render?.(this.scene, this.camera);
 
             performance.mark('render-end');
             performance.measure('render-frame', 'render-start', 'render-end');
@@ -65,12 +243,14 @@ class VisualizationApp {
         const width = window.innerWidth;
         const height = window.innerHeight;
 
-        this.camera.aspect = width / height;
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(width, height);
+        if (this.camera && this.renderer) {
+            this.camera.aspect = width / height;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(width, height);
+        }
 
-        this.visualizationEngine.handleResize(width, height);
-        this.analyticsManager.handleResize(width, height);
+        this.visualizationEngine?.handleResize?.(width, height);
+        this.analyticsManager?.handleResize?.(width, height);
     }
 
     handleNavigation(event) {
@@ -97,9 +277,13 @@ class VisualizationApp {
 
             const data = await this.dataProcessor.loadCategoryData(category);
 
-            await this.visualizationEngine.focusOnCategory(category, data);
+            if (this.visualizationEngine?.focusOnCategory) {
+                await this.visualizationEngine.focusOnCategory(category, data);
+            }
 
-            this.socket.emit('subscribe_to_category', category);
+            if (this.socket) {
+                this.socket.emit('subscribe_to_category', category);
+            }
 
             document.getElementById('visualization').scrollIntoView({
                 behavior: 'smooth'
@@ -124,17 +308,17 @@ class VisualizationApp {
 
     async handleCategoryChange(event) {
         const category = event.target.value;
-        await this.visualizationEngine.changeCategory(category);
+        await this.visualizationEngine?.changeCategory?.(category);
     }
 
     async handleTimeRangeChange(event) {
         const timeRange = event.target.value;
-        await this.visualizationEngine.changeTimeRange(timeRange);
+        await this.visualizationEngine?.changeTimeRange?.(timeRange);
     }
 
     async handleVisualizationModeChange(event) {
         const mode = event.target.value;
-        await this.visualizationEngine.changeMode(mode);
+        await this.visualizationEngine?.changeMode?.(mode);
     }
 
     async handleAction(event) {
@@ -146,19 +330,19 @@ class VisualizationApp {
                 break;
             case 'view-network':
                 document.getElementById('network').scrollIntoView({ behavior: 'smooth' });
-                await this.networkAnalyzer.loadNetworkData();
+                await this.networkAnalyzer?.loadNetworkData?.();
                 break;
             case 'center-network':
-                this.networkAnalyzer.centerView();
+                this.networkAnalyzer?.centerView?.();
                 break;
             case 'highlight-connections':
-                this.networkAnalyzer.highlightConnections();
+                this.networkAnalyzer?.highlightConnections?.();
                 break;
             case 'filter-influence':
-                this.networkAnalyzer.filterByInfluence();
+                this.networkAnalyzer?.filterByInfluence?.();
                 break;
             case 'animate-flow':
-                this.networkAnalyzer.animateDataFlow();
+                this.networkAnalyzer?.animateDataFlow?.();
                 break;
             case 'fullscreen':
                 this.toggleFullscreen();
@@ -203,6 +387,16 @@ class VisualizationApp {
             case '4':
                 document.getElementById('analytics').scrollIntoView({ behavior: 'smooth' });
                 break;
+            case 'n':
+                // E2E: open details for first network node if available
+                if (this.visualizationEngine?.networkSystem) {
+                    const meshes = this.visualizationEngine.networkSystem.nodeMeshes;
+                    for (const [, mesh] of meshes) {
+                        this.visualizationEngine.showNetworkNodeTooltip(mesh);
+                        break;
+                    }
+                }
+                break;
         }
     }
 
@@ -211,7 +405,7 @@ class VisualizationApp {
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-        this.visualizationEngine.updateMouse(mouse);
+        this.visualizationEngine?.updateMouse?.(mouse);
     }
 
     handleCanvasClick(event) {
@@ -219,7 +413,7 @@ class VisualizationApp {
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-        this.visualizationEngine.handleClick(mouse);
+        this.visualizationEngine?.handleClick?.(mouse);
     }
 
     handleScroll() {
@@ -235,9 +429,9 @@ class VisualizationApp {
     handleRealTimeUpdate(data) {
         const { category, metrics, timestamp } = data;
 
-        this.visualizationEngine.addRealTimeData(category, metrics, timestamp);
+        this.visualizationEngine?.addRealTimeData?.(category, metrics, timestamp);
 
-        this.analyticsManager.processRealTimeData(data);
+        this.analyticsManager?.processRealTimeData?.(data);
 
         this.updateMetricsPreview(category, metrics);
     }
@@ -308,7 +502,7 @@ class VisualizationApp {
 
     async exportVisualizationData() {
         try {
-            const data = await this.visualizationEngine.exportData();
+            const data = await this.visualizationEngine?.exportData?.();
             const blob = new Blob([JSON.stringify(data, null, 2)], {
                 type: 'application/json'
             });
@@ -342,19 +536,17 @@ class VisualizationApp {
     }
 
     resetVisualization() {
-        this.visualizationEngine.reset();
-        this.networkAnalyzer.reset();
-        this.controls.reset();
+        this.visualizationEngine?.reset?.();
+        this.networkAnalyzer?.reset?.();
+        this.controls?.reset?.();
         this.showNotification('Visualization reset', 'info');
     }
 
     hideLoadingScreen() {
         const loadingScreen = document.getElementById('loading-screen');
+        if (!loadingScreen) return;
         loadingScreen.classList.add('hidden');
-
-        setTimeout(() => {
-            loadingScreen.style.display = 'none';
-        }, 500);
+        setTimeout(() => { if (loadingScreen) loadingScreen.style.display = 'none'; }, 500);
     }
 
     showErrorState(error) {
@@ -427,9 +619,9 @@ class VisualizationApp {
             this.socket.disconnect();
         }
 
-        this.visualizationEngine.destroy();
-        this.networkAnalyzer.destroy();
-        this.analyticsManager.destroy();
+        this.visualizationEngine?.destroy?.();
+        this.networkAnalyzer?.destroy?.();
+        this.analyticsManager?.destroy?.();
 
         if (this.renderer) {
             this.renderer.dispose();
@@ -502,7 +694,10 @@ class DataProcessor {
 
 // Initialize application when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    window.houstonOilAirsApp = new HoustonOilAirsApp();
+    const app = new VisualizationApp();
+    app.initialize().finally(() => {
+        window.houstonOilAirsApp = app;
+    });
 });
 
 // Cleanup on page unload
