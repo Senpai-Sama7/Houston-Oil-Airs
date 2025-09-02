@@ -5,31 +5,26 @@ const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
-const Redis = require('redis');
-let ffi, ref;
+const Redis = require('redis')
+let ffi;
+let nativeProcessor;
 try {
-  ffi = require('ffi-napi');
-  ref = require('ref-napi');
-} catch (e) {
-  // Optional: FFI not available in some environments
-}
-
-// Import native C++ module (optionally)
-// Controlled by env CPP_ENGINE_ENABLED (default on). Falls back to JS generator when unavailable.
-let nativeLib = null;
-let nativeEnabled = process.env.CPP_ENGINE_ENABLED !== '0';
-if (nativeEnabled && ffi) {
-  try {
-    nativeLib = ffi.Library('../cpp-engine/build/libdata_processor.so', {
-      'create_processor': ['pointer', []],
-      'destroy_processor': ['void', ['pointer']],
-      'get_visualization_data': ['string', ['pointer', 'string']],
-      'update_real_time_data': ['void', ['pointer', 'pointer', 'int']]
+    ffi = require('ffi-napi');
+    require('ref-napi');
+    nativeProcessor = ffi.Library(process.env.NATIVE_PROCESSOR_PATH || '../cpp-engine/build/libdata_processor.so', {
+        'create_processor': ['pointer', []],
+        'destroy_processor': ['void', ['pointer']],
+        'get_visualization_data': ['string', ['pointer', 'string']],
+        'update_real_time_data': ['void', ['pointer', 'pointer', 'int']]
     });
-  } catch (e) {
-    console.warn('Native library unavailable, falling back to JS:', e.message);
-    nativeEnabled = false;
-  }
+} catch (err) {
+    console.warn('Native module not loaded, using stub implementation');
+    nativeProcessor = {
+        create_processor: () => null,
+        destroy_processor: () => {},
+        get_visualization_data: () => '{}',
+        update_real_time_data: () => {}
+    };
 }
 
 class HighPerformanceWebServer {
@@ -42,21 +37,24 @@ class HighPerformanceWebServer {
                 methods: ["GET", "POST"]
             }
         });
-        
-        const redisHost = process.env.REDIS_HOST || 'localhost';
-        const redisPort = process.env.REDIS_PORT || 6379;
-        this.redis = Redis.createClient({ url: `redis://${redisHost}:${redisPort}` });
 
-        this.redis.on('error', (err) => console.error('Redis error:', err));
-        this.redis.on('reconnecting', () => console.log('Redis reconnecting'));
-        this.redis.connect().catch(err => console.error('Redis connection error:', err));
+        this.redis = Redis.createClient({
+            url: `redis://${process.env.REDIS_HOST || 'localhost'}:${process.env.REDIS_PORT || 6379}`
+        });
+        this.redis.on('error', (err) => console.error('Redis error', err));
+        this.redis.on('reconnecting', () => console.warn('Redis reconnecting'));
+        if (process.env.NODE_ENV !== 'test') {
+            this.redis.connect().catch(err => console.error('Redis connection error', err));
+        }
         
         this.nativeAvailable = !!nativeLib;
         this.dataProcessor = this.nativeAvailable ? nativeLib.create_processor() : null;
         this.setupMiddleware();
         this.setupRoutes();
         this.setupWebSocket();
-        this.setupRealTimeDataStreaming();
+        if (process.env.NODE_ENV !== 'test') {
+            this.setupRealTimeDataStreaming();
+        }
     }
     
     setupMiddleware() {
@@ -438,32 +436,29 @@ class HighPerformanceWebServer {
     
     shutdown() {
         console.log('Shutting down server...');
-        if (this.nativeAvailable && this.dataProcessor) {
-            try { nativeLib.destroy_processor(this.dataProcessor); } catch (e) {}
+        nativeProcessor.destroy_processor(this.dataProcessor);
+        if (this.redis.isOpen) {
+            this.redis.quit();
         }
-        this.redis.quit();
-        clearInterval(this.streamingInterval);
         this.server.close();
     }
 }
 
 if (require.main === module) {
     const server = new HighPerformanceWebServer();
+    server.start();
 
-    // Graceful shutdown handlers are registered after server instantiation
     process.on('SIGINT', () => {
         console.log('Received SIGINT, shutting down gracefully...');
-        try { server.shutdown(); } catch (e) { /* noop */ }
+        server.shutdown();
         process.exit(0);
     });
 
     process.on('SIGTERM', () => {
         console.log('Received SIGTERM, shutting down gracefully...');
-        try { server.shutdown(); } catch (e) { /* noop */ }
+        server.shutdown();
         process.exit(0);
     });
-
-    server.start();
 }
 
 module.exports = HighPerformanceWebServer;

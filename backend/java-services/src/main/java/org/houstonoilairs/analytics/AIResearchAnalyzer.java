@@ -325,7 +325,7 @@ class AnalyticsController {
     }
 
     @GetMapping(value = "/research-trends", produces = MediaType.APPLICATION_JSON_VALUE)
-    public CompletableFuture<org.springframework.http.ResponseEntity<List<AIResearchAnalyzer.ResearchMetric>>> getResearchTrends(
+    public CompletableFuture<ResponseEntity<List<AIResearchAnalyzer.ResearchMetric>>> getResearchTrends(
             @RequestParam String category,
             @RequestParam(defaultValue = "24") int timeframe) {
         return analyzer.analyzeResearchTrends(category, timeframe).thenApply(metrics -> {
