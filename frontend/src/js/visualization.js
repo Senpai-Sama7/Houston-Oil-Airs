@@ -2,6 +2,293 @@
  * Advanced Visualization Engine for Houston Oil Airs
  * Handles 3D data visualization with high-performance rendering
  */
+import * as THREE from 'three';
+
+// Lightweight no-op stubs to allow progressive enhancement without runtime errors
+class BaseSystem {
+    constructor(scene, performanceConfig) {
+        this.scene = scene;
+        this.performanceConfig = performanceConfig;
+        this.visible = false;
+    }
+    async initialize() {}
+    setVisible(v) { this.visible = v; }
+    async loadData() {}
+    highlightCategory() {}
+    clearHighlight() {}
+    addRealTimePoint() {}
+    updateRealTimeMetrics() {}
+    addDataFlow() {}
+    update() {}
+    handleResize() {}
+    setLOD() {}
+    reset() {}
+    optimizeMemory() {}
+    destroy() {}
+    exportData() { return {}; }
+}
+
+class AdvancedParticleSystem extends BaseSystem {
+    constructor(scene, performanceConfig) {
+        super(scene, performanceConfig);
+        this.object3D = null;
+        this.geometry = null;
+        this.material = null;
+        this.pointCount = Math.min(performanceConfig?.maxParticles || 5000, 5000);
+        this._time = 0;
+    }
+
+    async initialize() {
+        // Create a simple particle cloud for an immediate visual
+        this.geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(this.pointCount * 3);
+        const colors = new Float32Array(this.pointCount * 3);
+
+        for (let i = 0; i < this.pointCount; i++) {
+            const i3 = i * 3;
+            positions[i3 + 0] = (Math.random() - 0.5) * 20;
+            positions[i3 + 1] = (Math.random() - 0.5) * 20;
+            positions[i3 + 2] = (Math.random() - 0.5) * 20;
+
+            colors[i3 + 0] = 0.1 + Math.random() * 0.9;
+            colors[i3 + 1] = 0.5 + Math.random() * 0.5;
+            colors[i3 + 2] = 1.0;
+        }
+
+        this.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        this.geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        this.material = new THREE.PointsMaterial({ size: 0.06, vertexColors: true, opacity: 0.9, transparent: true });
+        this.object3D = new THREE.Points(this.geometry, this.material);
+        this.object3D.visible = this.visible;
+        this.scene.add(this.object3D);
+    }
+
+    setVisible(v) {
+        super.setVisible(v);
+        if (this.object3D) this.object3D.visible = v;
+    }
+
+    async loadData(category, timeRange, data) {
+        // Populate geometry from API data if available; otherwise retain existing/random
+        if (!data || !Array.isArray(data.research_points) || data.research_points.length === 0) {
+            return true;
+        }
+
+        const pts = data.research_points;
+        const count = Math.min(pts.length, this.pointCount);
+        const positions = new Float32Array(count * 3);
+        const colors = new Float32Array(count * 3);
+
+        for (let i = 0; i < count; i++) {
+            const p = pts[i];
+            const i3 = i * 3;
+            positions[i3 + 0] = (p.pos?.[0] ?? 0);
+            positions[i3 + 1] = (p.pos?.[1] ?? 0);
+            positions[i3 + 2] = (p.pos?.[2] ?? 0);
+
+            const conf = Math.max(0, Math.min(1, p.confidence ?? 0.5));
+            // Map confidence to blue-ish color ramp
+            colors[i3 + 0] = 0.1 + 0.3 * conf;
+            colors[i3 + 1] = 0.4 + 0.4 * conf;
+            colors[i3 + 2] = 0.8 + 0.2 * conf;
+        }
+
+        // Rebuild geometry to match new dataset size
+        this.geometry?.dispose?.();
+        this.geometry = new THREE.BufferGeometry();
+        this.geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        this.geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        if (this.object3D) {
+            this.object3D.geometry = this.geometry;
+        } else {
+            this.material = new THREE.PointsMaterial({ size: 0.06, vertexColors: true, opacity: 0.9, transparent: true });
+            this.object3D = new THREE.Points(this.geometry, this.material);
+            this.object3D.visible = this.visible;
+            this.scene.add(this.object3D);
+        }
+        return true;
+    }
+
+    update(t) {
+        this._time = t * 0.001;
+        if (!this.object3D) return;
+        // Subtle idle animation
+        this.object3D.rotation.y = this._time * 0.1;
+    }
+
+    getPointCount() { return this.pointCount; }
+
+    setLOD(level) {
+        if (!this.material) return;
+        this.material.size = level === 'low' ? 0.04 : 0.06;
+    }
+
+    exportData() {
+        return { points: this.pointCount };
+    }
+
+    destroy() {
+        if (this.object3D) this.scene.remove(this.object3D);
+        this.material?.dispose?.();
+        this.geometry?.dispose?.();
+        this.object3D = null;
+        this.material = null;
+        this.geometry = null;
+    }
+}
+
+class NetworkVisualizationSystem extends BaseSystem {
+    constructor(scene, performanceConfig) {
+        super(scene, performanceConfig);
+        this.group = new THREE.Group();
+        this.nodes = [];
+        this.edges = [];
+        this.nodeMeshes = new Map();
+        this.edgeLines = null;
+        this._colorByCategory = new Map([
+            ['alignment', new THREE.Color(0x7aa7ff)],
+            ['fairness', new THREE.Color(0x66ffd2)],
+            ['interpretability', new THREE.Color(0xffa3a3)],
+            ['robustness', new THREE.Color(0xffd166)],
+            ['safety', new THREE.Color(0x1df2ff)],
+            ['ethics', new THREE.Color(0xb28dff)]
+        ]);
+    }
+
+    async initialize() {
+        this.group.visible = this.visible;
+        this.scene.add(this.group);
+    }
+
+    setVisible(v) {
+        super.setVisible(v);
+        this.group.visible = v;
+    }
+
+    async loadData(category, timeRange, data) {
+        if (!data || !Array.isArray(data.nodes)) return true;
+        this.clear();
+
+        this.nodes = data.nodes;
+        this.edges = Array.isArray(data.edges) ? data.edges : [];
+
+        // Compute degrees for nodes
+        const degree = new Map();
+        for (const e of this.edges) {
+            degree.set(e.source, (degree.get(e.source) || 0) + 1);
+            degree.set(e.target, (degree.get(e.target) || 0) + 1);
+        }
+
+        // Create node spheres
+        const sphereGeo = new THREE.SphereGeometry(0.08, 12, 12);
+        for (const n of this.nodes) {
+            const color = this._colorByCategory.get(n.category) || new THREE.Color(0x9bb4ff);
+            const mat = new THREE.MeshStandardMaterial({ color, emissive: color.clone().multiplyScalar(0.2) });
+            const m = new THREE.Mesh(sphereGeo, mat);
+            m.position.set(n.x || 0, n.y || 0, n.z || 0);
+            m.userData = { type: 'network-node', id: n.id, category: n.category, influence: n.influence, degree: degree.get(n.id) || 0 };
+            this.group.add(m);
+            this.nodeMeshes.set(n.id, m);
+        }
+
+        // Create edge lines
+        if (this.edges.length > 0) {
+            const positions = new Float32Array(this.edges.length * 2 * 3);
+            let i = 0;
+            for (const e of this.edges) {
+                const a = this.nodeMeshes.get(e.source)?.position;
+                const b = this.nodeMeshes.get(e.target)?.position;
+                if (!a || !b) continue;
+                positions[i++] = a.x; positions[i++] = a.y; positions[i++] = a.z;
+                positions[i++] = b.x; positions[i++] = b.y; positions[i++] = b.z;
+            }
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const mat = new THREE.LineBasicMaterial({ color: 0x5fa0ff, transparent: true, opacity: 0.6 });
+            this.edgeLines = new THREE.LineSegments(geo, mat);
+            this.group.add(this.edgeLines);
+        }
+        return true;
+    }
+
+    highlightCategory(category) {
+        for (const [id, mesh] of this.nodeMeshes) {
+            const isCat = mesh.userData.category === category;
+            mesh.scale.setScalar(isCat ? 1.6 : 1.0);
+            mesh.material?.emissive?.setScalar(isCat ? 0.5 : 0.2);
+        }
+    }
+
+    clearHighlight() {
+        for (const [, mesh] of this.nodeMeshes) {
+            mesh.scale.setScalar(1.0);
+            mesh.material?.emissive?.setScalar(0.2);
+        }
+    }
+
+    getNodeCount() { return this.nodes.length || 0; }
+
+    getNetworkDensity() {
+        const n = this.nodes.length || 0;
+        const m = this.edges.length || 0;
+        if (n <= 1) return 0;
+        return (2 * m) / (n * (n - 1));
+    }
+
+    update(t) {
+        // subtle pulsing
+        const s = 1 + Math.sin(t * 0.001) * 0.02;
+        this.group.scale.set(s, s, s);
+    }
+
+    handleResize() {}
+
+    exportData() { return { nodes: this.getNodeCount(), edges: this.edges.length || 0 }; }
+
+    centerView(camera) {
+        if (!this.nodes.length) return;
+        const bbox = new THREE.Box3();
+        this.nodeMeshes.forEach(mesh => bbox.expandByPoint(mesh.position));
+        const center = bbox.getCenter(new THREE.Vector3());
+        const size = bbox.getSize(new THREE.Vector3());
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const fov = camera.fov * (Math.PI / 180);
+        const distance = maxDim / (2 * Math.tan(fov / 2)) * 1.5;
+        const targetPos = center.clone().add(new THREE.Vector3(0, 0, distance));
+        camera.position.copy(targetPos);
+        camera.lookAt(center);
+    }
+
+    filterByInfluence(min = 0.5) {
+        for (const n of this.nodes) {
+            const mesh = this.nodeMeshes.get(n.id);
+            if (mesh) mesh.visible = (n.influence || 0) >= min;
+        }
+    }
+
+    clear() {
+        // dispose previous
+        for (const [, m] of this.nodeMeshes) {
+            this.group.remove(m);
+            m.geometry?.dispose?.();
+            m.material?.dispose?.();
+        }
+        this.nodeMeshes.clear();
+        if (this.edgeLines) {
+            this.group.remove(this.edgeLines);
+            this.edgeLines.geometry?.dispose?.();
+            this.edgeLines.material?.dispose?.();
+            this.edgeLines = null;
+        }
+    }
+
+    destroy() { this.clear(); this.scene.remove(this.group); }
+}
+
+class HeatmapSystem extends BaseSystem {}
+class DataFlowSystem extends BaseSystem {}
 
 class VisualizationEngine {
     constructor() {
@@ -10,7 +297,7 @@ class VisualizationEngine {
         this.renderer = null;
         
         this.currentMode = 'particles';
-        this.currentCategory = 'all';
+        this.currentCategory = 'alignment';
         this.currentTimeRange = 24;
         
         this.visualizationObjects = new Map();
@@ -32,6 +319,8 @@ class VisualizationEngine {
             cullingEnabled: true,
             instancedRendering: true
         };
+
+        this.dataProvider = null; // Expected to implement loadCategoryData(category)
     }
     
     async initialize(scene, camera, renderer) {
@@ -65,6 +354,10 @@ class VisualizationEngine {
         // Set default mode
         await this.changeMode(this.currentMode);
     }
+
+    setDataProvider(provider) {
+        this.dataProvider = provider;
+    }
     
     setupInteractionHandlers() {
         // Setup raycaster for object picking
@@ -85,22 +378,34 @@ class VisualizationEngine {
         switch (mode) {
             case 'particles':
                 this.particleSystem.setVisible(true);
-                await this.particleSystem.loadData(this.currentCategory, this.currentTimeRange);
+                {
+                    const data = this.dataProvider ? await this.dataProvider.loadCategoryData(this.currentCategory) : null;
+                    await this.particleSystem.loadData(this.currentCategory, this.currentTimeRange, data);
+                }
                 break;
                 
             case 'network':
                 this.networkSystem.setVisible(true);
-                await this.networkSystem.loadData(this.currentCategory, this.currentTimeRange);
+                {
+                    const data = this.dataProvider?.loadNetworkTopology ? await this.dataProvider.loadNetworkTopology() : null;
+                    await this.networkSystem.loadData(this.currentCategory, this.currentTimeRange, data);
+                }
                 break;
                 
             case 'heatmap':
                 this.heatmapSystem.setVisible(true);
-                await this.heatmapSystem.loadData(this.currentCategory, this.currentTimeRange);
+                {
+                    const data = this.dataProvider ? await this.dataProvider.loadCategoryData(this.currentCategory) : null;
+                    await this.heatmapSystem.loadData(this.currentCategory, this.currentTimeRange, data);
+                }
                 break;
                 
             case 'flow':
                 this.flowSystem.setVisible(true);
-                await this.flowSystem.loadData(this.currentCategory, this.currentTimeRange);
+                {
+                    const data = this.dataProvider ? await this.dataProvider.loadCategoryData(this.currentCategory) : null;
+                    await this.flowSystem.loadData(this.currentCategory, this.currentTimeRange, data);
+                }
                 break;
         }
         
@@ -114,16 +419,28 @@ class VisualizationEngine {
         // Update current visualization system
         switch (this.currentMode) {
             case 'particles':
-                await this.particleSystem.loadData(category, this.currentTimeRange);
+                {
+                    const data = this.dataProvider ? await this.dataProvider.loadCategoryData(category) : null;
+                    await this.particleSystem.loadData(category, this.currentTimeRange, data);
+                }
                 break;
             case 'network':
-                await this.networkSystem.loadData(category, this.currentTimeRange);
+                {
+                    const data = this.dataProvider?.loadNetworkTopology ? await this.dataProvider.loadNetworkTopology() : null;
+                    await this.networkSystem.loadData(category, this.currentTimeRange, data);
+                }
                 break;
             case 'heatmap':
-                await this.heatmapSystem.loadData(category, this.currentTimeRange);
+                {
+                    const data = this.dataProvider ? await this.dataProvider.loadCategoryData(category) : null;
+                    await this.heatmapSystem.loadData(category, this.currentTimeRange, data);
+                }
                 break;
             case 'flow':
-                await this.flowSystem.loadData(category, this.currentTimeRange);
+                {
+                    const data = this.dataProvider ? await this.dataProvider.loadCategoryData(category) : null;
+                    await this.flowSystem.loadData(category, this.currentTimeRange, data);
+                }
                 break;
         }
         
@@ -192,6 +509,7 @@ class VisualizationEngine {
             this.showDataPointTooltip(object, intersection);
         } else if (object.userData.type === 'network-node') {
             this.highlightNetworkNode(object);
+            this.showNetworkNodeTooltip(object);
         }
         
         // Change cursor
@@ -210,13 +528,14 @@ class VisualizationEngine {
         
         if (intersects.length > 0) {
             const object = intersects[0].object;
-            this.selectObject(object);
+            const intersection = intersects[0];
+            this.selectObject(object, intersection);
         } else {
             this.clearSelection();
         }
     }
     
-    selectObject(object) {
+    selectObject(object, intersection) {
         // Add to selection
         this.selectedObjects.add(object);
         
@@ -224,7 +543,7 @@ class VisualizationEngine {
         this.highlightSelectedObject(object);
         
         // Show detailed information
-        this.showObjectDetails(object);
+        this.showObjectDetails(object, intersection);
     }
     
     clearSelection() {
@@ -363,10 +682,14 @@ class VisualizationEngine {
             </div>
         `;
         
-        // Position tooltip near cursor
+        // Position tooltip near the projected screen position
+        const world = intersection.point.clone();
+        const vector = world.project(this.camera);
         const rect = this.renderer.domElement.getBoundingClientRect();
-        tooltip.style.left = `${intersection.point.x + rect.left + 10}px`;
-        tooltip.style.top = `${intersection.point.y + rect.top - 10}px`;
+        const x = (vector.x * 0.5 + 0.5) * rect.width + rect.left;
+        const y = (-vector.y * 0.5 + 0.5) * rect.height + rect.top;
+        tooltip.style.left = `${x + 10}px`;
+        tooltip.style.top = `${y - 10}px`;
         tooltip.style.display = 'block';
     }
     
@@ -386,6 +709,79 @@ class VisualizationEngine {
         if (tooltip) {
             tooltip.style.display = 'none';
         }
+    }
+
+    highlightNetworkNode(object) {
+        if (!this.networkSystem) return;
+        this.networkSystem.highlightCategory(object.userData.category);
+    }
+
+    clearNetworkHighlight() {
+        if (!this.networkSystem) return;
+        this.networkSystem.clearHighlight();
+    }
+
+    showNetworkNodeTooltip(object) {
+        const tooltip = this.getOrCreateTooltip();
+        const data = object.userData || {};
+
+        tooltip.innerHTML = `
+            <div class="tooltip-header">
+                <h4>${(data.category || 'node').toUpperCase()}</h4>
+                <span class="confidence">Node ID: ${data.id || 'N/A'}</span>
+            </div>
+            <div class="tooltip-body">
+                <p><strong>Type:</strong> Network Node</p>
+                <p><strong>Category:</strong> ${data.category || 'unknown'}</p>
+            </div>
+        `;
+
+        // Project object position to screen space
+        const vector = object.position.clone().project(this.camera);
+        const rect = this.renderer.domElement.getBoundingClientRect();
+        const x = (vector.x * 0.5 + 0.5) * rect.width + rect.left;
+        const y = (-vector.y * 0.5 + 0.5) * rect.height + rect.top;
+        tooltip.style.left = `${x + 10}px`;
+        tooltip.style.top = `${y - 10}px`;
+        tooltip.style.display = 'block';
+
+        // Update details panel
+        const panel = document.getElementById('details-panel');
+        if (panel) {
+            panel.style.display = 'block';
+            const idEl = document.getElementById('detail-id');
+            const catEl = document.getElementById('detail-category');
+            const infEl = document.getElementById('detail-influence');
+            if (idEl) idEl.textContent = data.id || '—';
+            if (catEl) catEl.textContent = data.category || '—';
+            if (infEl) infEl.textContent = (data.influence != null ? Number(data.influence).toFixed(2) : '—') + ` (deg ${data.degree ?? 0})`;
+        }
+    }
+
+    highlightSelectedObject(object) {
+        if (object.material && object.material.emissive) {
+            object.material.emissiveIntensity = 0.8;
+        }
+        object.scale.setScalar(1.8);
+    }
+
+    removeHighlight(object) {
+        if (object.material && object.material.emissive) {
+            object.material.emissiveIntensity = 0.2;
+        }
+        object.scale.setScalar(1.0);
+    }
+
+    showObjectDetails(object) {
+        if (object.userData?.type === 'network-node') {
+            this.showNetworkNodeTooltip(object);
+        }
+    }
+
+    hideObjectDetails() {
+        this.hideTooltip();
+        const panel = document.getElementById('details-panel');
+        if (panel) panel.style.display = 'none';
     }
     
     updateVisualizationStats() {
@@ -496,3 +892,5 @@ class VisualizationEngine {
         }
     }
 }
+
+export default VisualizationEngine;

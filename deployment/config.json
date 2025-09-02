@@ -64,7 +64,7 @@
       "static": "30/s"
     },
     "session": {
-      "secret": "houston-oil-airs-session-secret",
+      "secret": "${SESSION_SECRET}",
       "max_age": 3600000
     },
     "content_security_policy": {

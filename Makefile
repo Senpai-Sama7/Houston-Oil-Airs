@@ -30,6 +30,8 @@ help:
 	@echo "  clean       - Clean build artifacts"
 	@echo "  logs        - View application logs"
 	@echo "  monitor     - Open monitoring dashboard"
+	@echo "  project-graph - Build project knowledge graph JSON"
+	@echo "  graph-query  - Query the project graph (ARGS=...)"
 
 # Installation
 install:
@@ -170,6 +172,28 @@ monitor:
 	@echo "Grafana: http://localhost:3000 (admin/admin)"
 	@echo "Prometheus: http://localhost:9090"
 	@echo "Kibana: http://localhost:5601"
+
+# Project knowledge graph
+project-graph:
+	@echo "🧠 Building project knowledge graph..."
+	cd tools/project-graph && node build-graph.js
+	@echo "📄 Outputs: docs/project-graph.json, .dot, .graphml"
+
+graph-query:
+	@echo "🔎 Querying project graph..."
+	cd tools/project-graph && node query-graph.js $(ARGS)
+
+graph-subset:
+	@echo "🧠 Building subset project graph..."
+	cd tools/project-graph && node build-graph.js $(ARGS)
+
+graph-serve:
+	@echo "🖥️  Serving docs/ with graph viewer..."
+	cd tools/project-graph && node serve.js
+
+graph-cypher:
+	@echo "🧩 Exporting graph to Neo4j Cypher..."
+	cd tools/project-graph && node neo4j-export.js > ../../docs/project-graph.cypher
 
 # Performance testing
 perf-test:

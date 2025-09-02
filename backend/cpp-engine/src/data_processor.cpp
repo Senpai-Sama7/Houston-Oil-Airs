@@ -13,6 +13,8 @@ namespace houston_oil_airs
         research_data_.reserve(100000);
         network_nodes_.reserve(10000);
         enableSpatialIndexing();
+        // Generate an initial corpus of data in-memory
+        loadResearchData("");
     }
 
     DataProcessor::~DataProcessor()
@@ -173,7 +175,39 @@ namespace houston_oil_airs
         const char *get_visualization_data(DataProcessor *processor, const char *category)
         {
             static std::string result;
-            result = processor->serializeForWebGL();
+            // Filter by category and serialize a subset for web consumption
+            std::vector<ResearchDataPoint> filtered = processor->getFilteredData(std::string(category), 0.0, 25000);
+
+            Json::Value root;
+            Json::Value points(Json::arrayValue);
+            for (size_t i = 0; i < filtered.size(); ++i)
+            {
+                const auto &point = filtered[i];
+                Json::Value point_json;
+                point_json["pos"] = Json::Value(Json::arrayValue);
+                point_json["pos"].append(point.x);
+                point_json["pos"].append(point.y);
+                point_json["pos"].append(point.z);
+                point_json["confidence"] = point.confidence;
+                point_json["category"] = point.category;
+                point_json["timestamp"] = point.timestamp;
+                if (!point.metadata.empty())
+                {
+                    point_json["meta"] = Json::Value(Json::arrayValue);
+                    for (double meta : point.metadata)
+                    {
+                        point_json["meta"].append(meta);
+                    }
+                }
+                points.append(point_json);
+            }
+            root["research_points"] = points;
+            root["total_count"] = static_cast<int>(filtered.size());
+            root["generation_time"] = static_cast<double>(time(nullptr));
+
+            Json::StreamWriterBuilder builder;
+            builder["indentation"] = "";
+            result = Json::writeString(builder, root);
             return result.c_str();
         }
 
