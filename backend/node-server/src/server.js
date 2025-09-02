@@ -11,7 +11,7 @@ let nativeProcessor;
 try {
     ffi = require('ffi-napi');
     require('ref-napi');
-    nativeProcessor = ffi.Library('../cpp-engine/build/libdata_processor.so', {
+    nativeProcessor = ffi.Library(process.env.NATIVE_PROCESSOR_PATH || '../cpp-engine/build/libdata_processor.so', {
         'create_processor': ['pointer', []],
         'destroy_processor': ['void', ['pointer']],
         'get_visualization_data': ['string', ['pointer', 'string']],
