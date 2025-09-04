@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Douglas Mitchell — Portfolio</title>
-  <meta name="description" content="Personal site and portfolio — immersive, cinematic, and refined." />
+  <meta name="description" content="Personal site and portfolio of Douglas Mitchell — immersive, cinematic, and refined." />
   <meta name="theme-color" content="#0b0f1a" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,12 +12,12 @@
   <style>
     /* ————— Design Tokens ————— */
     :root{
-      --bg:#060913;           /* deep space */
+      --bg:#060913;          /* deep space */
       --bg-soft:#0b1222;      /* panels */
       --text:#e7ecf3;         /* primary text */
       --muted:#9fb0c2;        /* secondary */
       --accent:#7aa8ff;       /* starlight */
-      --accent-2:#9d7aff;     /* nebula */
+      --accent-2:#9d7aff;      /* nebula */
       --glass:rgba(15,24,44,.35);
       --border:rgba(161,180,210,.14);
       --shadow:0 20px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.04);
@@ -25,20 +25,31 @@
       --ease:cubic-bezier(.22,.61,.36,1);
     }
 
+    /* ————— Base & Layout ————— */
     *{box-sizing:border-box}
-    html,body{height:100%}
+    html,body{height:100%;}
     body{
-      margin:0; background: radial-gradient(1200px 800px at 70% -10%, rgba(67,110,255,.18), transparent),
-                 radial-gradient(1000px 800px at -10% 20%, rgba(157,122,255,.18), transparent), var(--bg);
-      color:var(--text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji; 
-      line-height:1.2; overflow-x:hidden;
+      margin:0;
+      background:
+        radial-gradient(1200px 800px at 70% -10%, rgba(67,110,255,.18), transparent),
+        radial-gradient(1000px 800px at -10% 20%, rgba(157,122,255,.18), transparent),
+        var(--bg);
+      color:var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
+      line-height:1.4;
+      overflow-x:hidden;
     }
 
-    a{color:inherit; text-decoration:none}
-    .wrap{width:min(1150px, 92vw); margin:0 auto}
-    .glass{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-           backdrop-filter: blur(14px) saturate(1.1);
-           border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);}
+    a{color:inherit; text-decoration:none; transition: color .2s var(--ease);}
+    .wrap{width:min(1200px, 94vw); margin:0 auto}
+    .glass{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      backdrop-filter: blur(14px) saturate(1.1);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+    }
 
     /* ————— Magical Space Canvas ————— */
     #space{position:fixed; inset:0; z-index:-2; display:block;}
@@ -46,17 +57,31 @@
     /* ————— Extra ambient graphics (soft nebula + orbs) ————— */
     .ambient{position:fixed; inset:0; z-index:-1; pointer-events:none}
     .nebula, .orb{position:absolute; border-radius:50%; filter:blur(40px); opacity:.35; mix-blend-mode:screen}
-    .nebula{background:conic-gradient(from 220deg, rgba(157,122,255,.5), rgba(122,168,255,.35), rgba(255,255,255,0) 70%);
-            width:85vmax; height:85vmax; left:-20vmax; top:-10vmax; animation:slowspin 110s linear infinite}
-    .orb.o1{background:radial-gradient(circle at 30% 30%, rgba(122,168,255,.45), transparent 60%);
-            width:38vmin; height:38vmin; right:8vmin; top:18vmin; animation:float 9s ease-in-out infinite}
-    .orb.o2{background:radial-gradient(circle at 60% 40%, rgba(157,122,255,.45), transparent 60%);
-            width:28vmin; height:28vmin; left:6vmin; bottom:10vmin; animation:float 11s ease-in-out infinite reverse}
+    .nebula{
+      background:conic-gradient(from 220deg, rgba(157,122,255,.5), rgba(122,168,255,.35), rgba(255,255,255,0) 70%);
+      width:85vmax; height:85vmax; left:-20vmax; top:-10vmax; animation:slowspin 110s linear infinite
+    }
+    .orb.o1{
+      background:radial-gradient(circle at 30% 30%, rgba(122,168,255,.45), transparent 60%);
+      width:38vmin; height:38vmin; right:8vmin; top:18vmin; animation:float 9s ease-in-out infinite
+    }
+    .orb.o2{
+      background:radial-gradient(circle at 60% 40%, rgba(157,122,255,.45), transparent 60%);
+      width:28vmin; height:28vmin; left:6vmin; bottom:10vmin; animation:float 11s ease-in-out infinite reverse
+    }
     @keyframes slowspin{to{transform:rotate(1turn)}}
-    @keyframes float{50%{transform:translateY(-10px)}}
+    @keyframes float{50%{transform:translateY(-12px)}}
 
     /* Additional ambient layer: subtle grid for depth */
-    .gridlines{position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size:80px 80px, 80px 80px; mask-image:radial-gradient(70% 70% at 50% 40%, black, transparent 70%); opacity:.14; mix-blend-mode:soft-light; transform:perspective(600px) rotateX(50deg) translateY(-10%); filter:blur(.3px)}
+    .gridlines{
+      position:absolute; inset:0;
+      background-image:linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size:80px 80px, 80px 80px;
+      mask-image:radial-gradient(70% 70% at 50% 40%, black, transparent 70%);
+      opacity:.14; mix-blend-mode:soft-light;
+      transform:perspective(600px) rotateX(50deg) translateY(-10%);
+      filter:blur(.3px);
+    }
 
     /* ————— Entrance “New‑world Panels” ————— */
     .gate{position:fixed; inset:0; z-index:9999; overflow:hidden; background:#000;}
@@ -66,44 +91,55 @@
     .gate .pane{background:linear-gradient(180deg, rgba(6,9,19,.96), rgba(6,9,19,.86)); border-right:1px solid rgba(255,255,255,.03); transform:translateY(0)}
     .gate .brand{position:absolute; z-index:3; text-align:center; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none}
     .gate h1{font-size:clamp(28px, 6vw, 52px); letter-spacing:.08em; text-transform:uppercase; font-weight:800; text-shadow:0 10px 36px rgba(0,0,0,.7)}
-    .enter{margin-top:14px; padding:12px 18px; font-weight:700; border-radius:14px; border:1px solid var(--border); background:rgba(255,255,255,.06); cursor:pointer; pointer-events:auto}
+    .enter{margin-top:14px; padding:12px 22px; font-weight:700; border-radius:14px; border:1px solid var(--border); background:rgba(255,255,255,.06); cursor:pointer; pointer-events:auto; transition: all .2s var(--ease);}
+    .enter:hover{background:rgba(255,255,255,.1); transform:scale(1.05);}
     .gate.reveal .pane{animation:panelExit .85s var(--ease) forwards; animation-delay: calc(var(--i) * .06s)}
     .gate.reveal .brand{animation:brandOut .5s var(--ease) .2s forwards}
-    .gate.hide{opacity:0; visibility:hidden; transition:opacity .6s var(--ease);} 
-
+    .gate.hide{opacity:0; visibility:hidden; transition:opacity .6s var(--ease);}
     @keyframes panelExit{to{transform:translateY(-110%)}}
     @keyframes brandOut{to{opacity:0; transform:translate(-50%,-60%)}}
 
     /* ————— Hero ————— */
-    header{position:relative; padding:120px 0 60px}
-    .badge{display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border:1px solid var(--border); background:rgba(255,255,255,.04); border-radius:999px; font-size:12px; color:var(--muted)}
-    .title{font-size:clamp(40px,8vw,94px); font-weight:800; letter-spacing:-.02em; margin:16px 0 10px}
-    .subtitle{max-width:820px; font-size:clamp(16px,2.2vw,22px); color:var(--muted)}
-    .cta{display:flex; gap:14px; margin-top:26px}
-    .btn{padding:14px 18px; border-radius:14px; font-weight:700; border:1px solid var(--border)}
+    header{position:relative; padding:140px 0 80px; text-align: center;}
+    .badge{display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border:1px solid var(--border); background:rgba(255,255,255,.04); border-radius:999px; font-size:13px; color:var(--muted)}
+    .title{font-size:clamp(40px,8vw,94px); font-weight:800; letter-spacing:-.02em; margin:20px 0 10px; line-height: 1.1;}
+    .subtitle{max-width:820px; font-size:clamp(16px,2.2vw,22px); color:var(--muted); margin: 0 auto;}
+    .cta{display:flex; justify-content: center; gap:14px; margin-top:32px}
+    .btn{padding:14px 22px; border-radius:14px; font-weight:700; border:1px solid var(--border); transition: all .2s var(--ease);}
     .btn.primary{background:linear-gradient(90deg, rgba(122,168,255,.35), rgba(157,122,255,.35));}
-    .btn:hover{transform:translateY(-1px); box-shadow:0 12px 40px rgba(0,0,0,.35)}
+    .btn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 12px 40px rgba(0,0,0,.35),
+      inset 0 1px 0 rgba(255,255,255,.08),
+      0 0 0 1px rgba(122,168,255,.2);
+    }
+    .btn.primary:hover{box-shadow: 0 12px 40px rgba(0,0,0,.35), 0 0 40px -10px var(--accent);}
+    .btn:disabled {cursor: not-allowed; opacity: 0.6;}
 
     /* ————— Section: Projects ————— */
     section{padding:64px 0}
     .section-title{font-size:clamp(22px,3vw,30px); margin:0 0 22px 6px}
-    .grid{display:grid; grid-template-columns:repeat(12, 1fr); gap:18px}
-    .card{grid-column:span 4; position:relative; overflow:hidden; padding:16px; min-height:260px; display:flex; border-radius:var(--radius)}
+    .grid{display:grid; grid-template-columns:repeat(12, 1fr); gap:24px}
+    .card{grid-column:span 4; position:relative; overflow:hidden; padding:16px; min-height:280px; display:flex; flex-direction:column; border-radius:var(--radius)}
+    .card:hover{transform:translateY(-4px)}
     .card .content{z-index:2; margin-top:auto}
     .kicker{font-size:12px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase}
-    .name{font-size:22px; font-weight:800; line-height:1.15; word-break:break-word}
-    .meta{font-size:14px; color:var(--muted)}
-    .card .halo{position:absolute; inset:-30%; background:radial-gradient(500px 400px at 20% 20%, rgba(122,168,255,.35), transparent 60%), radial-gradient(400px 320px at 80% 80%, rgba(157,122,255,.35), transparent 60%); filter:blur(40px); opacity:.7;}
-    .card:hover .halo{transform:scale(1.1)}
-    .card:hover{transform:translateY(-3px)}
+    .name{font-size:24px; font-weight:800; line-height:1.15; word-break:break-word}
+    .meta{font-size:15px; color:var(--muted)}
+    .card .halo{position:absolute; inset:-40%; background:radial-gradient(500px 400px at 20% 20%, rgba(122,168,255,.35), transparent 60%), radial-gradient(400px 320px at 80% 80%, rgba(157,122,255,.35), transparent 60%); filter:blur(40px); opacity:.7; transition: transform .4s var(--ease);}
+    .card:hover .halo{transform:scale(1.15) rotate(-10deg)}
 
     /* — Frame cards with fitted text overlay */
     .card.frame{padding:0}
-    .card.frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(1.15) contrast(1.05); opacity:.001; transition:opacity .4s var(--ease)}
+    .card.frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(1.15) contrast(1.05); opacity:.001; transition:opacity .4s var(--ease), transform .4s var(--ease)}
+    .card.frame:hover img {transform: scale(1.05);}
     .card.frame.has-image img{opacity:1}
-    .card.frame .overlay{position:absolute; inset:0; background:linear-gradient(to top, rgba(6,9,19,.78), rgba(6,9,19,.35) 40%, transparent 70%)}
-    .card.frame .content{position:absolute; left:14px; right:14px; bottom:14px; z-index:2; padding:12px 12px 10px; border-radius:16px;
-                         background:linear-gradient(180deg, rgba(6,9,19,.65), rgba(6,9,19,.25)); backdrop-filter: blur(6px);}
+    .card.frame .overlay{position:absolute; inset:0; background:linear-gradient(to top, rgba(6,9,19,.85), rgba(6,9,19,.45) 40%, transparent 70%)}
+    .card.frame .content{
+      position:absolute; left:14px; right:14px; bottom:14px; z-index:2;
+      padding:14px; border-radius:16px;
+      background:rgba(6,9,19,.5); backdrop-filter: blur(8px);
+    }
     .card.frame .name{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
     .card.frame .meta{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
 
@@ -112,7 +148,8 @@
       radial-gradient(180px 140px at 20% 25%, rgba(122,168,255,.35), transparent 60%),
       radial-gradient(220px 180px at 80% 70%, rgba(157,122,255,.35), transparent 60%),
       conic-gradient(from 200deg, rgba(255,255,255,.08), rgba(255,255,255,0) 40%);
-      filter:saturate(1.15)}
+      filter:saturate(1.15)
+    }
     .card.frame .shape-fallback::before,
     .card.frame .shape-fallback::after{content:""; position:absolute; border-radius:24px; background:linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,0)); box-shadow:0 20px 60px rgba(0,0,0,.35)}
     .card.frame .shape-fallback::before{width:58%; height:34%; left:8%; top:10%; transform:rotate(-6deg)}
@@ -120,31 +157,61 @@
     .card.frame.has-image .shape-fallback{display:none}
     .card.frame:not(.has-image) .overlay{background:linear-gradient(to top, rgba(6,9,19,.86), rgba(6,9,19,.45) 40%, transparent 70%)}
 
-    @media (max-width: 980px){ .card{grid-column:span 6} }
-    @media (max-width: 680px){ .card{grid-column:span 12} header{padding-top:96px} }
-
     /* ————— Section: GitHub ————— */
-    .repo-list{display:grid; grid-template-columns:repeat(12, 1fr); gap:14px}
-    .repo{grid-column:span 4; padding:16px; min-height:148px; display:flex; flex-direction:column}
-    .repo h4{margin:2px 0 10px; font-size:16px; line-height:1.2; word-break:break-word}
+    .repo-list{display:grid; grid-template-columns:repeat(12, 1fr); gap:18px}
+    .repo{grid-column:span 4; padding:18px; min-height:160px; display:flex; flex-direction:column}
+    .repo h4{margin:2px 0 10px; font-size:18px; line-height:1.2; word-break:break-word}
+    .repo h4 a:hover {color: var(--accent);}
     .repo p{margin:0; color:var(--muted); font-size:14px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden}
-    .repo a{color:var(--accent)}
-    @media (max-width: 980px){ .repo{grid-column:span 6} }
-    @media (max-width: 680px){ .repo{grid-column:span 12} }
+    .repo .tiny {margin-top:auto; opacity:.8}
+
+    /* ————— Section: Gemini AI Ideator ————— */
+    #gemini-ideator { text-align: center; }
+    #idea-container {
+        grid-column: 3 / span 8;
+        min-height: 200px;
+        padding: 24px;
+        margin-top: 24px;
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        opacity: 0;
+        transform: scale(0.95);
+        transition: opacity .5s var(--ease), transform .5s var(--ease);
+    }
+    #idea-container.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+    #idea-container .tech-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 
     /* ————— Reveal Animations ————— */
-    .reveal{opacity:0; transform:translateY(14px); transition: all .9s var(--ease)}
+    .reveal{opacity:0; transform:translateY(16px); transition: all 1s var(--ease)}
     .reveal.on{opacity:1; transform:none}
 
     /* ————— Footer ————— */
-    footer{padding:60px 0 100px; color:var(--muted); text-align:center}
+    footer{padding:60px 0 80px; color:var(--muted); text-align:center}
     .tiny{font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:12px}
+
+    /* ————— Responsive Breakpoints ————— */
+    @media (max-width: 980px){
+      .card, .repo, #idea-container {grid-column:span 6}
+      #idea-container {grid-column: 2 / span 10;}
+    }
+    @media (max-width: 680px){
+      .card, .repo, #idea-container {grid-column:span 12}
+      #idea-container {grid-column: 1 / span 12;}
+      header{padding-top:110px}
+      .cta{flex-direction: column;}
+    }
   </style>
 </head>
 <body data-github-user="senpai-sama7">
 
   <!-- Space background canvas -->
   <canvas id="space" aria-hidden="true"></canvas>
+
   <!-- Ambient graphics -->
   <div class="ambient" aria-hidden="true">
     <div class="nebula"></div>
@@ -152,229 +219,372 @@
     <div class="orb o2"></div>
     <div class="gridlines"></div>
   </div>
-    <div class="orb o1"></div>
-    <div class="orb o2"></div>
-  </div>
 
   <!-- Cinematic entrance overlay -->
   <div class="gate" id="gate" aria-hidden="true">
-    <video id="introVideo" autoplay playsinline muted>
+    <video id="introVideo" autoplay playsinline muted loop>
       <source src="https://cdn.coverr.co/videos/coverr-starry-sky-8428/1080p.mp4" type="video/mp4" />
     </video>
     <div class="veil"></div>
     <div class="panes">
-      <span class="pane" style="--i:0"></span>
-      <span class="pane" style="--i:1"></span>
-      <span class="pane" style="--i:2"></span>
-      <span class="pane" style="--i:3"></span>
-      <span class="pane" style="--i:4"></span>
-      <span class="pane" style="--i:5"></span>
-      <span class="pane" style="--i:6"></span>
-      <span class="pane" style="--i:7"></span>
+      <span class="pane" style="--i:0"></span><span class="pane" style="--i:1"></span>
+      <span class="pane" style="--i:2"></span><span class="pane" style="--i:3"></span>
+      <span class="pane" style="--i:4"></span><span class="pane" style="--i:5"></span>
+      <span class="pane" style="--i:6"></span><span class="pane" style="--i:7"></span>
     </div>
     <div class="brand">
-      <h1>Welcome to Douglas Mitchell</h1>
-      <button class="enter" id="enterBtn" aria-label="Enter site">Enter</button>
+      <h1>Douglas Mitchell</h1>
+      <button class="enter" id="enterBtn" aria-label="Enter site">Explore</button>
     </div>
   </div>
 
-  <header class="wrap">
-    <span class="badge">Portfolio • Focus: <strong style="margin-left:6px">You</strong></span>
-    <h1 class="title">Douglas Mitchell</h1>
-    <p class="subtitle">Designer–developer crafting calm, cinematic web experiences. Meticulous about detail, obsessed with clarity.</p>
-    <div class="cta">
-      <a class="btn primary glass" href="#projects">Explore Projects</a>
-      <a class="btn glass" href="#github">Latest from GitHub</a>
-    </div>
-  </header>
-
-  <!-- PROJECTS -->
-  <section id="projects" class="wrap">
-    <h3 class="section-title">Selected work</h3>
-    <div class="grid">
-      <!-- Project 1 -->
-      <a class="card frame glass reveal" href="https://senpai-sama7.github.io/C0Di3/" target="_blank" rel="noopener">
-        <img src="c0di3-cover.png" alt="C0Di3 project preview" loading="lazy"/>
-        <div class="shape-fallback" aria-hidden="true"></div>
-        <div class="overlay"></div>
-        <div class="content">
-          <span class="kicker">Live • Front‑end</span>
-          <div class="name">C0Di3</div>
-          <div class="meta">Interactive code experience.</div>
-        </div>
-      </a>
-
-      <!-- Project 2 -->
-      <a class="card frame glass reveal" href="https://synapse-form-backend.vercel.app/" target="_blank" rel="noopener">
-        <img src="synapse-form-cover.png" alt="Synapse Form project preview" loading="lazy"/>
-        <div class="shape-fallback" aria-hidden="true"></div>
-        <div class="overlay"></div>
-        <div class="content">
-          <span class="kicker">Live • API / Backend</span>
-          <div class="name">Synapse Form</div>
-          <div class="meta">Minimal forms with a modern backend.</div>
-        </div>
-      </a>
-
-      <!-- Project 3 with your provided image -->
-      <a class="card frame glass reveal" href="https://senpai-sama7.github.io/Houston-Oil-Airs/" target="_blank" rel="noopener">
-        <img src="IMAGE.jpg" alt="Houston Oil Airs project preview" loading="lazy"/>
-        <div class="shape-fallback" aria-hidden="true"></div>
-        <div class="overlay"></div>
-        <div class="content">
-          <span class="kicker">Live • Data‑viz</span>
-          <div class="name">Houston Oil Airs</div>
-          <div class="meta">Environmental snapshot & insights.</div>
-        </div>
-      </a>
-    </div>
-  </section>
-
-  <!-- ABOUT — subtle book mention -->
-  <section class="wrap">
-    <div class="grid">
-      <div class="card glass reveal" style="grid-column:span 8;">
-        <h3 style="margin:0 0 10px">About</h3>
-        <p style="color:var(--muted); max-width:70ch">I design and build polished, lightning‑fast web experiences with an eye for motion and narrative. I love taking complex ideas and making them feel effortless.</p>
+  <main>
+    <header class="wrap">
+      <span class="badge reveal">Portfolio • Focus: <strong style="margin-left:6px; color: var(--accent);">Creative Technology</strong></span>
+      <h1 class="title reveal" style="transition-delay: .1s">Douglas Mitchell</h1>
+      <p class="subtitle reveal" style="transition-delay: .2s">A passionate designer and developer crafting calm, cinematic, and intuitive web experiences. Meticulous about detail, obsessed with clarity, and driven by the pursuit of digital craftsmanship.</p>
+      <div class="cta reveal" style="transition-delay: .3s">
+        <a class="btn primary glass" href="#projects">Explore Projects</a>
+        <a class="btn glass" href="#github">Latest from GitHub</a>
       </div>
-      <div class="card glass reveal" style="grid-column:span 4; display:flex; align-items:center; justify-content:center">
-        <div style="text-align:center">
-          <div class="kicker">Also</div>
-          <div class="name">Author</div>
-          <p class="meta">A tasteful nod to my book—focus stays on the work.</p>
+    </header>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="wrap">
+      <h3 class="section-title reveal">Selected Work</h3>
+      <div class="grid">
+        <!-- Project 1 -->
+        <a class="card frame glass reveal" href="https://senpai-sama7.github.io/C0Di3/" target="_blank" rel="noopener">
+          <img src="https://placehold.co/600x400/0b1222/7aa8ff/png?text=C0Di3" alt="C0Di3 project preview" loading="lazy"/>
+          <div class="shape-fallback" aria-hidden="true"></div>
+          <div class="overlay"></div>
+          <div class="content">
+            <span class="kicker">Live • Front‑end</span>
+            <div class="name">C0Di3</div>
+            <div class="meta">An immersive, interactive coding environment designed to teach programming concepts through a unique, narrative-driven experience.</div>
+          </div>
+        </a>
+
+        <!-- Project 2 -->
+        <a class="card frame glass reveal" href="https://synapse-form-backend.vercel.app/" target="_blank" rel="noopener" style="transition-delay: .1s">
+          <img src="https://placehold.co/600x400/0b1222/9d7aff/png?text=Synapse+Form" alt="Synapse Form project preview" loading="lazy"/>
+          <div class="shape-fallback" aria-hidden="true"></div>
+          <div class="overlay"></div>
+          <div class="content">
+            <span class="kicker">Live • API / Backend</span>
+            <div class="name">Synapse Form</div>
+            <div class="meta">A robust and minimal form backend service providing reliable data handling, validation, and integration for modern web applications.</div>
+          </div>
+        </a>
+
+        <!-- Project 3 -->
+        <a class="card frame glass reveal" href="https://senpai-sama7.github.io/Houston-Oil-Airs/" target="_blank" rel="noopener" style="transition-delay: .2s">
+          <img src="https://placehold.co/600x400/0b1222/e7ecf3/png?text=Houston+Oil+Airs" alt="Houston Oil Airs project preview" loading="lazy"/>
+          <div class="shape-fallback" aria-hidden="true"></div>
+          <div class="overlay"></div>
+          <div class="content">
+            <span class="kicker">Live • Data‑viz</span>
+            <div class="name">Houston Oil Airs</div>
+            <div class="meta">An interactive data visualization project presenting an environmental snapshot of air quality metrics related to the oil industry in Houston.</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ABOUT / SKILLS -->
+    <section class="wrap">
+      <div class="grid">
+        <div class="card glass reveal" style="grid-column:span 8;">
+          <h3 class="name" style="margin:0 0 10px">About Me</h3>
+          <p class="meta" style="max-width:70ch">I'm a multidisciplinary creator with a deep love for technology and art. My work is guided by principles of minimalism, performance, and accessibility. I design and build polished, lightning-fast web experiences with an eye for motion and narrative, striving to take complex ideas and make them feel simple, intuitive, and beautiful.</p>
+        </div>
+        <div class="card glass reveal" style="grid-column:span 4; justify-content:center;">
+            <h3 class="name">Core Technologies</h3>
+            <p class="meta" style="color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;">
+              <span class="badge">JavaScript</span><span class="badge">React</span>
+              <span class="badge">Node.js</span><span class="badge">CSS3</span>
+              <span class="badge">HTML5</span><span class="badge">APIs</span>
+              <span class="badge">Figma</span><span class="badge">Git</span>
+            </p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- GITHUB (auto‑pull) -->
-  <section id="github" class="wrap">
-    <h3 class="section-title">Latest from GitHub</h3>
-    <div id="repos" class="repo-list"></div>
-  </section>
+    <!-- GITHUB (auto‑pull) -->
+    <section id="github" class="wrap">
+      <h3 class="section-title reveal">Latest from GitHub</h3>
+      <div id="repos" class="repo-list">
+        <!-- JS will populate this -->
+        <p class="reveal" style="color: var(--muted);">Fetching repositories...</p>
+      </div>
+    </section>
 
-  <footer>
-    <div class="tiny">© <span id="year"></span> Douglas Mitchell. Built with semantic HTML, CSS animations, and a dusting of JS.</div>
+    <!-- GEMINI AI IDEATOR -->
+    <section id="gemini-ideator" class="wrap">
+        <div class="reveal">
+            <h3 class="section-title" style="text-align:center;">AI Project Ideator</h3>
+            <p class="subtitle" style="margin-bottom: 24px;">Feeling uninspired? Let Gemini brainstorm a unique project idea tailored to my skill set. Press the button to generate a new concept.</p>
+            <button id="generateIdeaBtn" class="btn primary glass">Generate Idea ✨</button>
+        </div>
+        <div class="grid">
+            <div id="idea-container" class="card glass">
+                <p class="meta" style="text-align: center;">Your next great idea will appear here...</p>
+            </div>
+        </div>
+    </section>
+
+  </main>
+
+  <footer class="wrap">
+    <div class="tiny">© <span id="year"></span> Douglas Mitchell. Built with semantic HTML, modern CSS, and a dusting of JavaScript.</div>
   </footer>
 
   <script>
-  // ————— Respect reduced motion —————
-  const preferReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // ————— Respect reduced motion —————
+    const preferReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ————— Panels Gate logic (new entrance) —————
-  const gate = document.getElementById('gate');
-  const enterBtn = document.getElementById('enterBtn');
-  const introVideo = document.getElementById('introVideo');
+    // ————— Panels Gate logic (new entrance) —————
+    const gate = document.getElementById('gate');
+    const enterBtn = document.getElementById('enterBtn');
+    const introVideo = document.getElementById('introVideo');
 
-  function revealGate(){
-    if(!gate.classList.contains('reveal')){
-      gate.classList.add('reveal');
-      setTimeout(()=> gate.classList.add('hide'), 1100);
+    function revealGate(){
+      document.body.style.overflow = ''; // Restore scroll
+      if(!gate.classList.contains('reveal')){
+        gate.classList.add('reveal');
+        setTimeout(()=> gate.classList.add('hide'), 1200);
+      }
     }
-  }
-  enterBtn && enterBtn.addEventListener('click', revealGate);
-  setTimeout(revealGate, 3600);
-  introVideo && introVideo.addEventListener('ended', revealGate);
+    // Set body to prevent scroll until gate is opened
+    document.body.style.overflow = 'hidden';
+    enterBtn?.addEventListener('click', revealGate);
 
-  // ————— Image fallback to shapes —————
-  document.querySelectorAll('.card.frame').forEach(card=>{
-    const img = card.querySelector('img');
-    function mark(){ if(img.complete && img.naturalWidth>0){ card.classList.add('has-image'); } else { card.classList.remove('has-image'); } }
-    if(img){ img.addEventListener('load', mark); img.addEventListener('error', mark); mark(); setTimeout(mark, 1200); }
-  });
+    // Automatically open gate after a delay, but only if user hasn't clicked
+    const autoOpenTimer = setTimeout(revealGate, 4000);
+    enterBtn?.addEventListener('click', () => clearTimeout(autoOpenTimer));
+    introVideo?.addEventListener('canplay', () => introVideo.play());
 
-  // ————— Space Canvas (enhanced but light) —————
-  (function(){
-    const canvas = document.getElementById('space');
-    const ctx = canvas.getContext('2d');
-    let w, h, dpr, stars = [], tick = 0, trails=[];
-    const STAR_COUNT = 240; // density
+    // ————— Image fallback to shapes —————
+    document.querySelectorAll('.card.frame').forEach(card=>{
+      const img = card.querySelector('img');
+      function checkImage(){
+        if(img.complete && img.naturalWidth > 0){
+          card.classList.add('has-image');
+        } else {
+          card.classList.remove('has-image');
+        }
+      }
+      if(img){
+        img.addEventListener('load', checkImage);
+        img.addEventListener('error', checkImage);
+        checkImage(); // Check on initial script run
+        setTimeout(checkImage, 1000); // Re-check after a moment
+      }
+    });
 
-    function resize(){
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = canvas.width = innerWidth * dpr; h = canvas.height = innerHeight * dpr;
-      canvas.style.width = innerWidth + 'px'; canvas.style.height = innerHeight + 'px';
-      ctx.setTransform(dpr,0,0,dpr,0,0);
-    }
+    // ————— Space Canvas (enhanced but light) —————
+    (function(){
+      const canvas = document.getElementById('space');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let w, h, dpr, stars = [], tick = 0, comets=[];
+      const STAR_COUNT = 250;
 
-    function init(){
-      stars = Array.from({length: STAR_COUNT}, () => ({
-        x: Math.random()*innerWidth,
-        y: Math.random()*innerHeight,
-        z: Math.random()*0.6 + 0.4,
-        r: Math.random()*1.6 + .2,
-        s: Math.random()*0.3 + 0.05
-      }));
-    }
+      function resize(){
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = canvas.width = window.innerWidth * dpr;
+        h = canvas.height = window.innerHeight * dpr;
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        ctx.scale(dpr,dpr);
+      }
 
-    function comet(){
-      // casual shooting star
-      trails.push({x:Math.random()*innerWidth, y:-20, vx:2+Math.random()*2.5, vy:1+Math.random()*1.5, life:0});
-    }
+      function createStar(){
+        return {
+          x: Math.random()*window.innerWidth,
+          y: Math.random()*window.innerHeight,
+          z: Math.random()*0.7 + 0.3,
+          r: Math.random()*1.8 + .2,
+          s: Math.random()*0.3 + 0.05
+        }
+      }
 
-    function draw(){
-      ctx.clearRect(0,0,innerWidth,innerHeight);
-      const g = ctx.createRadialGradient(innerWidth*0.7, innerHeight*-0.1, 50, innerWidth*0.7, innerHeight*-0.1, innerWidth);
-      g.addColorStop(0, 'rgba(122,168,255,0.08)'); g.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = g; ctx.fillRect(0,0,innerWidth,innerHeight);
+      function init(){
+        stars = Array.from({length: STAR_COUNT}, createStar);
+      }
 
-      stars.forEach(star =>{
-        ctx.beginPath(); ctx.arc(star.x, star.y, star.r * star.z, 0, Math.PI*2);
-        ctx.fillStyle = `rgba(231,236,243,${0.75*star.z})`;
-        ctx.fill();
-        if(!preferReduced && (tick % 60 === 0)) star.r = Math.random()*1.6 + .2;
-        star.x += star.s * (0.2 + star.z*0.8); if(star.x > innerWidth+10) star.x = -10;
+      function createComet(){
+        if (preferReduced || comets.length > 2) return;
+        comets.push({x:Math.random()*w*0.8, y:-20, vx:2+Math.random()*2.5, vy:1.5+Math.random()*1.5, life:0, maxLength: 80});
+      }
+
+      function draw(){
+        ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+        const g = ctx.createRadialGradient(window.innerWidth*0.7, window.innerHeight*-0.1, 50, window.innerWidth*0.7, window.innerHeight*-0.1, window.innerWidth);
+        g.addColorStop(0, 'rgba(122,168,255,0.08)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0,0,window.innerWidth,window.innerHeight);
+
+        stars.forEach(star =>{
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.r * star.z, 0, Math.PI*2);
+          ctx.fillStyle = `rgba(231,236,243,${0.85*star.z})`;
+          ctx.fill();
+          star.x += star.s * (0.2 + star.z*0.8);
+          if(star.x > window.innerWidth+10) {
+              star.x = -10;
+              star.y = Math.random() * window.innerHeight;
+          }
+        });
+
+        comets.forEach(t =>{
+          t.x += t.vx; t.y += t.vy; t.life += .015;
+          ctx.globalAlpha = Math.max(0, 1 - t.life);
+          ctx.beginPath(); ctx.moveTo(t.x, t.y);
+          ctx.lineTo(t.x - t.vx * 15, t.y - t.vy * 15);
+          ctx.strokeStyle = '#e7ecf3'; ctx.lineWidth = 1.2; ctx.stroke();
+          ctx.globalAlpha = 1;
+        });
+        comets = comets.filter(t => t.life < 1 && t.x < window.innerWidth+80);
+
+        tick++;
+        if(!preferReduced) requestAnimationFrame(draw);
+      }
+
+      resize(); init(); draw();
+      window.addEventListener('resize', ()=>{resize(); init();});
+      if(!preferReduced) setInterval(createComet, 4500);
+    })();
+
+    // ————— Reveal on scroll —————
+    const io = new IntersectionObserver(entries=>{
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+            e.target.classList.add('on');
+            io.unobserve(e.target); // Optional: stop observing once revealed
+        }
       });
+    }, {threshold:.1});
+    document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
 
-      // comets
-      trails.forEach(t =>{
-        t.x += t.vx; t.y += t.vy; t.life += .02;
-        ctx.globalAlpha = Math.max(0, 1 - t.life);
-        ctx.beginPath(); ctx.moveTo(t.x, t.y); ctx.lineTo(t.x - 60, t.y - 20);
-        ctx.strokeStyle = '#e7ecf3'; ctx.lineWidth = 1.2; ctx.stroke();
-        ctx.globalAlpha = 1;
-      });
-      trails = trails.filter(t => t.life < 1 && t.x < innerWidth+80);
-
-      tick++;
-      if(!preferReduced) requestAnimationFrame(draw);
-    }
-
-    resize(); init(); draw();
-    addEventListener('resize', ()=>{resize(); init();});
-    if(!preferReduced) setInterval(comet, 4500);
-  })();
-
-  // ————— Reveal on scroll —————
-  const io = new IntersectionObserver(entries=>{
-    entries.forEach(e=> e.isIntersecting && e.target.classList.add('on'))
-  }, {threshold:.18});
-  document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
-
-  // ————— GitHub API: show latest repos —————
-  async function loadRepos(){
-    const user = document.body.dataset.githubUser || 'senpai-sama7'; // GitHub username; name on site is Douglas Mitchell
-    try{
-      const res = await fetch(`https://api.github.com/users/${user}/repos?sort=updated&per_page=6`, {headers:{'Accept':'application/vnd.github+json'}});
-      const data = await res.json();
+    // ————— GitHub API: show latest repos —————
+    async function loadRepos(){
+      const user = document.body.dataset.githubUser || 'senpai-sama7';
       const target = document.getElementById('repos');
-      target.innerHTML = '';
-      data.slice(0,6).forEach(r=>{
-        const el = document.createElement('article');
-        el.className = 'repo glass reveal';
-        el.innerHTML = `
-          <h4><a href="${r.html_url}" target="_blank" rel="noopener">${r.name}</a></h4>
-          <p>${r.description || 'No description provided.'}</p>
-          <p class="tiny" style="margin-top:auto; opacity:.8">★ ${r.stargazers_count} • ${r.language || '—'}</p>`;
-        target.appendChild(el);
-        setTimeout(()=>el.classList.add('on'), 50);
-      });
-    }catch(err){ console.warn('GitHub API error', err); }
-  }
-  loadRepos();
+      try{
+        const res = await fetch(`https://api.github.com/users/${user}/repos?sort=updated&per_page=6`);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        const data = await res.json();
+        target.innerHTML = '';
+        if (!data || data.length === 0) {
+            target.innerHTML = `<p class="reveal on" style="color: var(--muted);">No public repositories found.</p>`;
+            return;
+        }
 
-  // Year
-  document.getElementById('year').textContent = new Date().getFullYear();
+        data.slice(0,6).forEach((r, i) => {
+          const el = document.createElement('a');
+          el.className = 'repo glass reveal';
+          el.href = r.html_url;
+          el.target = "_blank";
+          el.rel = "noopener";
+          el.style.transitionDelay = `${i * 0.05}s`;
+          el.innerHTML = `
+            <h4>${r.name}</h4>
+            <p>${r.description || 'No description provided.'}</p>
+            <p class="tiny">★ ${r.stargazers_count} • ${r.language || '—'}</p>`;
+          target.appendChild(el);
+          setTimeout(() => el.classList.add('on'), 50); // Fire animation
+        });
+      }catch(err){
+        console.warn('GitHub API error', err);
+        target.innerHTML = `<p class="reveal on" style="color: var(--muted);">Could not load projects from GitHub.</p>`;
+      }
+    }
+    loadRepos();
+
+    // ————— Gemini API: AI Project Ideator —————
+    const generateIdeaBtn = document.getElementById('generateIdeaBtn');
+    const ideaContainer = document.getElementById('idea-container');
+
+    async function getProjectIdea() {
+        generateIdeaBtn.disabled = true;
+        ideaContainer.classList.add('visible');
+        ideaContainer.innerHTML = `<p class="meta" style="text-align: center;">Conjuring a concept... ✨</p>`;
+
+        const apiKey = ""; // Canvas will provide this
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+        
+        const systemPrompt = "You are a creative director at a top tech firm, specializing in brainstorming innovative web projects. You are brief, creative, and inspiring.";
+        const userQuery = "Generate a novel project idea for a portfolio. The creator is a designer-developer focused on 'Creative Technology', skilled in front-end, back-end, and data visualization. Provide a project title, a one-sentence pitch, a 2-3 sentence detailed description, and a list of 3-5 suggested core technologies.";
+
+        const payload = {
+            contents: [{ parts: [{ text: userQuery }] }],
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+            generationConfig: {
+                responseMimeType: "application/json",
+                responseSchema: {
+                    type: "OBJECT",
+                    properties: {
+                        "title": { "type": "STRING" },
+                        "pitch": { "type": "STRING" },
+                        "description": { "type": "STRING" },
+                        "technologies": {
+                            "type": "ARRAY",
+                            "items": { "type": "STRING" }
+                        }
+                    },
+                    required: ["title", "pitch", "description", "technologies"]
+                }
+            }
+        };
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`API error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            const candidate = result.candidates?.[0];
+            const jsonText = candidate?.content?.parts?.[0]?.text;
+
+            if (jsonText) {
+                const idea = JSON.parse(jsonText);
+                displayIdea(idea);
+            } else {
+                throw new Error("Invalid response structure from API.");
+            }
+
+        } catch (error) {
+            console.error("Gemini API Error:", error);
+            ideaContainer.innerHTML = `<p class="meta" style="text-align: center; color: var(--accent);">Sorry, the creative sparks aren't flying right now. Please try again later.</p>`;
+        } finally {
+            generateIdeaBtn.disabled = false;
+        }
+    }
+
+    function displayIdea(idea) {
+        const techBadges = idea.technologies.map(tech => `<span class="badge">${tech}</span>`).join('');
+        ideaContainer.innerHTML = `
+            <span class="kicker">Project Concept</span>
+            <h3 class="name" style="margin: 4px 0 8px;">${idea.title}</h3>
+            <p class="meta" style="font-style: italic;">"${idea.pitch}"</p>
+            <p class="meta">${idea.description}</p>
+            <div class="tech-list">${techBadges}</div>
+        `;
+    }
+
+    generateIdeaBtn.addEventListener('click', getProjectIdea);
+
+
+    // Set dynamic year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
+
