@@ -55,25 +55,24 @@
     @keyframes slowspin{to{transform:rotate(1turn)}}
     @keyframes float{50%{transform:translateY(-10px)}}
 
-    /* ————— Entrance “Portal” (cinematic overlay) ————— */
-    .gate{position:fixed; inset:0; z-index:9999; display:grid; place-items:center; overflow:hidden;
-          background:#000; clip-path:circle(140% at 50% 55%); transition:clip-path 1.2s var(--ease), opacity .6s var(--ease) .9s}
-    .gate video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(1.15) contrast(1.08) brightness(.9)}
-    .gate .veil{position:absolute; inset:0; background:radial-gradient(60vmax 40vmax at 50% 55%, rgba(120,150,255,.25), rgba(0,0,0,.6) 60%, rgba(0,0,0,.9)); mix-blend-mode:screen}
-    .portal{position:relative; z-index:2; width:min(72vmin, 700px); aspect-ratio:1/1; border-radius:50%;
-            background:radial-gradient(circle at 50% 50%, transparent 45%, rgba(122,168,255,.35) 60%, rgba(157,122,255,.35) 75%, transparent 78%);
-            box-shadow:0 0 120px rgba(122,168,255,.45), inset 0 0 80px rgba(0,0,0,.9); animation:spin 18s linear infinite}
-    .rings{position:absolute; inset:0; border-radius:50%; background:repeating-conic-gradient(rgba(255,255,255,.15) 0 6deg, transparent 6deg 18deg);
-           -webkit-mask: radial-gradient(circle at 50% 50%, transparent 36%, #000 40%);
-           mask: radial-gradient(circle at 50% 50%, transparent 36%, #000 40%); filter:blur(1px); opacity:.5}
-    .gate .brand{position:absolute; z-index:3; text-align:center; top:50%; left:50%; transform:translate(-50%,-50%)}
-    .gate h1{font-size:clamp(28px, 6vw, 52px); letter-spacing:.08em; text-transform:uppercase; font-weight:800; text-shadow:0 10px 36px rgba(0,0,0,.7)}
-    .enter{margin-top:14px; padding:12px 18px; font-weight:700; border-radius:14px; border:1px solid var(--border);
-           background:rgba(255,255,255,.06); cursor:pointer}
-    .enter:hover{transform:translateY(-1px); box-shadow:0 10px 30px rgba(0,0,0,.35)}
-    .gate.close{clip-path:circle(0% at 50% 55%); opacity:0; pointer-events:none}
+    /* Additional ambient layer: subtle grid for depth */
+    .gridlines{position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size:80px 80px, 80px 80px; mask-image:radial-gradient(70% 70% at 50% 40%, black, transparent 70%); opacity:.14; mix-blend-mode:soft-light; transform:perspective(600px) rotateX(50deg) translateY(-10%); filter:blur(.3px)}
 
-    @keyframes spin{to{transform:rotate(1turn)}}
+    /* ————— Entrance “New‑world Panels” ————— */
+    .gate{position:fixed; inset:0; z-index:9999; overflow:hidden; background:#000;}
+    .gate video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(1.2) contrast(1.05) brightness(.9)}
+    .gate .veil{position:absolute; inset:0; background:radial-gradient(70vmax 50vmax at 50% 55%, rgba(120,150,255,.25), rgba(0,0,0,.75) 60%, rgba(0,0,0,.95)); mix-blend-mode:screen}
+    .gate .panes{position:absolute; inset:0; display:grid; grid-template-columns:repeat(8,1fr)}
+    .gate .pane{background:linear-gradient(180deg, rgba(6,9,19,.96), rgba(6,9,19,.86)); border-right:1px solid rgba(255,255,255,.03); transform:translateY(0)}
+    .gate .brand{position:absolute; z-index:3; text-align:center; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none}
+    .gate h1{font-size:clamp(28px, 6vw, 52px); letter-spacing:.08em; text-transform:uppercase; font-weight:800; text-shadow:0 10px 36px rgba(0,0,0,.7)}
+    .enter{margin-top:14px; padding:12px 18px; font-weight:700; border-radius:14px; border:1px solid var(--border); background:rgba(255,255,255,.06); cursor:pointer; pointer-events:auto}
+    .gate.reveal .pane{animation:panelExit .85s var(--ease) forwards; animation-delay: calc(var(--i) * .06s)}
+    .gate.reveal .brand{animation:brandOut .5s var(--ease) .2s forwards}
+    .gate.hide{opacity:0; visibility:hidden; transition:opacity .6s var(--ease);} 
+
+    @keyframes panelExit{to{transform:translateY(-110%)}}
+    @keyframes brandOut{to{opacity:0; transform:translate(-50%,-60%)}}
 
     /* ————— Hero ————— */
     header{position:relative; padding:120px 0 60px}
@@ -100,12 +99,26 @@
 
     /* — Frame cards with fitted text overlay */
     .card.frame{padding:0}
-    .card.frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(1.15) contrast(1.05)}
+    .card.frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(1.15) contrast(1.05); opacity:.001; transition:opacity .4s var(--ease)}
+    .card.frame.has-image img{opacity:1}
     .card.frame .overlay{position:absolute; inset:0; background:linear-gradient(to top, rgba(6,9,19,.78), rgba(6,9,19,.35) 40%, transparent 70%)}
     .card.frame .content{position:absolute; left:14px; right:14px; bottom:14px; z-index:2; padding:12px 12px 10px; border-radius:16px;
                          background:linear-gradient(180deg, rgba(6,9,19,.65), rgba(6,9,19,.25)); backdrop-filter: blur(6px);}
     .card.frame .name{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
     .card.frame .meta{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+
+    /* — Shape placeholders for project cards when images are missing */
+    .card.frame .shape-fallback{position:absolute; inset:0; display:block; background:
+      radial-gradient(180px 140px at 20% 25%, rgba(122,168,255,.35), transparent 60%),
+      radial-gradient(220px 180px at 80% 70%, rgba(157,122,255,.35), transparent 60%),
+      conic-gradient(from 200deg, rgba(255,255,255,.08), rgba(255,255,255,0) 40%);
+      filter:saturate(1.15)}
+    .card.frame .shape-fallback::before,
+    .card.frame .shape-fallback::after{content:""; position:absolute; border-radius:24px; background:linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,0)); box-shadow:0 20px 60px rgba(0,0,0,.35)}
+    .card.frame .shape-fallback::before{width:58%; height:34%; left:8%; top:10%; transform:rotate(-6deg)}
+    .card.frame .shape-fallback::after{width:46%; height:28%; right:10%; bottom:12%; transform:rotate(8deg)}
+    .card.frame.has-image .shape-fallback{display:none}
+    .card.frame:not(.has-image) .overlay{background:linear-gradient(to top, rgba(6,9,19,.86), rgba(6,9,19,.45) 40%, transparent 70%)}
 
     @media (max-width: 980px){ .card{grid-column:span 6} }
     @media (max-width: 680px){ .card{grid-column:span 12} header{padding-top:96px} }
@@ -137,6 +150,10 @@
     <div class="nebula"></div>
     <div class="orb o1"></div>
     <div class="orb o2"></div>
+    <div class="gridlines"></div>
+  </div>
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
   </div>
 
   <!-- Cinematic entrance overlay -->
@@ -145,11 +162,18 @@
       <source src="https://cdn.coverr.co/videos/coverr-starry-sky-8428/1080p.mp4" type="video/mp4" />
     </video>
     <div class="veil"></div>
-    <div class="portal">
-      <div class="rings"></div>
+    <div class="panes">
+      <span class="pane" style="--i:0"></span>
+      <span class="pane" style="--i:1"></span>
+      <span class="pane" style="--i:2"></span>
+      <span class="pane" style="--i:3"></span>
+      <span class="pane" style="--i:4"></span>
+      <span class="pane" style="--i:5"></span>
+      <span class="pane" style="--i:6"></span>
+      <span class="pane" style="--i:7"></span>
     </div>
     <div class="brand">
-      <h1>Entering your world</h1>
+      <h1>Welcome to Douglas Mitchell</h1>
       <button class="enter" id="enterBtn" aria-label="Enter site">Enter</button>
     </div>
   </div>
@@ -170,7 +194,8 @@
     <div class="grid">
       <!-- Project 1 -->
       <a class="card frame glass reveal" href="https://senpai-sama7.github.io/C0Di3/" target="_blank" rel="noopener">
-        <img src="c0di3-cover.png" alt="C0Di3 project preview"/>
+        <img src="c0di3-cover.png" alt="C0Di3 project preview" loading="lazy"/>
+        <div class="shape-fallback" aria-hidden="true"></div>
         <div class="overlay"></div>
         <div class="content">
           <span class="kicker">Live • Front‑end</span>
@@ -181,7 +206,8 @@
 
       <!-- Project 2 -->
       <a class="card frame glass reveal" href="https://synapse-form-backend.vercel.app/" target="_blank" rel="noopener">
-        <img src="synapse-form-cover.png" alt="Synapse Form project preview"/>
+        <img src="synapse-form-cover.png" alt="Synapse Form project preview" loading="lazy"/>
+        <div class="shape-fallback" aria-hidden="true"></div>
         <div class="overlay"></div>
         <div class="content">
           <span class="kicker">Live • API / Backend</span>
@@ -192,7 +218,8 @@
 
       <!-- Project 3 with your provided image -->
       <a class="card frame glass reveal" href="https://senpai-sama7.github.io/Houston-Oil-Airs/" target="_blank" rel="noopener">
-        <img src="IMAGE.jpg" alt="Houston Oil Airs project preview"/>
+        <img src="IMAGE.jpg" alt="Houston Oil Airs project preview" loading="lazy"/>
+        <div class="shape-fallback" aria-hidden="true"></div>
         <div class="overlay"></div>
         <div class="content">
           <span class="kicker">Live • Data‑viz</span>
@@ -234,30 +261,27 @@
   // ————— Respect reduced motion —————
   const preferReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ————— Cinematic Portal logic —————
+  // ————— Panels Gate logic (new entrance) —————
   const gate = document.getElementById('gate');
   const enterBtn = document.getElementById('enterBtn');
   const introVideo = document.getElementById('introVideo');
 
-  const closeGate = () => gate.classList.add('close');
-  enterBtn.addEventListener('click', closeGate);
-  setTimeout(closeGate, 4200);
-  introVideo && introVideo.addEventListener('ended', closeGate);
-
-  // Add tiny particle sparks inside portal for depth
-  (function portalParticles(){
-    const root = document.querySelector('.portal');
-    if(!root || preferReduced) return;
-    for(let i=0;i<36;i++){
-      const s = document.createElement('span');
-      const r = 34 + Math.random()*28; // radius
-      const a = Math.random()*360;
-      s.style.cssText = `position:absolute; left:50%; top:50%; width:3px; height:3px; background:#e7ecf3; border-radius:50%;
-        transform:rotate(${a}deg) translate(${r}%,0); filter:drop-shadow(0 0 8px rgba(122,168,255,.9)); opacity:${.4+Math.random()*.6};`;
-      root.appendChild(s);
-      s.animate([{transform:`rotate(${a}deg) translate(${r}%,0)`},{transform:`rotate(${a+360}deg) translate(${r}%,0)`}],{duration:12000+Math.random()*6000,iterations:Infinity});
+  function revealGate(){
+    if(!gate.classList.contains('reveal')){
+      gate.classList.add('reveal');
+      setTimeout(()=> gate.classList.add('hide'), 1100);
     }
-  })();
+  }
+  enterBtn && enterBtn.addEventListener('click', revealGate);
+  setTimeout(revealGate, 3600);
+  introVideo && introVideo.addEventListener('ended', revealGate);
+
+  // ————— Image fallback to shapes —————
+  document.querySelectorAll('.card.frame').forEach(card=>{
+    const img = card.querySelector('img');
+    function mark(){ if(img.complete && img.naturalWidth>0){ card.classList.add('has-image'); } else { card.classList.remove('has-image'); } }
+    if(img){ img.addEventListener('load', mark); img.addEventListener('error', mark); mark(); setTimeout(mark, 1200); }
+  });
 
   // ————— Space Canvas (enhanced but light) —————
   (function(){
