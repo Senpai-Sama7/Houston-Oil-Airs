@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -9,391 +7,293 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
   <style>
     /* ————— Design Tokens ————— */
     :root{
-      --bg:#060913;          /* deep space */
-      --bg-soft:#0b1222;      /* panels */
-      --text:#e7ecf3;         /* primary text */
-      --muted:#9fb0c2;        /* secondary */
-      --accent:#7aa8ff;       /* starlight */
-      --accent-2:#9d7aff;      /* nebula */
-      --glass:rgba(15,24,44,.35);
-      --border:rgba(161,180,210,.14);
-      --shadow:0 20px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.04);
-      --radius:22px;
-      --ease:cubic-bezier(.22,.61,.36,1);
+      --bg:#060913;--bg-soft:#0b1222;--text:#e7ecf3;--muted:#9fb0c2;--accent:#7aa8ff;--accent-2:#9d7aff;--glass:rgba(15,24,44,.35);--border:rgba(161,180,210,.14);--shadow:0 20px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.04);--radius:22px;--ease:cubic-bezier(.22,.61,.36,1);
     }
 
     /* ————— Base & Layout ————— */
     *{box-sizing:border-box}
     html,body{height:100%;}
-    body{
-      margin:0;
-      background:
-        radial-gradient(1200px 800px at 70% -10%, rgba(67,110,255,.18), transparent),
-        radial-gradient(1000px 800px at -10% 20%, rgba(157,122,255,.18), transparent),
-        var(--bg);
-      color:var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;
-      line-height:1.4;
-      overflow-x:hidden;
-    }
-
-    a{color:inherit; text-decoration:none; transition: color .2s var(--ease);}
-    .wrap{width:min(1200px, 94vw); margin:0 auto}
-    .glass{
-      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      backdrop-filter: blur(14px) saturate(1.1);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      transition: transform .3s var(--ease), box-shadow .3s var(--ease);
-    }
+    body{margin:0;background:var(--bg);color:var(--text);font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji;line-height:1.4;overflow-x:hidden;}
+    a{color:inherit;text-decoration:none;transition:color .2s var(--ease);}
+    .wrap{width:min(1200px, 94vw);margin:0 auto}
+    .glass{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));backdrop-filter:blur(14px) saturate(1.1);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);transition:transform .3s var(--ease), box-shadow .3s var(--ease);}
 
     /* ————— Magical Space Canvas ————— */
-    #space{position:fixed; inset:0; z-index:-2; display:block; cursor: crosshair;}
+    #space{position:fixed;inset:0;z-index:-2;display:block;cursor:crosshair;}
 
     /* ————— Extra ambient graphics (soft nebula + orbs) ————— */
-    .ambient{position:fixed; inset:0; z-index:-1; pointer-events:none}
-    .nebula, .orb, .icosahedron{position:absolute; border-radius:50%;}
-    .nebula{
-      background:conic-gradient(from 220deg, rgba(157,122,255,.5), rgba(122,168,255,.35), rgba(255,255,255,0) 70%);
-      width:85vmax; height:85vmax; left:-20vmax; top:-10vmax; filter:blur(40px); opacity:.35; mix-blend-mode:screen; animation:slowspin 110s linear infinite
-    }
-    .orb.o1{
-      background:radial-gradient(circle at 30% 30%, rgba(122,168,255,.45), transparent 60%);
-      width:38vmin; height:38vmin; right:8vmin; top:18vmin; filter:blur(40px); opacity:.35; mix-blend-mode:screen; animation:float 9s ease-in-out infinite
-    }
-    .orb.o2{
-      background:radial-gradient(circle at 60% 40%, rgba(157,122,255,.45), transparent 60%);
-      width:28vmin; height:28vmin; left:6vmin; bottom:10vmin; filter:blur(40px); opacity:.35; mix-blend-mode:screen; animation:float 11s ease-in-out infinite reverse
-    }
-    .icosahedron {
-        width: 15vmin; height: 15vmin;
-        right: 20vmin; bottom: 25vmin;
-        background: radial-gradient(circle at center, rgba(122, 168, 255, 0.1), transparent 60%);
-        opacity: 0.8;
-        animation: slowspin 25s linear infinite reverse;
-    }
-    .icosahedron::before {
-        content: '';
-        position: absolute;
-        inset: 10%;
-        border: 1px solid rgba(122, 168, 255, 0.3);
-        border-radius: 50%;
-        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-        animation: slowspin 15s linear infinite;
-    }
-
+    .ambient{position:fixed;inset:0;z-index:-1;pointer-events:none}
+    .nebula, .orb, .icosahedron{position:absolute;border-radius:50%;}
+    .nebula{background:conic-gradient(from 220deg, rgba(157,122,255,.5), rgba(122,168,255,.35), rgba(255,255,255,0) 70%);width:85vmax;height:85vmax;left:-20vmax;top:-10vmax;filter:blur(40px);opacity:.35;mix-blend-mode:screen;animation:slowspin 110s linear infinite}
+    .orb.o1{background:radial-gradient(circle at 30% 30%, rgba(122,168,255,.45), transparent 60%);width:38vmin;height:38vmin;right:8vmin;top:18vmin;filter:blur(40px);opacity:.35;mix-blend-mode:screen;animation:float 9s ease-in-out infinite}
+    .orb.o2{background:radial-gradient(circle at 60% 40%, rgba(157,122,255,.45), transparent 60%);width:28vmin;height:28vmin;left:6vmin;bottom:10vmin;filter:blur(40px);opacity:.35;mix-blend-mode:screen;animation:float 11s ease-in-out infinite reverse}
+    .icosahedron{width:15vmin;height:15vmin;right:20vmin;bottom:25vmin;background:radial-gradient(circle at center, rgba(122, 168, 255, 0.1), transparent 60%);opacity:.8;animation:slowspin 25s linear infinite reverse;}
+    .icosahedron::before{content:'';position:absolute;inset:10%;border:1px solid rgba(122, 168, 255, 0.3);border-radius:50%;clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);animation:slowspin 15s linear infinite;}
     @keyframes slowspin{to{transform:rotate(1turn)}}
     @keyframes float{50%{transform:translateY(-12px)}}
-
-    /* Gridlines for depth */
-    .gridlines{
-      position:absolute; inset:0;
-      background-image:linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
-      background-size:80px 80px, 80px 80px;
-      mask-image:radial-gradient(70% 70% at 50% 40%, black, transparent 70%);
-      opacity:.14; mix-blend-mode:soft-light;
-      transform:perspective(600px) rotateX(50deg) translateY(-10%);
-      filter:blur(.3px);
-    }
+    .gridlines{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);background-size:80px 80px, 80px 80px;mask-image:radial-gradient(70% 70% at 50% 40%, black, transparent 70%);opacity:.14;mix-blend-mode:soft-light;transform:perspective(600px) rotateX(50deg) translateY(-10%);filter:blur(.3px);}
 
     /* ————— Entrance “New‑world Panels” ————— */
-    .gate{position:fixed; inset:0; z-index:9999; overflow:hidden; background:#000;}
-    .gate video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(1.2) contrast(1.05) brightness(.9)}
-    .gate .veil{position:absolute; inset:0; background:radial-gradient(70vmax 50vmax at 50% 55%, rgba(120,150,255,.25), rgba(0,0,0,.75) 60%, rgba(0,0,0,.95)); mix-blend-mode:screen}
-    .gate .panes{position:absolute; inset:0; display:grid; grid-template-columns:repeat(8,1fr)}
-    .gate .pane{background:linear-gradient(180deg, rgba(6,9,19,.96), rgba(6,9,19,.86)); border-right:1px solid rgba(255,255,255,.03); transform:translateY(0)}
-    .gate .brand{position:absolute; z-index:3; text-align:center; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none}
-    .gate h1{font-size:clamp(28px, 6vw, 52px); letter-spacing:.08em; text-transform:uppercase; font-weight:800; text-shadow:0 10px 36px rgba(0,0,0,.7)}
-    .enter{margin-top:14px; padding:12px 22px; font-weight:700; border-radius:14px; border:1px solid var(--border); background:rgba(255,255,255,.06); cursor:pointer; pointer-events:auto; transition: all .2s var(--ease);}
-    .enter:hover{background:rgba(255,255,255,.1); transform:scale(1.05);}
-    .gate.reveal .pane{animation:panelExit .85s var(--ease) forwards; animation-delay: calc(var(--i) * .06s)}
-    .gate.reveal .brand{animation:brandOut .5s var(--ease) .2s forwards}
-    .gate.hide{opacity:0; visibility:hidden; transition:opacity .6s var(--ease);}
-    @keyframes panelExit{to{transform:translateY(-110%)}}
-    @keyframes brandOut{to{opacity:0; transform:translate(-50%,-60%)}}
+    .gate{position:fixed;inset:0;z-index:9999;overflow:hidden;background:#000;}
+    .gate video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.2) contrast(1.05) brightness(.9)}
+    .gate .veil{position:absolute;inset:0;background:radial-gradient(70vmax 50vmax at 50% 55%, rgba(120,150,255,.25), rgba(0,0,0,.75) 60%, rgba(0,0,0,.95));mix-blend-mode:screen}
+    
+    /* New Loader Styles */
+    .gate .brand { position: absolute; z-index: 3; text-align: center; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(400px, 80vw); transition: all .5s var(--ease); }
+    .gate h1{font-size:clamp(28px, 6vw, 48px);letter-spacing:.08em;text-transform:uppercase;font-weight:800;text-shadow:0 10px 36px rgba(0,0,0,.7); margin-bottom: 30px;}
+    
+    .loader-container { font-family: "JetBrains Mono", monospace; color: var(--accent); text-shadow: 0 0 8px rgba(122, 168, 255, 0.5); }
+    .loader-bar { height: 4px; background: rgba(122, 168, 255, 0.15); border-radius: 4px; position: relative; overflow: hidden; }
+    .loader-progress { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--accent); border-radius: 4px; transition: width .1s linear; box-shadow: 0 0 10px var(--accent); }
+    .loader-info { display: flex; justify-content: space-between; font-size: 12px; margin-top: 10px; opacity: 0.8; }
+    
+    .enter{margin-top:24px;padding:10px 20px;font-weight:600; font-size: 14px; border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,.06);cursor:pointer;pointer-events:auto;transition:all .2s var(--ease);}
+    .enter:hover{background:rgba(255,255,255,.1);transform:scale(1.05);}
 
-    /* ————— Hero ————— */
-    header{position:relative; padding:140px 0 80px; text-align: center;}
-    .badge{display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border:1px solid var(--border); background:rgba(255,255,255,.04); border-radius:999px; font-size:13px; color:var(--muted)}
-    .title{font-size:clamp(40px,8vw,94px); font-weight:800; letter-spacing:-.02em; margin:20px 0 10px; line-height: 1.1;}
-    .subtitle{max-width:820px; font-size:clamp(16px,2.2vw,22px); color:var(--muted); margin: 0 auto;}
-    .cta{display:flex; justify-content: center; gap:14px; margin-top:32px}
-    .btn{padding:14px 22px; border-radius:14px; font-weight:700; border:1px solid var(--border); transition: all .2s var(--ease);}
+    .gate.reveal .brand{ animation:brandOut .5s var(--ease) forwards; }
+    .gate.hide{opacity:0;visibility:hidden;transition:opacity .6s var(--ease) .3s;}
+    @keyframes brandOut{to{opacity:0;transform:translate(-50%,-60%)}}
+
+    /* ————— Sections, Hero, Buttons ————— */
+    section{padding:80px 0}
+    header{position:relative;padding:140px 0 80px;text-align:center;}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid var(--border);background:rgba(255,255,255,.04);border-radius:999px;font-size:13px;color:var(--muted)}
+    .title{font-size:clamp(40px,8vw,94px);font-weight:800;letter-spacing:-.02em;margin:20px 0 10px;line-height:1.1;}
+    .subtitle{max-width:820px;font-size:clamp(16px,2.2vw,22px);color:var(--muted);margin:0 auto;}
+    .cta{display:flex;justify-content:center;gap:14px;margin-top:32px}
+    .btn{padding:14px 22px;border-radius:14px;font-weight:700;border:1px solid var(--border);transition:all .2s var(--ease);}
     .btn.primary{background:linear-gradient(90deg, rgba(122,168,255,.35), rgba(157,122,255,.35));}
-    .btn:hover{
-      transform:translateY(-2px);
-      box-shadow:0 12px 40px rgba(0,0,0,.35),
-      inset 0 1px 0 rgba(255,255,255,.08),
-      0 0 0 1px rgba(122,168,255,.2);
-    }
-    .btn.primary:hover{box-shadow: 0 12px 40px rgba(0,0,0,.35), 0 0 40px -10px var(--accent);}
-    .btn:disabled {cursor: not-allowed; opacity: 0.6;}
-
-    /* ————— Section: Projects ————— */
-    section{padding:64px 0}
-    .section-title{font-size:clamp(22px,3vw,30px); margin:0 0 22px 6px}
-    .grid{display:grid; grid-template-columns:repeat(12, 1fr); gap:24px}
-    .card{grid-column:span 4; position:relative; overflow:hidden; padding:16px; min-height:280px; display:flex; flex-direction:column; border-radius:var(--radius)}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08),0 0 0 1px rgba(122,168,255,.2);}
+    .btn.primary:hover{box-shadow:0 12px 40px rgba(0,0,0,.35), 0 0 40px -10px var(--accent);}
+    .btn:disabled{cursor:not-allowed;opacity:.6;}
+    .section-title{font-size:clamp(22px,3vw,30px);margin:0 0 22px 6px}
+    .grid{display:grid;grid-template-columns:repeat(12, 1fr);gap:24px}
+    .card{grid-column:span 4;position:relative;overflow:hidden;padding:16px;min-height:280px;display:flex;flex-direction:column;border-radius:var(--radius)}
     .card:hover{transform:translateY(-4px)}
-    .card .content{z-index:2; margin-top:auto}
-    .kicker{font-size:12px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase}
-    .name{font-size:24px; font-weight:800; line-height:1.15; word-break:break-word}
-    .meta{font-size:15px; color:var(--muted)}
-    .card .halo{position:absolute; inset:-40%; background:radial-gradient(500px 400px at 20% 20%, rgba(122,168,255,.35), transparent 60%), radial-gradient(400px 320px at 80% 80%, rgba(157,122,255,.35), transparent 60%); filter:blur(40px); opacity:.7; transition: transform .4s var(--ease);}
+    .card .content{z-index:2;margin-top:auto}
+    .kicker{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+    .name{font-size:24px;font-weight:800;line-height:1.15;word-break:break-word}
+    .meta{font-size:15px;color:var(--muted)}
+    .card .halo{position:absolute;inset:-40%;background:radial-gradient(500px 400px at 20% 20%, rgba(122,168,255,.35), transparent 60%), radial-gradient(400px 320px at 80% 80%, rgba(157,122,255,.35), transparent 60%);filter:blur(40px);opacity:.7;transition:transform .4s var(--ease);}
     .card:hover .halo{transform:scale(1.15) rotate(-10deg)}
-
     .card.frame{padding:0}
-    .card.frame .art-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
-    .card.frame:hover .art-bg { transform: scale(1.05); }
-    .card.frame .overlay{position:absolute; inset:0; background:linear-gradient(to top, rgba(6,9,19,.85), rgba(6,9,19,.45) 40%, transparent 70%)}
-    .card.frame .content{
-      position:absolute; left:14px; right:14px; bottom:14px; z-index:2;
-      padding:14px; border-radius:16px;
-      background:rgba(6,9,19,.5); backdrop-filter: blur(8px);
+    .card.frame .art-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s ease;}
+    .card.frame:hover .art-bg{transform:scale(1.05);}
+    .card.frame .overlay{position:absolute;inset:0;background:linear-gradient(to top, rgba(6,9,19,.85), rgba(6,9,19,.45) 40%, transparent 70%)}
+    .card.frame .content{position:absolute;left:14px;right:14px;bottom:14px;z-index:2;padding:14px;border-radius:16px;background:rgba(6,9,19,.5);backdrop-filter:blur(8px);}
+    .card.frame .name{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .card.frame .meta{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    
+    /* ————— Book Section ————— */
+    #book-section .grid { align-items: center; }
+    #book-cover-container { grid-column: span 5; perspective: 1000px; }
+    #book-cover { width: 100%; max-width: 300px; aspect-ratio: 2/3; margin: 0 auto; transform-style: preserve-3d; transition: transform 0.6s var(--ease); }
+    #book-cover img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+    #book-details { grid-column: span 7; }
+    .strong-brain-bg {
+        position: absolute; inset: 0; z-index: -1;
+        background-image: url('https://placehold.co/1200x800/060913/7aa8ff?text=Strong+Mind&font=raleway');
+        background-size: cover; background-position: center;
+        opacity: 0.05; filter: blur(5px);
+        mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
     }
-    .card.frame .name{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
-    .card.frame .meta{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
 
+    /* ————— Data & Dashboards Section ————— */
+    .chart-container { grid-column: span 6; padding: 24px; }
+    .kpi-grid { grid-column: span 12; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .kpi-card { padding: 20px; text-align: center; }
+    .kpi-value { font-size: 36px; font-weight: 800; color: var(--accent); }
+    .kpi-label { font-size: 14px; color: var(--muted); }
+
+    /* ————— Mini Game Section ————— */
+    #game-container { grid-column: span 12; position: relative; aspect-ratio: 16/9; overflow: hidden; border-radius: var(--radius); }
+    #game-canvas { display: block; width: 100%; height: 100%; background: #000; }
+    #game-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; background: rgba(6,9,19,0.7); color: white; text-align: center; z-index: 10; opacity: 1; transition: opacity .5s ease; }
+    #game-overlay.hidden { opacity: 0; pointer-events: none; }
+    #game-score { position: absolute; top: 20px; left: 20px; font-size: 24px; font-weight: 600; z-index: 5; text-shadow: 0 0 5px #000; }
+    
     /* ————— Interactive About Me ————— */
-    #about-card {
-        grid-column: span 12;
-        padding: 32px;
-        min-height: 400px;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    }
-    #about-slides-container {
-        flex-grow: 1;
-        position: relative;
-    }
-    .about-slide {
-        position: absolute;
-        inset: 0;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(20px) scale(0.98);
-        transition: all .5s var(--ease);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-    }
-    .about-slide.active {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0) scale(1);
-    }
-    .toolkit-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-        gap: 20px;
-        width: 80%;
-        margin-top: 20px;
-    }
-    .tool-item {
-        color: var(--muted);
-        font-weight: 600;
-        transition: color .3s var(--ease), transform .3s var(--ease);
-    }
-    .tool-item:hover {
-        color: var(--accent);
-        transform: scale(1.1);
-    }
-    #about-nav {
-        margin-top: auto;
-        padding-top: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    #about-nav .nav-btn {
-        background: none;
-        border: none;
-        color: var(--muted);
-        cursor: pointer;
-        font-family: inherit;
-        font-size: 14px;
-        font-weight: 600;
-        padding: 8px 16px;
-        border-radius: 99px;
-        transition: all .3s var(--ease);
-    }
-    #about-nav .nav-btn:hover {
-        background: rgba(255,255,255,0.05);
-        color: var(--text);
-    }
-    #about-nav .nav-btn:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-    }
-    .slide-dots { display: flex; gap: 8px; }
-    .slide-dot {
-        width: 8px; height: 8px;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.2);
-        transition: background .3s var(--ease);
-    }
-    .slide-dot.active { background: var(--accent); }
+    #about-card {grid-column:span 12;padding:32px;min-height:400px;display:flex;flex-direction:column;overflow:hidden;}
+    #about-slides-container {flex-grow:1;position:relative;}
+    .about-slide {position:absolute;inset:0;opacity:0;visibility:hidden;transform:translateY(20px) scale(0.98);transition:all .5s var(--ease);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
+    .about-slide.active {opacity:1;visibility:visible;transform:translateY(0) scale(1);}
+    .toolkit-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:20px;width:80%;margin-top:20px;}
+    .tool-item {color:var(--muted);font-weight:600;transition:color .3s var(--ease), transform .3s var(--ease);}
+    .tool-item:hover {color:var(--accent);transform:scale(1.1);}
+    #about-nav {margin-top:auto;padding-top:20px;display:flex;justify-content:space-between;align-items:center;}
+    #about-nav .nav-btn {background:none;border:none;color:var(--muted);cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;padding:8px 16px;border-radius:99px;transition:all .3s var(--ease);}
+    #about-nav .nav-btn:hover {background:rgba(255,255,255,0.05);color:var(--text);}
+    #about-nav .nav-btn:disabled {opacity:0.3;cursor:not-allowed;}
+    .slide-dots {display:flex;gap:8px;}
+    .slide-dot {width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);transition:background .3s var(--ease);}
+    .slide-dot.active {background:var(--accent);}
 
-    /* ————— Section: GitHub ————— */
-    .repo-list{display:grid; grid-template-columns:repeat(12, 1fr); gap:18px}
-    .repo{grid-column:span 4; padding:18px; min-height:160px; display:flex; flex-direction:column}
-    .repo h4{margin:2px 0 10px; font-size:18px; line-height:1.2; word-break:break-word}
-    .repo h4 a:hover {color: var(--accent);}
-    .repo p{margin:0; color:var(--muted); font-size:14px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden}
-    .repo .tiny {margin-top:auto; opacity:.8}
-
-    /* ————— Section: Gemini AI Ideator ————— */
-    #gemini-ideator { text-align: center; }
-    #idea-container {
-        grid-column: 3 / span 8;
-        min-height: 200px;
-        padding: 24px;
-        margin-top: 24px;
-        text-align: left;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        opacity: 0;
-        transform: scale(0.95);
-        transition: opacity .5s var(--ease), transform .5s var(--ease);
-    }
-    #idea-container.visible {
-        opacity: 1;
-        transform: scale(1);
-    }
-    #idea-container .tech-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-
-    /* ————— Reveal Animations ————— */
-    .reveal{opacity:0; transform:translateY(16px); transition: all 1s var(--ease)}
-    .reveal.on{opacity:1; transform:none}
-
-    /* ————— Footer ————— */
-    footer{padding:60px 0 80px; color:var(--muted); text-align:center}
-    .tiny{font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:12px}
+    /* ————— Other Sections ————— */
+    .repo-list{display:grid;grid-template-columns:repeat(12, 1fr);gap:18px}
+    .repo{grid-column:span 4;padding:18px;min-height:160px;display:flex;flex-direction:column}
+    #gemini-ideator{text-align:center;}
+    #idea-container{grid-column:3 / span 8;min-height:200px;padding:24px;margin-top:24px;text-align:left;display:flex;flex-direction:column;justify-content:center;opacity:0;transform:scale(0.95);transition:opacity .5s var(--ease), transform .5s var(--ease);}
+    #idea-container.visible{opacity:1;transform:scale(1);}
+    .reveal{opacity:0;transform:translateY(16px);transition:all 1s var(--ease)}
+    .reveal.on{opacity:1;transform:none}
+    footer{padding:60px 0 80px;color:var(--muted);text-align:center}
+    .tiny{font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;font-size:12px}
 
     /* ————— Responsive Breakpoints ————— */
     @media (max-width: 980px){
-      .card, .repo, #idea-container {grid-column:span 6}
+      .card, .repo, #idea-container, .chart-container {grid-column:span 6}
+      #book-cover-container, #book-details { grid-column: span 12; text-align: center; }
       #idea-container {grid-column: 2 / span 10;}
     }
     @media (max-width: 680px){
-      .card, .repo, #idea-container {grid-column:span 12}
+      .card, .repo, #idea-container, .chart-container {grid-column:span 12}
       #idea-container {grid-column: 1 / span 12;}
       header{padding-top:110px}
-      .cta{flex-direction: column;}
-      .toolkit-grid {width: 100%;}
+      .cta{flex-direction:column;}
+      .toolkit-grid {width:100%;}
     }
   </style>
 </head>
 <body data-github-user="senpai-sama7">
 
   <canvas id="space" aria-hidden="true"></canvas>
-
-  <div class="ambient" aria-hidden="true">
-    <div class="nebula"></div>
-    <div class="orb o1"></div>
-    <div class="orb o2"></div>
-    <div class="icosahedron"></div>
-    <div class="gridlines"></div>
-  </div>
+  <div class="ambient" aria-hidden="true"><div class="nebula"></div><div class="orb o1"></div><div class="orb o2"></div><div class="icosahedron"></div><div class="gridlines"></div></div>
 
   <div class="gate" id="gate" aria-hidden="true">
-    <video id="introVideo" autoplay playsinline muted loop>
-      <source src="https://cdn.coverr.co/videos/coverr-starry-sky-8428/1080p.mp4" type="video/mp4" />
-    </video>
+    <video id="introVideo" autoplay playsinline muted loop><source src="https://cdn.coverr.co/videos/coverr-starry-sky-8428/1080p.mp4" type="video/mp4" /></video>
     <div class="veil"></div>
-    <div class="panes">
-      <span class="pane" style="--i:0"></span><span class="pane" style="--i:1"></span>
-      <span class="pane" style="--i:2"></span><span class="pane" style="--i:3"></span>
-      <span class="pane" style="--i:4"></span><span class="pane" style="--i:5"></span>
-      <span class="pane" style="--i:6"></span><span class="pane" style="--i:7"></span>
-    </div>
     <div class="brand">
-      <h1>Douglas Mitchell</h1>
-      <button class="enter" id="enterBtn" aria-label="Enter site">Explore</button>
+        <h1>Douglas Mitchell</h1>
+        <div class="loader-container">
+            <div class="loader-bar">
+                <div id="loaderProgress" class="loader-progress"></div>
+            </div>
+            <div class="loader-info">
+                <span id="loaderStatus">SYSTEM CHECK...</span>
+                <span id="loaderPercentage">0%</span>
+            </div>
+        </div>
+        <button class="enter" id="enterBtn" aria-label="Enter site">Skip</button>
     </div>
   </div>
 
   <main>
-    <header class="wrap">
+    <header id="scene-hero" class="wrap">
       <span class="badge reveal">Portfolio • Focus: <strong style="margin-left:6px; color: var(--accent);">Creative Technology</strong></span>
       <h1 class="title reveal" style="transition-delay: .1s">Douglas Mitchell</h1>
       <p class="subtitle reveal" style="transition-delay: .2s">A passionate designer and developer crafting calm, cinematic, and intuitive web experiences. Meticulous about detail, obsessed with clarity, and driven by the pursuit of digital craftsmanship.</p>
-      <div class="cta reveal" style="transition-delay: .3s">
-        <a class="btn primary glass" href="#projects">Explore Projects</a>
-        <a class="btn glass" href="#github">Latest from GitHub</a>
-      </div>
+      <div class="cta reveal" style="transition-delay: .3s"><a class="btn primary glass" href="#projects">Explore Projects</a><a class="btn glass" href="#book-section">View My Book</a></div>
     </header>
 
-    <section id="projects" class="wrap">
-      <h3 class="section-title reveal">Selected Work</h3>
-      <div class="grid">
-        <a class="card frame glass reveal" href="https://senpai-sama7.github.io/C0Di3/" target="_blank" rel="noopener">
-            <svg class="art-bg" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g1" gradientTransform="rotate(45)"><stop offset="0%" stop-color="#0b1222" /><stop offset="100%" stop-color="#7aa8ff" /></linearGradient></defs><rect width="300" height="200" fill="#060913" /><path d="M-50 100 L350 100" stroke="url(#g1)" stroke-width="80" stroke-linecap="round" fill="none" transform="rotate(20 150 100)"><animate attributeName="d" values="M-50 100 L350 100; M-50 100 Q150 200 350 100; M-50 100 L350 100" dur="8s" repeatCount="indefinite" /></path></svg>
-            <div class="overlay"></div><div class="content"><span class="kicker">Live • Front‑end</span><div class="name">C0Di3</div><div class="meta">An immersive, interactive coding environment designed to teach programming concepts through a unique, narrative-driven experience.</div></div>
-        </a>
-        <a class="card frame glass reveal" href="https://synapse-form-backend.vercel.app/" target="_blank" rel="noopener" style="transition-delay: .1s">
-            <svg class="art-bg" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><filter id="f1"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.05" numOctaves="3" result="warp" /><feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="30" in="SourceGraphic" in2="warp" /></filter></defs><rect width="300" height="200" fill="#060913" /><g filter="url(#f1)"><path d="M150 0 V200 M0 100 H300" stroke="#9d7aff" stroke-width="1.5" opacity="0.4"><animate attributeName="stroke-width" values="1.5; 3; 1.5" dur="6s" repeatCount="indefinite" /></path></g></svg>
-            <div class="overlay"></div><div class="content"><span class="kicker">Live • API / Backend</span><div class="name">Synapse Form</div><div class="meta">A robust and minimal form backend service providing reliable data handling, validation, and integration for modern web applications.</div></div>
-        </a>
-        <a class="card frame glass reveal" href="https://senpai-sama7.github.io/Houston-Oil-Airs/" target="_blank" rel="noopener" style="transition-delay: .2s">
-            <svg class="art-bg" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect width="300" height="200" fill="#060913" /><g stroke="#e7ecf3" stroke-width="0.5" stroke-opacity="0.5"><path d="M50 200 C100 -50, 200 250, 250 0" fill="none"><animate attributeName="d" values="M50 200 C100 -50, 200 250, 250 0; M50 200 C150 50, 150 150, 250 0; M50 200 C100 -50, 200 250, 250 0" dur="10s" repeatCount="indefinite" /></path><path d="M250 200 C200 -50, 100 250, 50 0" fill="none"><animate attributeName="d" values="M250 200 C200 -50, 100 250, 50 0; M250 200 C150 50, 150 150, 50 0; M250 200 C200 -50, 100 250, 50 0" dur="10s" repeatCount="indefinite" /></path></g></svg>
-            <div class="overlay"></div><div class="content"><span class="kicker">Live • Data‑viz</span><div class="name">Houston Oil Airs</div><div class="meta">An interactive data visualization project presenting an environmental snapshot of air quality metrics related to the oil industry in Houston.</div></div>
-        </a>
+    <section id="scene-projects" class="wrap">
+        <h3 class="section-title reveal">Selected Work</h3>
+        <div class="grid">
+            <a class="card frame glass reveal" href="https://senpai-sama7.github.io/C0Di3/" target="_blank" rel="noopener">
+                <svg class="art-bg" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g1" gradientTransform="rotate(45)"><stop offset="0%" stop-color="#0b1222" /><stop offset="100%" stop-color="#7aa8ff" /></linearGradient></defs><rect width="300" height="200" fill="#060913" /><path d="M-50 100 L350 100" stroke="url(#g1)" stroke-width="80" stroke-linecap="round" fill="none" transform="rotate(20 150 100)"><animate attributeName="d" values="M-50 100 L350 100; M-50 100 Q150 200 350 100; M-50 100 L350 100" dur="8s" repeatCount="indefinite" /></path></svg>
+                <div class="overlay"></div><div class="content"><span class="kicker">Live • Front‑end</span><div class="name">C0Di3</div><div class="meta">An immersive, interactive coding environment designed to teach programming concepts through a unique, narrative-driven experience.</div></div>
+            </a>
+            <a class="card frame glass reveal" href="https://synapse-form-backend.vercel.app/" target="_blank" rel="noopener" style="transition-delay: .1s">
+                <svg class="art-bg" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><filter id="f1"><feTurbulence type="fractalNoise" baseFrequency="0.02 0.05" numOctaves="3" result="warp" /><feDisplacementMap xChannelSelector="R" yChannelSelector="G" scale="30" in="SourceGraphic" in2="warp" /></filter></defs><rect width="300" height="200" fill="#060913" /><g filter="url(#f1)"><path d="M150 0 V200 M0 100 H300" stroke="#9d7aff" stroke-width="1.5" opacity="0.4"><animate attributeName="stroke-width" values="1.5; 3; 1.5" dur="6s" repeatCount="indefinite" /></path></g></svg>
+                <div class="overlay"></div><div class="content"><span class="kicker">Live • API / Backend</span><div class="name">Synapse Form</div><div class="meta">A robust and minimal form backend service providing reliable data handling, validation, and integration for modern web applications.</div></div>
+            </a>
+            <a class="card frame glass reveal" href="https://senpai-sama7.github.io/Houston-Oil-Airs/" target="_blank" rel="noopener" style="transition-delay: .2s">
+                <svg class="art-bg" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><rect width="300" height="200" fill="#060913" /><g stroke="#e7ecf3" stroke-width="0.5" stroke-opacity="0.5"><path d="M50 200 C100 -50, 200 250, 250 0" fill="none"><animate attributeName="d" values="M50 200 C100 -50, 200 250, 250 0; M50 200 C150 50, 150 150, 250 0; M50 200 C100 -50, 200 250, 250 0" dur="10s" repeatCount="indefinite" /></path><path d="M250 200 C200 -50, 100 250, 50 0" fill="none"><animate attributeName="d" values="M250 200 C200 -50, 100 250, 50 0; M250 200 C150 50, 150 150, 50 0; M250 200 C200 -50, 100 250, 50 0" dur="10s" repeatCount="indefinite" /></path></g></svg>
+                <div class="overlay"></div><div class="content"><span class="kicker">Live • Data‑viz</span><div class="name">Houston Oil Airs</div><div class="meta">An interactive data visualization project presenting an environmental snapshot of air quality metrics related to the oil industry in Houston.</div></div>
+            </a>
       </div>
     </section>
-
-    <section class="wrap">
-      <div class="grid">
-        <div id="about-card" class="card glass reveal">
-          <div id="about-slides-container">
-            <div class="about-slide active" data-slide="0">
-              <h3 class="name">The Philosophy</h3>
-              <p class="meta" style="max-width: 60ch;">I believe technology should feel like magic. My work focuses on creating fluid, intuitive interfaces that are not only functional but also delightful to use. It's about blending artistry with logic to build experiences that resonate.</p>
-            </div>
-            <div class="about-slide" data-slide="1">
-              <h3 class="name">The Toolkit</h3>
-              <div class="toolkit-grid">
-                <span class="tool-item">JavaScript (ES6+)</span>
-                <span class="tool-item">React & Next.js</span>
-                <span class="tool-item">Node.js</span>
-                <span class="tool-item">CSS / GSAP</span>
-                <span class="tool-item">Three.js / WebGL</span>
-                <span class="tool-item">APIs & GraphQL</span>
-                <span class="tool-item">Figma</span>
-                <span class="tool-item">Git & CI/CD</span>
-              </div>
-            </div>
-            <div class="about-slide" data-slide="2">
-              <h3 class="name">The Mission</h3>
-              <p class="meta" style="max-width: 60ch;">To build a more beautiful and humane digital world. My goal is to craft applications that respect the user's attention, inspire curiosity, and push the boundaries of what's possible on the web.</p>
-            </div>
-          </div>
-          <div id="about-nav">
-            <button id="about-prev" class="nav-btn">Back</button>
-            <div class="slide-dots">
-              <span class="slide-dot active" data-dot="0"></span>
-              <span class="slide-dot" data-dot="1"></span>
-              <span class="slide-dot" data-dot="2"></span>
-            </div>
-            <button id="about-next" class="nav-btn">Next</button>
-          </div>
+    
+    <section id="scene-book" class="wrap" style="position: relative;">
+      <div class="strong-brain-bg"></div>
+      <h3 class="section-title reveal">My Book: Now Available</h3>
+      <div id="book-section" class="grid">
+        <div id="book-cover-container" class="reveal">
+          <div id="book-cover"><img src="https://m.media-amazon.com/images/I/611Xeq1o6FL._SL1500_.jpg" alt="Book Cover for The Confident Mind"></div>
+        </div>
+        <div id="book-details" class="reveal" style="transition-delay: .2s">
+          <h2 class="name">The Confident Mind</h2>
+          <span class="badge" style="margin: 10px 0;">Self-Help • Psychology • Personal Growth</span>
+          <p class="meta" style="max-width: 60ch; margin: 20px auto;">A practical manual designed to help you repair, build, and sustain authentic confidence. This book provides actionable strategies to overcome self-doubt and master your mindset.</p>
+          <a href="https://a.co/d/ggjyIWA" target="_blank" rel="noopener" class="btn primary glass" style="margin-top: 20px;">Purchase on Amazon</a>
         </div>
       </div>
     </section>
 
-    <section id="github" class="wrap">
-      <h3 class="section-title reveal">Latest from GitHub</h3>
-      <div id="repos" class="repo-list">
-        <p class="reveal" style="color: var(--muted);">Fetching repositories...</p>
+    <section id="scene-dashboard" class="wrap">
+        <h3 class="section-title reveal">Data & Dashboards</h3>
+        <div class="grid">
+            <div class="kpi-grid reveal">
+                <div class="kpi-card glass"><div class="kpi-value" id="kpi-1">0</div><div class="kpi-label">Lines of Code Written</div></div>
+                <div class="kpi-card glass"><div class="kpi-value" id="kpi-2">0</div><div class="kpi-label">Project Completion Rate</div></div>
+                <div class="kpi-card glass"><div class="kpi-value" id="kpi-3">0</div><div class="kpi-label">Happy Freelance Clients</div></div>
+                <div class="kpi-card glass"><div class="kpi-value" id="kpi-4">0</div><div class="kpi-label">Cups of Coffee</div></div>
+            </div>
+            <div class="chart-container glass reveal"><canvas id="skillsChart"></canvas></div>
+            <div class="chart-container glass reveal"><canvas id="activityChart"></canvas></div>
+        </div>
+    </section>
+
+    <section id="scene-game" class="wrap">
+        <h3 class="section-title reveal">Mini-Game: Astro-Aviator</h3>
+        <div class="grid">
+            <div id="game-container" class="glass reveal">
+                <div id="game-overlay">
+                    <h2 class="name">Astro-Aviator</h2>
+                    <p class="meta">Use your mouse to navigate and click to shoot. Survive the asteroid field!</p>
+                    <button id="startGameBtn" class="btn primary glass" style="margin-top: 20px;">Start Game</button>
+                </div>
+                <div id="game-score" style="display: none;">Score: 0</div>
+                <canvas id="game-canvas"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <section id="scene-about" class="wrap">
+      <div class="grid">
+          <div id="about-card" class="card glass reveal">
+              <div id="about-slides-container">
+                <div class="about-slide active" data-slide="0">
+                  <h3 class="name">The Philosophy</h3>
+                  <p class="meta" style="max-width: 60ch;">I believe technology should feel like magic. My work focuses on creating fluid, intuitive interfaces that are not only functional but also delightful to use. It's about blending artistry with logic to build experiences that resonate.</p>
+                </div>
+                <div class="about-slide" data-slide="1">
+                  <h3 class="name">The Toolkit</h3>
+                  <div class="toolkit-grid">
+                    <span class="tool-item">JavaScript (ES6+)</span>
+                    <span class="tool-item">React & Next.js</span>
+                    <span class="tool-item">Node.js</span>
+                    <span class="tool-item">CSS / GSAP</span>
+                    <span class="tool-item">Three.js / WebGL</span>
+                    <span class="tool-item">APIs & GraphQL</span>
+                    <span class="tool-item">Figma</span>
+                    <span class="tool-item">Git & CI/CD</span>
+                  </div>
+                </div>
+                <div class="about-slide" data-slide="2">
+                  <h3 class="name">The Mission</h3>
+                  <p class="meta" style="max-width: 60ch;">To build a more beautiful and humane digital world. My goal is to craft applications that respect the user's attention, inspire curiosity, and push the boundaries of what's possible on the web.</p>
+                </div>
+              </div>
+              <div id="about-nav">
+                <button id="about-prev" class="nav-btn">Back</button>
+                <div class="slide-dots">
+                  <span class="slide-dot active" data-dot="0"></span>
+                  <span class="slide-dot" data-dot="1"></span>
+                  <span class="slide-dot" data-dot="2"></span>
+                </div>
+                <button id="about-next" class="nav-btn">Next</button>
+              </div>
+          </div>
       </div>
+    </section>
+
+    <section id="scene-github" class="wrap">
+      <h3 class="section-title reveal">Latest from GitHub</h3>
+      <div id="repos" class="repo-list"><p class="reveal" style="color: var(--muted);">Fetching repositories...</p></div>
     </section>
 
     <section id="gemini-ideator" class="wrap">
@@ -411,225 +311,506 @@
   </main>
 
   <footer class="wrap">
-    <div class="tiny">© <span id="year"></span> Douglas Mitchell. Built with semantic HTML, modern CSS, and a dusting of JavaScript.</div>
+      <div class="tiny">© <span id="year"></span> Douglas Mitchell. Built with semantic HTML, modern CSS, and a dusting of JavaScript.</div>
   </footer>
 
   <script>
+    // Global settings & helpers
     const preferReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const lerp = (a, b, n) => (1 - n) * a + n * b;
 
-    const gate = document.getElementById('gate');
-    const enterBtn = document.getElementById('enterBtn');
-    const introVideo = document.getElementById('introVideo');
-
-    function revealGate(){
-      document.body.style.overflow = '';
-      if(!gate.classList.contains('reveal')){
-        gate.classList.add('reveal');
-        setTimeout(()=> gate.classList.add('hide'), 1200);
-      }
-    }
-    document.body.style.overflow = 'hidden';
-    enterBtn?.addEventListener('click', revealGate);
-    const autoOpenTimer = setTimeout(revealGate, 4000);
-    enterBtn?.addEventListener('click', () => clearTimeout(autoOpenTimer));
-    introVideo?.addEventListener('canplay', () => introVideo.play());
-
-    (function(){
-      const canvas = document.getElementById('space');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      let w, h, dpr, stars = [], comets=[], particles = [];
-      const STAR_COUNT = 250;
-      const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-
-      function resize(){
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
-        w = canvas.width = window.innerWidth * dpr;
-        h = canvas.height = window.innerHeight * dpr;
-        canvas.style.width = window.innerWidth + 'px';
-        canvas.style.height = window.innerHeight + 'px';
-        ctx.scale(dpr,dpr);
-      }
-
-      function createStar(){ return { x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, z: Math.random()*0.7 + 0.3, r: Math.random()*1.8 + .2, s: Math.random()*0.3 + 0.05 } }
-      function init(){ stars = Array.from({length: STAR_COUNT}, createStar); }
-
-      function createComet(){ if (preferReduced || comets.length > 2) return; comets.push({x:Math.random()*w*0.8, y:-20, vx:2+Math.random()*2.5, vy:1.5+Math.random()*1.5, life:0, maxLength: 80}); }
-
-      function draw(){
-        ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
-        const g = ctx.createRadialGradient(window.innerWidth*0.7, window.innerHeight*-0.1, 50, window.innerWidth*0.7, window.innerHeight*-0.1, window.innerWidth);
-        g.addColorStop(0, 'rgba(122,168,255,0.08)'); g.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = g; ctx.fillRect(0,0,window.innerWidth,window.innerHeight);
-
-        stars.forEach(s => {
-          ctx.beginPath(); ctx.arc(s.x, s.y, s.r * s.z, 0, Math.PI*2);
-          ctx.fillStyle = `rgba(231,236,243,${0.85*s.z})`; ctx.fill();
-          s.x += s.s * (0.2 + s.z*0.8);
-          if(s.x > window.innerWidth+10) { s.x = -10; s.y = Math.random() * window.innerHeight; }
-        });
-
-        comets.forEach(c => {
-          c.x += c.vx; c.y += c.vy; c.life += .015;
-          ctx.globalAlpha = Math.max(0, 1 - c.life);
-          ctx.beginPath(); ctx.moveTo(c.x, c.y); ctx.lineTo(c.x - c.vx * 15, c.y - c.vy * 15);
-          ctx.strokeStyle = '#e7ecf3'; ctx.lineWidth = 1.2; ctx.stroke();
-          ctx.globalAlpha = 1;
-        });
-        comets = comets.filter(c => c.life < 1 && c.x < window.innerWidth+80);
-
-        for (let i = 0; i < particles.length; i++) {
-            const p = particles[i];
-            p.x += p.vx; p.y += p.vy; p.life -= 0.01;
-            if (p.life <= 0) { particles.splice(i, 1); i--; continue; }
-            ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(122, 168, 255, ${p.life * 0.5})`; ctx.fill();
-        }
-
-        if(!preferReduced) requestAnimationFrame(draw);
-      }
-      
-      function createParticle(e) {
-        mouse.x = e.clientX; mouse.y = e.clientY;
-        for (let i = 0; i < 2; i++) {
-            particles.push({
-                x: mouse.x, y: mouse.y,
-                vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2,
-                size: Math.random() * 2 + 1, life: Math.random() * 0.5 + 0.5
-            });
-        }
-      }
-
-      resize(); init(); draw();
-      window.addEventListener('resize', ()=>{resize(); init();});
-      if(!preferReduced) {
-        setInterval(createComet, 4500);
-        window.addEventListener('mousemove', createParticle);
-      }
-    })();
-
-    const io = new IntersectionObserver(entries=>{
-      entries.forEach(e => {
-        if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
-      });
-    }, {threshold:.1});
-    document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
-
-    async function loadRepos(){
-      const user = document.body.dataset.githubUser || 'senpai-sama7';
-      const target = document.getElementById('repos');
-      try{
-        const res = await fetch(`https://api.github.com/users/${user}/repos?sort=updated&per_page=6`);
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        const data = await res.json();
-        target.innerHTML = '';
-        if (!data || data.length === 0) {
-            target.innerHTML = `<p class="reveal on" style="color: var(--muted);">No public repositories found.</p>`;
-            return;
-        }
-        data.slice(0,6).forEach((r, i) => {
-          const el = document.createElement('a');
-          el.className = 'repo glass reveal'; el.href = r.html_url; el.target = "_blank"; el.rel = "noopener";
-          el.style.transitionDelay = `${i * 0.05}s`;
-          el.innerHTML = `<h4>${r.name}</h4><p>${r.description || 'No description provided.'}</p><p class="tiny">★ ${r.stargazers_count} • ${r.language || '—'}</p>`;
-          target.appendChild(el);
-          setTimeout(() => el.classList.add('on'), 50);
-        });
-      }catch(err){
-        console.warn('GitHub API error', err);
-        target.innerHTML = `<p class="reveal on" style="color: var(--muted);">Could not load projects from GitHub.</p>`;
-      }
-    }
-    loadRepos();
-
-    // ————— Interactive About Me Deck —————
-    (function() {
-        const prevBtn = document.getElementById('about-prev');
-        const nextBtn = document.getElementById('about-next');
-        const slides = document.querySelectorAll('.about-slide');
-        const dots = document.querySelectorAll('.slide-dot');
-        let currentSlide = 0;
-        const totalSlides = slides.length;
-
-        function updateSlides() {
-            slides.forEach((slide, index) => {
-                slide.classList.toggle('active', index === currentSlide);
-            });
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentSlide);
-            });
-            prevBtn.disabled = currentSlide === 0;
-            nextBtn.disabled = currentSlide === totalSlides - 1;
-        }
-
-        nextBtn.addEventListener('click', () => {
-            if (currentSlide < totalSlides - 1) {
-                currentSlide++;
-                updateSlides();
-            }
-        });
-
-        prevBtn.addEventListener('click', () => {
-            if (currentSlide > 0) {
-                currentSlide--;
-                updateSlides();
-            }
-        });
+    // ————— Gate Logic —————
+    function initGate() {
+        const gate = document.getElementById('gate');
+        const enterBtn = document.getElementById('enterBtn');
+        const introVideo = document.getElementById('introVideo');
+        const loaderProgress = document.getElementById('loaderProgress');
+        const loaderPercentage = document.getElementById('loaderPercentage');
+        const loaderStatus = document.getElementById('loaderStatus');
         
-        updateSlides();
-    })();
+        if (!gate || !enterBtn || !loaderProgress || !loaderPercentage || !loaderStatus) return;
 
-    // ————— Gemini API: AI Project Ideator —————
-    const generateIdeaBtn = document.getElementById('generateIdeaBtn');
-    const ideaContainer = document.getElementById('idea-container');
+        document.body.style.overflow = 'hidden';
+        let progress = 0;
+        let loaderInterval = null;
 
-    async function getProjectIdea() {
-        generateIdeaBtn.disabled = true;
-        ideaContainer.classList.add('visible');
-        ideaContainer.innerHTML = `<p class="meta" style="text-align: center;">Conjuring a concept... ✨</p>`;
+        const statusMessages = [
+            { pct: 0, msg: "SYSTEM CHECK..." },
+            { pct: 25, msg: "INITIALIZING STARFIELD..." },
+            { pct: 50, msg: "CALIBRATING WARP DRIVE..." },
+            { pct: 75, msg: "ENGAGING..." },
+            { pct: 100, msg: "WELCOME." }
+        ];
 
-        const apiKey = "";
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+        function updateLoader() {
+            progress += 1;
+            
+            const currentStatus = statusMessages.slice().reverse().find(s => progress >= s.pct);
+            if (currentStatus) {
+                loaderStatus.textContent = currentStatus.msg;
+            }
+
+            loaderProgress.style.width = `${progress}%`;
+            loaderPercentage.textContent = `${progress}%`;
+
+            if (progress >= 100) {
+                clearInterval(loaderInterval);
+                setTimeout(revealGate, 500);
+            }
+        }
+
+        function revealGate() {
+            document.body.style.overflow = '';
+            if (!gate.classList.contains('reveal')) {
+                gate.classList.add('reveal');
+                setTimeout(() => gate.classList.add('hide'), 800);
+            }
+        }
+
+        function startLoader() {
+            if (loaderInterval) return;
+            loaderInterval = setInterval(updateLoader, 35);
+        }
+
+        function skipLoader() {
+            clearInterval(loaderInterval);
+            loaderProgress.style.transition = 'width .5s var(--ease)';
+            loaderProgress.style.width = '100%';
+            loaderPercentage.textContent = '100%';
+            loaderStatus.textContent = 'WELCOME.';
+            setTimeout(revealGate, 500);
+        }
+
+        enterBtn.addEventListener('click', skipLoader);
+        introVideo?.addEventListener('canplay', startLoader);
+
+        // Fallback if video event doesn't fire
+        setTimeout(() => {
+            if (!loaderInterval) startLoader();
+        }, 1000);
+    }
+    initGate();
+
+    // ————— Space Canvas Fly-through —————
+    function initSpaceCanvas() {
+        const canvas = document.getElementById('space');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let w, h, dpr, stars = [], particles = [];
+        const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2, easedX: window.innerWidth/2, easedY: window.innerHeight/2 };
+        const scenes = [
+            { id: 'hero', speed: 0.5, starCount: 250, tint: { r: 6, g: 9, b: 19, a: 0.1 } },
+            { id: 'projects', speed: 1.5, starCount: 400, tint: { r: 157, g: 122, b: 255, a: 0.15 } },
+            { id: 'book', speed: 1, starCount: 300, tint: { r: 255, g: 200, b: 150, a: 0.08 } },
+            { id: 'dashboard', speed: 3, starCount: 350, tint: { r: 100, g: 220, b: 200, a: 0.1 } },
+            { id: 'game', speed: 6, starCount: 450, tint: { r: 255, g: 100, b: 100, a: 0.12 } },
+            { id: 'about', speed: 8, starCount: 500, tint: { r: 122, g: 168, b: 255, a: 0.1 } },
+            { id: 'github', speed: 0.8, starCount: 300, tint: { r: 231, g: 236, b: 243, a: 0.08 } }
+        ];
+        let sceneBoundaries = [], currentSceneIndex = 0;
+        let currentState = JSON.parse(JSON.stringify(scenes[0]));
+
+        function resize() {
+            dpr = Math.min(window.devicePixelRatio || 1, 2);
+            w = canvas.width = window.innerWidth * dpr;
+            h = canvas.height = window.innerHeight * dpr;
+            canvas.style.width = window.innerWidth + 'px';
+            canvas.style.height = window.innerHeight + 'px';
+            ctx.scale(dpr,dpr);
+        }
         
-        const systemPrompt = "You are a creative director at a top tech firm, specializing in brainstorming innovative web projects. You are brief, creative, and inspiring.";
-        const userQuery = "Generate a novel project idea for a portfolio. The creator is a designer-developer focused on 'Creative Technology', skilled in front-end, back-end, and data visualization. Provide a project title, a one-sentence pitch, a 2-3 sentence detailed description, and a list of 3-5 suggested core technologies.";
+        function calculateBoundaries() {
+            sceneBoundaries = scenes.map(s => {
+                const el = document.getElementById(`scene-${s.id}`);
+                return el ? el.offsetTop + el.offsetHeight / 2 : 0;
+            }).filter(b => b > 0);
+        }
+        
+        function init() {
+            resize();
+            stars = [];
+            const maxStars = scenes.reduce((max, s) => Math.max(max, s.starCount), 0);
+            for(let i = 0; i < maxStars; i++) stars.push({ x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, px:0, py:0, z: Math.random()*0.8+0.2, r: Math.random()*1.8+.2 });
+            calculateBoundaries();
+        }
 
-        const payload = {
-            contents: [{ parts: [{ text: userQuery }] }],
-            systemInstruction: { parts: [{ text: systemPrompt }] },
-            generationConfig: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: "OBJECT",
-                    properties: { "title": { "type": "STRING" }, "pitch": { "type": "STRING" }, "description": { "type": "STRING" }, "technologies": { "type": "ARRAY", "items": { "type": "STRING" } } },
-                    required: ["title", "pitch", "description", "technologies"]
+        function updateScene() {
+            const scrollY = window.scrollY + window.innerHeight / 2;
+            let newIndex = 0;
+            for (let i = sceneBoundaries.length - 1; i >= 0; i--) {
+                if (scrollY >= sceneBoundaries[i]) {
+                    newIndex = i;
+                    break;
                 }
             }
+            currentSceneIndex = newIndex;
+        }
+
+        function draw() {
+            const targetState = scenes[currentSceneIndex];
+            const lerpFactor = 0.04;
+            currentState.speed = lerp(currentState.speed, targetState.speed, lerpFactor);
+            currentState.starCount = lerp(currentState.starCount, targetState.starCount, lerpFactor);
+            currentState.tint.r = lerp(currentState.tint.r, targetState.tint.r, lerpFactor);
+            currentState.tint.g = lerp(currentState.tint.g, targetState.tint.g, lerpFactor);
+            currentState.tint.b = lerp(currentState.tint.b, targetState.tint.b, lerpFactor);
+            currentState.tint.a = lerp(currentState.tint.a, targetState.tint.a, lerpFactor);
+
+            ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+            const {r,g,b,a} = currentState.tint;
+            ctx.fillStyle = `rgba(${r.toFixed(0)}, ${g.toFixed(0)}, ${b.toFixed(0)}, ${a.toFixed(3)})`;
+            ctx.fillRect(0,0,window.innerWidth, window.innerHeight);
+            
+            mouse.easedX = lerp(mouse.easedX, mouse.x, 0.05);
+            mouse.easedY = lerp(mouse.easedY, mouse.y, 0.05);
+
+            for(let i = 0; i < Math.floor(currentState.starCount); i++) {
+                const s = stars[i];
+                const parallaxX = (mouse.easedX - window.innerWidth / 2) * (s.z * 0.05);
+                const parallaxY = (mouse.easedY - window.innerHeight / 2) * (s.z * 0.05);
+                s.px = s.x; s.py = s.y;
+                s.x += s.z * currentState.speed;
+                if(s.x > window.innerWidth+10) { s.x = -10; s.y = Math.random() * window.innerHeight; s.px = s.x; }
+                
+                const alpha = 0.85 * s.z;
+                ctx.fillStyle = `rgba(231,236,243,${alpha})`;
+                ctx.beginPath();
+                ctx.arc(s.x + parallaxX, s.y + parallaxY, s.r * s.z, 0, Math.PI*2);
+                ctx.fill();
+
+                if (currentState.speed > 4) {
+                    ctx.strokeStyle = `rgba(231,236,243,${alpha * 0.5})`;
+                    ctx.lineWidth = s.r * s.z;
+                    ctx.beginPath();
+                    ctx.moveTo(s.px + parallaxX, s.py + parallaxY);
+                    ctx.lineTo(s.x + parallaxX, s.y + parallaxY);
+                    ctx.stroke();
+                }
+            }
+
+            if(!preferReduced) requestAnimationFrame(draw);
+        }
+        
+        init();
+        draw();
+        window.addEventListener('resize', init);
+        window.addEventListener('scroll', updateScene);
+        window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+    }
+    initSpaceCanvas();
+
+    // ————— Book Cover Interaction —————
+    function initBookInteraction() {
+        const container = document.getElementById('book-cover-container');
+        const cover = document.getElementById('book-cover');
+        if(!container || !cover) return;
+        container.addEventListener('mousemove', (e) => {
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const rotateY = (x / rect.width - 0.5) * -30;
+            const rotateX = (y / rect.height - 0.5) * 30;
+            cover.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+        container.addEventListener('mouseleave', () => {
+            cover.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        });
+    }
+    initBookInteraction();
+
+    // ————— Dashboard Charts & KPIs —————
+    function initDashboard() {
+        const counters = [
+            {el:document.getElementById('kpi-1'), val:7000, suffix: 'K+', start:0, speed: 50},
+            {el:document.getElementById('kpi-2'), val:100, suffix: '%', start:0, speed: 20},
+            {el:document.getElementById('kpi-3'), val:3, suffix: '', start:0, speed: 300},
+            {el:document.getElementById('kpi-4'), val:1200, suffix: 'K', start: 0, speed: 30}
+        ];
+        
+        const animateKPI = (c) => {
+            let current = c.start;
+            const step = c.val / (1000 / c.speed);
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= c.val) {
+                    clearInterval(timer);
+                    current = c.val;
+                }
+                if (c.suffix === 'K+') c.el.textContent = `${(current/1000).toFixed(1)}K+`;
+                else if (c.suffix === 'K') c.el.textContent = `${(current/1000).toFixed(1)}K`;
+                else c.el.textContent = `${Math.ceil(current)}${c.suffix}`;
+            }, c.speed);
+        };
+        
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    counters.forEach(animateKPI);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        const kpiGrid = document.querySelector('.kpi-grid');
+        if(kpiGrid) observer.observe(kpiGrid);
+
+        const chartCtx1 = document.getElementById('skillsChart')?.getContext('2d');
+        const chartCtx2 = document.getElementById('activityChart')?.getContext('2d');
+        
+        const chartOptions = {
+            plugins: { legend: { display: false } },
+            scales: { x: { ticks: { color: 'var(--muted)' }, grid: { color: 'var(--border)' } }, y: { ticks: { color: 'var(--muted)' }, grid: { color: 'var(--border)' } } }
         };
 
-        try {
-            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            if (!response.ok) { throw new Error(`API error! status: ${response.status}`); }
-            const result = await response.json();
-            const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (jsonText) { displayIdea(JSON.parse(jsonText)); } 
-            else { throw new Error("Invalid response structure from API."); }
-        } catch (error) {
-            console.error("Gemini API Error:", error);
-            ideaContainer.innerHTML = `<p class="meta" style="text-align: center; color: var(--accent);">Sorry, the creative sparks aren't flying right now. Please try again later.</p>`;
-        } finally {
-            generateIdeaBtn.disabled = false;
+        if (chartCtx1) new Chart(chartCtx1, {
+            type: 'radar',
+            data: { labels: ['Design', 'Frontend', 'Backend', 'Animation', 'UX/UI', 'DevOps'],
+                datasets: [{ label: 'Skill Level', data: [90, 95, 75, 85, 92, 60], backgroundColor: 'rgba(122, 168, 255, 0.2)', borderColor: 'rgba(122, 168, 255, 1)', pointBackgroundColor: 'rgba(122, 168, 255, 1)' }]
+            },
+            options: { ...chartOptions, scales: { r: { angleLines: { color: 'var(--border)' }, grid: { color: 'var(--border)' }, pointLabels: { color: 'var(--muted)' }, ticks: { display: false } } } }
+        });
+
+        if (chartCtx2) new Chart(chartCtx2, {
+            type: 'line',
+            data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{ label: 'Commits', data: [65, 59, 80, 81, 56, 55], fill: true, backgroundColor: 'rgba(157, 122, 255, 0.2)', borderColor: 'rgba(157, 122, 255, 1)', tension: 0.4 }]
+            },
+            options: chartOptions
+        });
+    }
+    initDashboard();
+
+    // ————— Mini Game Logic —————
+    function initAstroAviator() {
+        const container = document.getElementById('game-container');
+        const canvas = document.getElementById('game-canvas');
+        const overlay = document.getElementById('game-overlay');
+        const scoreEl = document.getElementById('game-score');
+        const startBtn = document.getElementById('startGameBtn');
+        if (!canvas || !container) return;
+        const ctx = canvas.getContext('2d');
+        
+        let player, asteroids, score, gameOver, animationFrame;
+        let bullets, powerUps, lastShotTime = 0, shootCooldown = 250; // default cooldown in ms
+        const playerSize = 15;
+        const mouse = { x: 0, y: 0 };
+
+        function resize() {
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
         }
-    }
 
-    function displayIdea(idea) {
-        const techBadges = idea.technologies.map(tech => `<span class="badge">${tech}</span>`).join('');
-        ideaContainer.innerHTML = `<span class="kicker">Project Concept</span><h3 class="name" style="margin: 4px 0 8px;">${idea.title}</h3><p class="meta" style="font-style: italic;">"${idea.pitch}"</p><p class="meta">${idea.description}</p><div class="tech-list">${techBadges}</div>`;
-    }
+        function initGame() {
+            resize();
+            player = { x: canvas.width / 4, y: canvas.height / 2 };
+            asteroids = [];
+            bullets = [];
+            powerUps = [];
+            score = 0;
+            gameOver = false;
+            shootCooldown = 250;
+            scoreEl.textContent = 'Score: 0';
+            scoreEl.style.display = 'block';
+            overlay.classList.add('hidden');
+            if (animationFrame) cancelAnimationFrame(animationFrame);
+            gameLoop();
+        }
 
-    generateIdeaBtn.addEventListener('click', getProjectIdea);
-    document.getElementById('year').textContent = new Date().getFullYear();
+        function gameLoop() {
+            if (gameOver) {
+                overlay.classList.remove('hidden');
+                overlay.querySelector('.name').textContent = 'Game Over!';
+                overlay.querySelector('.meta').textContent = `Final Score: ${score}`;
+                overlay.querySelector('button').textContent = 'Play Again';
+                scoreEl.style.display = 'none';
+                return;
+            }
+
+            const now = Date.now();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Player
+            player.x = lerp(player.x, mouse.x, 0.08);
+            player.y = lerp(player.y, mouse.y, 0.08);
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.moveTo(player.x + playerSize, player.y);
+            ctx.lineTo(player.x - playerSize, player.y - playerSize * 0.8);
+            ctx.lineTo(player.x - playerSize, player.y + playerSize * 0.8);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Bullets
+            for(let i = bullets.length - 1; i >= 0; i--) {
+                const b = bullets[i];
+                b.x += 10;
+                ctx.fillStyle = 'cyan';
+                ctx.fillRect(b.x, b.y - 2, 10, 4);
+                if(b.x > canvas.width) bullets.splice(i, 1);
+            }
+
+            // PowerUps
+            for(let i = powerUps.length - 1; i >= 0; i--) {
+                const p = powerUps[i];
+                p.x -= 1; // drift left
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.stroke();
+                
+                // PowerUp collection
+                if (Math.hypot(player.x - p.x, player.y - p.y) < playerSize + 10) {
+                    activatePowerUp(p.type);
+                    powerUps.splice(i, 1);
+                } else if (p.x < -10) {
+                    powerUps.splice(i, 1);
+                }
+            }
+
+            // Asteroids
+            if (Math.random() < 0.03 + (score / 10000)) { // Increase spawn rate over time
+                asteroids.push({
+                    x: canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 25 + 10,
+                    speed: Math.random() * 2 + 1
+                });
+            }
+
+            for (let i = asteroids.length - 1; i >= 0; i--) {
+                const a = asteroids[i];
+                a.x -= a.speed;
+                ctx.strokeStyle = '#9fb0c2';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(a.x, a.y, a.size, a.size);
+
+                // Check bullet collision
+                let hit = false;
+                for (let j = bullets.length - 1; j >= 0; j--) {
+                    const b = bullets[j];
+                    if (b.x > a.x && b.x < a.x + a.size && b.y > a.y && b.y < a.y + a.size) {
+                        bullets.splice(j, 1);
+                        hit = true;
+                        break;
+                    }
+                }
+                
+                if (hit) {
+                    // Chance to drop power-up
+                    if (Math.random() < 0.2) { // 20% chance
+                        powerUps.push({x: a.x, y: a.y, type: 'rapidFire', color: '#ffdd00'});
+                    }
+                    asteroids.splice(i, 1);
+                    score += 100;
+                } else if (a.x + a.size < 0) {
+                    asteroids.splice(i, 1);
+                } else if (Math.hypot(player.x - (a.x + a.size/2), player.y - (a.y + a.size/2)) < playerSize + a.size/2) {
+                    gameOver = true;
+                }
+            }
+            
+            score++;
+            scoreEl.textContent = `Score: ${score}`;
+            animationFrame = requestAnimationFrame(gameLoop);
+        }
+
+        function shoot() {
+            const now = Date.now();
+            if (now - lastShotTime > shootCooldown) {
+                lastShotTime = now;
+                bullets.push({x: player.x + playerSize, y: player.y});
+            }
+        }
+        
+        function activatePowerUp(type) {
+            if (type === 'rapidFire') {
+                shootCooldown = 100; // faster shooting
+                setTimeout(() => {
+                    shootCooldown = 250; // revert after 5 seconds
+                }, 5000);
+            }
+        }
+
+        startBtn.addEventListener('click', initGame);
+        container.addEventListener('click', shoot);
+        container.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            mouse.x = e.clientX - rect.left;
+            mouse.y = e.clientY - rect.top;
+        });
+        window.addEventListener('resize', resize);
+    }
+    initAstroAviator();
+
+    // ————— Init other sections (About, GitHub, Gemini) —————
+    function initAboutDeck() {
+        const prevBtn = document.getElementById('about-prev'); const nextBtn = document.getElementById('about-next'); const slides = document.querySelectorAll('.about-slide'); const dots = document.querySelectorAll('.slide-dot'); let currentSlide = 0; const totalSlides = slides.length;
+        function updateSlides() { slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide)); dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide)); prevBtn.disabled = currentSlide === 0; nextBtn.disabled = currentSlide === totalSlides - 1; }
+        nextBtn?.addEventListener('click', () => { if (currentSlide < totalSlides - 1) { currentSlide++; updateSlides(); } });
+        prevBtn?.addEventListener('click', () => { if (currentSlide > 0) { currentSlide--; updateSlides(); } });
+        updateSlides();
+    }
+    async function loadRepos(){
+      const user = document.body.dataset.githubUser || 'senpai-sama7'; const target = document.getElementById('repos'); if(!target) return;
+      try{
+        const res = await fetch(`https://api.github.com/users/${user}/repos?sort=updated&per_page=6`); if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`); const data = await res.json(); target.innerHTML = ''; if (!data || data.length === 0) { target.innerHTML = `<p class="reveal on" style="color: var(--muted);">No public repositories found.</p>`; return; }
+        data.slice(0,6).forEach((r, i) => { 
+            const el = document.createElement('a'); 
+            el.className = 'repo glass reveal'; 
+            el.href = r.html_url; 
+            el.target = "_blank"; 
+            el.rel = "noopener"; 
+            el.style.transitionDelay = `${i * 0.05}s`; 
+
+            if (r.description) {
+                el.innerHTML = `<h4>${r.name}</h4><p>${r.description}</p><p class="tiny" style="margin-top:auto;opacity:.8">★ ${r.stargazers_count} • ${r.language || '—'}</p>`;
+            } else {
+                el.style.justifyContent = 'center';
+                el.style.alignItems = 'center';
+                el.style.textAlign = 'center';
+                el.innerHTML = `<h4>${r.name}</h4><p class="tiny" style="margin-top:10px;opacity:.8">★ ${r.stargazers_count} • ${r.language || '—'}</p>`;
+            }
+
+            target.appendChild(el); 
+            setTimeout(() => el.classList.add('on'), 50); 
+        });
+        const io = new IntersectionObserver(entries=>{ entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }); }, {threshold:.1});
+        target.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+      }catch(err){ console.warn('GitHub API error', err); target.innerHTML = `<p class="reveal on" style="color: var(--muted);">Could not load projects from GitHub.</p>`; }
+    }
+    function initGeminiIdeator() {
+        const generateIdeaBtn = document.getElementById('generateIdeaBtn');
+        const ideaContainer = document.getElementById('idea-container');
+        if(!generateIdeaBtn || !ideaContainer) return;
+        
+        async function getProjectIdea() {
+            generateIdeaBtn.disabled = true; ideaContainer.classList.add('visible'); ideaContainer.innerHTML = `<p class="meta" style="text-align: center;">Conjuring a concept... ✨</p>`;
+            const apiKey = ""; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+            const systemPrompt = "You are a creative director for a cutting-edge digital agency. Your job is to brainstorm innovative web project ideas. The ideas should be ambitious but achievable for a skilled solo developer. They must blend creative design, front-end animation, and a solid back-end concept. Format the response as a JSON object with 'title', 'pitch', 'description', and an array of 'technologies'.";
+            const userQuery = "Generate a novel project idea for a portfolio. Focus on concepts that involve data visualization, interactive 3D elements (like Three.js), or unique API integrations. The project should feel both artistic and technically impressive.";
+            const payload = { contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] }, generationConfig: { responseMimeType: "application/json", responseSchema: { type: "OBJECT", properties: { "title": { "type": "STRING" }, "pitch": { "type": "STRING" }, "description": { "type": "STRING" }, "technologies": { "type": "ARRAY", "items": { "type": "STRING" } } }, required: ["title", "pitch", "description", "technologies"] } } };
+            try {
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { throw new Error(`API error! status: ${response.status}`); }
+                const result = await response.json(); const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text; if (jsonText) { displayIdea(JSON.parse(jsonText)); } else { throw new Error("Invalid response structure from API."); }
+            } catch (error) { console.error("Gemini API Error:", error); ideaContainer.innerHTML = `<p class="meta" style="text-align: center; color: var(--accent);">Sorry, the creative sparks aren't flying right now. Please try again later.</p>`; } finally { generateIdeaBtn.disabled = false; }
+        }
+        function displayIdea(idea) { const techBadges = idea.technologies.map(tech => `<span class="badge" style="background: rgba(255,255,255,.05);">${tech}</span>`).join(''); ideaContainer.innerHTML = `<span class="kicker">Project Concept</span><h3 class="name" style="margin: 4px 0 8px;">${idea.title}</h3><p class="meta" style="font-style: italic;">"${idea.pitch}"</p><p class="meta">${idea.description}</p><div class="tech-list" style="margin-top: 16px; display:flex; flex-wrap:wrap; gap:8px;">${techBadges}</div>`; }
+        generateIdeaBtn.addEventListener('click', getProjectIdea);
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        const io = new IntersectionObserver(entries=>{ entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }); }, {threshold:.1});
+        document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+        
+        initAboutDeck();
+        loadRepos();
+        initGeminiIdeator();
+        document.getElementById('year').textContent = new Date().getFullYear();
+    });
   </script>
 </body>
 </html>
+
+
 
