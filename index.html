@@ -43,21 +43,37 @@
     /* ————— Magical Space Canvas ————— */
     #space{position:fixed; inset:0; z-index:-2; display:block;}
 
-    /* ————— Entrance “Gate” (cinematic overlay) ————— */
-    .gate{position:fixed; inset:0; z-index:9999; background:radial-gradient(1200px 800px at 50% 40%, rgba(120,150,255,.18), transparent), #000; display:grid; place-items:center; overflow:hidden}
-    .gate video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(1.2) contrast(1.1) brightness(.85); transform:scale(1.05); animation:zoom 8s var(--ease) forwards}
-    .gate::after{content:""; position:absolute; inset:-20%; pointer-events:none; background:conic-gradient(from 180deg, rgba(122,168,255,.22), rgba(157,122,255,.22), transparent 60%); mix-blend-mode:screen; filter:blur(40px); opacity:.35; animation:spin 16s linear infinite}
-    .gate .logo{position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:18px}
-    .mark{width:84px; height:84px; border-radius:28px; background:linear-gradient(145deg, var(--accent), var(--accent-2)); box-shadow:0 14px 50px rgba(122,168,255,.45); transform:perspective(800px) rotateX(14deg) rotateY(-18deg); animation:float 5s ease-in-out infinite}
-    .gate h1{font-size:clamp(28px, 6vw, 48px); letter-spacing:.08em; text-transform:uppercase; font-weight:800; text-shadow:0 6px 30px rgba(0,0,0,.6)}
-    .enter{position:relative; z-index:2; margin-top:4px; padding:10px 16px; font-weight:600; border-radius:14px; border:1px solid var(--border); background:rgba(255,255,255,.06); cursor:pointer}
-    .enter:hover{transform:translateY(-1px); box-shadow:0 10px 30px rgba(0,0,0,.35)}
-    .gate.fade{animation:fadeOut .9s var(--ease) forwards}
+    /* ————— Extra ambient graphics (soft nebula + orbs) ————— */
+    .ambient{position:fixed; inset:0; z-index:-1; pointer-events:none}
+    .nebula, .orb{position:absolute; border-radius:50%; filter:blur(40px); opacity:.35; mix-blend-mode:screen}
+    .nebula{background:conic-gradient(from 220deg, rgba(157,122,255,.5), rgba(122,168,255,.35), rgba(255,255,255,0) 70%);
+            width:85vmax; height:85vmax; left:-20vmax; top:-10vmax; animation:slowspin 110s linear infinite}
+    .orb.o1{background:radial-gradient(circle at 30% 30%, rgba(122,168,255,.45), transparent 60%);
+            width:38vmin; height:38vmin; right:8vmin; top:18vmin; animation:float 9s ease-in-out infinite}
+    .orb.o2{background:radial-gradient(circle at 60% 40%, rgba(157,122,255,.45), transparent 60%);
+            width:28vmin; height:28vmin; left:6vmin; bottom:10vmin; animation:float 11s ease-in-out infinite reverse}
+    @keyframes slowspin{to{transform:rotate(1turn)}}
+    @keyframes float{50%{transform:translateY(-10px)}}
 
-    @keyframes zoom{to{transform:scale(1.14)}}
+    /* ————— Entrance “Portal” (cinematic overlay) ————— */
+    .gate{position:fixed; inset:0; z-index:9999; display:grid; place-items:center; overflow:hidden;
+          background:#000; clip-path:circle(140% at 50% 55%); transition:clip-path 1.2s var(--ease), opacity .6s var(--ease) .9s}
+    .gate video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(1.15) contrast(1.08) brightness(.9)}
+    .gate .veil{position:absolute; inset:0; background:radial-gradient(60vmax 40vmax at 50% 55%, rgba(120,150,255,.25), rgba(0,0,0,.6) 60%, rgba(0,0,0,.9)); mix-blend-mode:screen}
+    .portal{position:relative; z-index:2; width:min(72vmin, 700px); aspect-ratio:1/1; border-radius:50%;
+            background:radial-gradient(circle at 50% 50%, transparent 45%, rgba(122,168,255,.35) 60%, rgba(157,122,255,.35) 75%, transparent 78%);
+            box-shadow:0 0 120px rgba(122,168,255,.45), inset 0 0 80px rgba(0,0,0,.9); animation:spin 18s linear infinite}
+    .rings{position:absolute; inset:0; border-radius:50%; background:repeating-conic-gradient(rgba(255,255,255,.15) 0 6deg, transparent 6deg 18deg);
+           -webkit-mask: radial-gradient(circle at 50% 50%, transparent 36%, #000 40%);
+           mask: radial-gradient(circle at 50% 50%, transparent 36%, #000 40%); filter:blur(1px); opacity:.5}
+    .gate .brand{position:absolute; z-index:3; text-align:center; top:50%; left:50%; transform:translate(-50%,-50%)}
+    .gate h1{font-size:clamp(28px, 6vw, 52px); letter-spacing:.08em; text-transform:uppercase; font-weight:800; text-shadow:0 10px 36px rgba(0,0,0,.7)}
+    .enter{margin-top:14px; padding:12px 18px; font-weight:700; border-radius:14px; border:1px solid var(--border);
+           background:rgba(255,255,255,.06); cursor:pointer}
+    .enter:hover{transform:translateY(-1px); box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    .gate.close{clip-path:circle(0% at 50% 55%); opacity:0; pointer-events:none}
+
     @keyframes spin{to{transform:rotate(1turn)}}
-    @keyframes float{50%{transform:perspective(800px) rotateX(14deg) rotateY(-18deg) translateY(-6px)} }
-    @keyframes fadeOut{to{opacity:0; visibility:hidden}}
 
     /* ————— Hero ————— */
     header{position:relative; padding:120px 0 60px}
@@ -76,25 +92,29 @@
     .card{grid-column:span 4; position:relative; overflow:hidden; padding:16px; min-height:260px; display:flex; border-radius:var(--radius)}
     .card .content{z-index:2; margin-top:auto}
     .kicker{font-size:12px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase}
-    .name{font-size:22px; font-weight:800}
+    .name{font-size:22px; font-weight:800; line-height:1.15; word-break:break-word}
     .meta{font-size:14px; color:var(--muted)}
     .card .halo{position:absolute; inset:-30%; background:radial-gradient(500px 400px at 20% 20%, rgba(122,168,255,.35), transparent 60%), radial-gradient(400px 320px at 80% 80%, rgba(157,122,255,.35), transparent 60%); filter:blur(40px); opacity:.7;}
     .card:hover .halo{transform:scale(1.1)}
     .card:hover{transform:translateY(-3px)}
 
+    /* — Frame cards with fitted text overlay */
     .card.frame{padding:0}
     .card.frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:saturate(1.15) contrast(1.05)}
-    .card.frame .overlay{position:absolute; inset:0; background:linear-gradient(to top, rgba(6,9,19,.75), transparent 60%)}
-    .card.frame .content{padding:18px;}
+    .card.frame .overlay{position:absolute; inset:0; background:linear-gradient(to top, rgba(6,9,19,.78), rgba(6,9,19,.35) 40%, transparent 70%)}
+    .card.frame .content{position:absolute; left:14px; right:14px; bottom:14px; z-index:2; padding:12px 12px 10px; border-radius:16px;
+                         background:linear-gradient(180deg, rgba(6,9,19,.65), rgba(6,9,19,.25)); backdrop-filter: blur(6px);}
+    .card.frame .name{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+    .card.frame .meta{display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
 
     @media (max-width: 980px){ .card{grid-column:span 6} }
     @media (max-width: 680px){ .card{grid-column:span 12} header{padding-top:96px} }
 
     /* ————— Section: GitHub ————— */
     .repo-list{display:grid; grid-template-columns:repeat(12, 1fr); gap:14px}
-    .repo{grid-column:span 4; padding:16px; min-height:130px; display:flex; flex-direction:column}
-    .repo h4{margin:2px 0 10px; font-size:16px}
-    .repo p{margin:0; color:var(--muted); font-size:14px}
+    .repo{grid-column:span 4; padding:16px; min-height:148px; display:flex; flex-direction:column}
+    .repo h4{margin:2px 0 10px; font-size:16px; line-height:1.2; word-break:break-word}
+    .repo p{margin:0; color:var(--muted); font-size:14px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden}
     .repo a{color:var(--accent)}
     @media (max-width: 980px){ .repo{grid-column:span 6} }
     @media (max-width: 680px){ .repo{grid-column:span 12} }
@@ -106,22 +126,29 @@
     /* ————— Footer ————— */
     footer{padding:60px 0 100px; color:var(--muted); text-align:center}
     .tiny{font-family:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size:12px}
-
   </style>
 </head>
 <body data-github-user="senpai-sama7">
 
   <!-- Space background canvas -->
   <canvas id="space" aria-hidden="true"></canvas>
+  <!-- Ambient graphics -->
+  <div class="ambient" aria-hidden="true">
+    <div class="nebula"></div>
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+  </div>
 
-  <!-- Cinematic entrance overlay (click or waits a moment) -->
+  <!-- Cinematic entrance overlay -->
   <div class="gate" id="gate" aria-hidden="true">
     <video id="introVideo" autoplay playsinline muted>
-      <!-- You can replace this with your own short loop. -->
       <source src="https://cdn.coverr.co/videos/coverr-starry-sky-8428/1080p.mp4" type="video/mp4" />
     </video>
-    <div class="logo">
-      <div class="mark"></div>
+    <div class="veil"></div>
+    <div class="portal">
+      <div class="rings"></div>
+    </div>
+    <div class="brand">
       <h1>Entering your world</h1>
       <button class="enter" id="enterBtn" aria-label="Enter site">Enter</button>
     </div>
@@ -176,7 +203,7 @@
     </div>
   </section>
 
-  <!-- ABOUT — keep book subtle; focus remains on you -->
+  <!-- ABOUT — subtle book mention -->
   <section class="wrap">
     <div class="grid">
       <div class="card glass reveal" style="grid-column:span 8;">
@@ -187,7 +214,7 @@
         <div style="text-align:center">
           <div class="kicker">Also</div>
           <div class="name">Author</div>
-          <p class="meta">A short, tasteful mention of your book lives here—without stealing focus.</p>
+          <p class="meta">A tasteful nod to my book—focus stays on the work.</p>
         </div>
       </div>
     </div>
@@ -204,26 +231,40 @@
   </footer>
 
   <script>
-  // ————— Respect users who prefer reduced motion —————
+  // ————— Respect reduced motion —————
   const preferReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ————— Cinematic Gate logic —————
+  // ————— Cinematic Portal logic —————
   const gate = document.getElementById('gate');
   const enterBtn = document.getElementById('enterBtn');
   const introVideo = document.getElementById('introVideo');
 
-  const closeGate = () => gate.classList.add('fade');
+  const closeGate = () => gate.classList.add('close');
   enterBtn.addEventListener('click', closeGate);
-  // auto close once some seconds have passed (fallback if video blocked)
-  setTimeout(closeGate, 3800);
+  setTimeout(closeGate, 4200);
   introVideo && introVideo.addEventListener('ended', closeGate);
 
-  // ————— Space Canvas (soft, low‑CPU starfield) —————
+  // Add tiny particle sparks inside portal for depth
+  (function portalParticles(){
+    const root = document.querySelector('.portal');
+    if(!root || preferReduced) return;
+    for(let i=0;i<36;i++){
+      const s = document.createElement('span');
+      const r = 34 + Math.random()*28; // radius
+      const a = Math.random()*360;
+      s.style.cssText = `position:absolute; left:50%; top:50%; width:3px; height:3px; background:#e7ecf3; border-radius:50%;
+        transform:rotate(${a}deg) translate(${r}%,0); filter:drop-shadow(0 0 8px rgba(122,168,255,.9)); opacity:${.4+Math.random()*.6};`;
+      root.appendChild(s);
+      s.animate([{transform:`rotate(${a}deg) translate(${r}%,0)`},{transform:`rotate(${a+360}deg) translate(${r}%,0)`}],{duration:12000+Math.random()*6000,iterations:Infinity});
+    }
+  })();
+
+  // ————— Space Canvas (enhanced but light) —————
   (function(){
     const canvas = document.getElementById('space');
     const ctx = canvas.getContext('2d');
-    let w, h, dpr, stars = [], tick = 0, mouseX = 0, mouseY = 0;
-    const STAR_COUNT = 220; // tasteful density
+    let w, h, dpr, stars = [], tick = 0, trails=[];
+    const STAR_COUNT = 240; // density
 
     function resize(){
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -236,41 +277,48 @@
       stars = Array.from({length: STAR_COUNT}, () => ({
         x: Math.random()*innerWidth,
         y: Math.random()*innerHeight,
-        z: Math.random()*0.6 + 0.4, // depth 0.4–1
+        z: Math.random()*0.6 + 0.4,
         r: Math.random()*1.6 + .2,
-        s: Math.random()*0.3 + 0.05 // speed
+        s: Math.random()*0.3 + 0.05
       }));
+    }
+
+    function comet(){
+      // casual shooting star
+      trails.push({x:Math.random()*innerWidth, y:-20, vx:2+Math.random()*2.5, vy:1+Math.random()*1.5, life:0});
     }
 
     function draw(){
       ctx.clearRect(0,0,innerWidth,innerHeight);
-      // subtle space hue
       const g = ctx.createRadialGradient(innerWidth*0.7, innerHeight*-0.1, 50, innerWidth*0.7, innerHeight*-0.1, innerWidth);
-      g.addColorStop(0, 'rgba(122,168,255,0.08)');
-      g.addColorStop(1, 'rgba(0,0,0,0)');
+      g.addColorStop(0, 'rgba(122,168,255,0.08)'); g.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = g; ctx.fillRect(0,0,innerWidth,innerHeight);
 
-      const px = (mouseX - innerWidth/2) / innerWidth;
-      const py = (mouseY - innerHeight/2) / innerHeight;
-
       stars.forEach(star =>{
-        const x = star.x + px * (1 - star.z) * 18;
-        const y = star.y + py * (1 - star.z) * 18;
-        ctx.beginPath(); ctx.arc(x, y, star.r * star.z, 0, Math.PI*2);
+        ctx.beginPath(); ctx.arc(star.x, star.y, star.r * star.z, 0, Math.PI*2);
         ctx.fillStyle = `rgba(231,236,243,${0.75*star.z})`;
         ctx.fill();
-        // twinkle
         if(!preferReduced && (tick % 60 === 0)) star.r = Math.random()*1.6 + .2;
-        // drift
         star.x += star.s * (0.2 + star.z*0.8); if(star.x > innerWidth+10) star.x = -10;
       });
+
+      // comets
+      trails.forEach(t =>{
+        t.x += t.vx; t.y += t.vy; t.life += .02;
+        ctx.globalAlpha = Math.max(0, 1 - t.life);
+        ctx.beginPath(); ctx.moveTo(t.x, t.y); ctx.lineTo(t.x - 60, t.y - 20);
+        ctx.strokeStyle = '#e7ecf3'; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.globalAlpha = 1;
+      });
+      trails = trails.filter(t => t.life < 1 && t.x < innerWidth+80);
+
       tick++;
-      if(!preferReduced) requestAnimationFrame(draw); else ctx.save();
+      if(!preferReduced) requestAnimationFrame(draw);
     }
 
     resize(); init(); draw();
     addEventListener('resize', ()=>{resize(); init();});
-    addEventListener('pointermove', e=>{ mouseX = e.clientX; mouseY = e.clientY; });
+    if(!preferReduced) setInterval(comet, 4500);
   })();
 
   // ————— Reveal on scroll —————
@@ -281,7 +329,7 @@
 
   // ————— GitHub API: show latest repos —————
   async function loadRepos(){
-    const user = document.body.dataset.githubUser || 'senpai-sama7'; // change if needed
+    const user = document.body.dataset.githubUser || 'senpai-sama7'; // GitHub username; name on site is Douglas Mitchell
     try{
       const res = await fetch(`https://api.github.com/users/${user}/repos?sort=updated&per_page=6`, {headers:{'Accept':'application/vnd.github+json'}});
       const data = await res.json();
