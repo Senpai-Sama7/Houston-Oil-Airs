@@ -1,0 +1,17 @@
+apiVersion: v2
+name: houston-oil-airs
+description: Advanced AI Research Platform
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+home: https://houstonoilairs.org
+sources:
+  - https://github.com/Senpai-Sama7/Houston-Oil-Airs
+maintainers:
+  - name: Senpai-Sama7
+    email: support@houstonoilairs.org
+keywords:
+  - ai
+  - research
+  - visualization
+  - analytics

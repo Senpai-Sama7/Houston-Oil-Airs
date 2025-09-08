@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../helm/houston-oil-airs
+
+namespace: houston-oil-airs
+
+commonLabels:
+  app.kubernetes.io/name: houston-oil-airs
+  app.kubernetes.io/managed-by: kustomize

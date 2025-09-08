@@ -1,0 +1,91 @@
+# Pod Security Standards
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: houston-oil-airs
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
+# Network Policy for Backend
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: houston-backend-netpol
+  namespace: houston-oil-airs
+spec:
+  podSelector:
+    matchLabels:
+      app: houston-backend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: houston-frontend
+    - podSelector:
+        matchLabels:
+          app: kong-gateway
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 3001
+    - protocol: TCP
+      port: 8080
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: redis
+    - podSelector:
+        matchLabels:
+          app: postgres
+    ports:
+    - protocol: TCP
+      port: 6379
+    - protocol: TCP
+      port: 5432
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 443
+---
+# Service Account with minimal permissions
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: houston-backend-sa
+  namespace: houston-oil-airs
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: houston-backend-role
+  namespace: houston-oil-airs
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: houston-backend-binding
+  namespace: houston-oil-airs
+subjects:
+- kind: ServiceAccount
+  name: houston-backend-sa
+  namespace: houston-oil-airs
+roleRef:
+  kind: Role
+  name: houston-backend-role
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,138 @@
+global:
+  namespace: houston-oil-airs
+  imageRegistry: ghcr.io
+  imageRepository: senpai-sama7/houston-oil-airs
+
+app:
+  name: houston-oil-airs
+  version: "1.0.0"
+
+frontend:
+  enabled: true
+  replicaCount: 2
+  image:
+    repository: frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 80
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "200m"
+
+backend:
+  enabled: true
+  replicaCount: 3
+  image:
+    repository: backend
+    tag: latest
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    ports:
+      http: 3001
+      java: 8080
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+  env:
+    NODE_ENV: production
+    REDIS_HOST: redis-service
+    REDIS_PORT: "6379"
+
+redis:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: redis
+    tag: 7-alpine
+  service:
+    port: 6379
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "200m"
+  persistence:
+    enabled: true
+    size: 10Gi
+
+postgres:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: postgres
+    tag: 15-alpine
+  service:
+    port: 5432
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+  persistence:
+    enabled: true
+    size: 20Gi
+  database: houston_oil_airs
+  username: houston_user
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: houstonoilairs.org
+      paths:
+        - path: /api
+          pathType: Prefix
+          service: backend
+          port: 3001
+        - path: /
+          pathType: Prefix
+          service: frontend
+          port: 80
+  tls:
+    - secretName: houston-tls
+      hosts:
+        - houstonoilairs.org
+
+monitoring:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+  prometheusRule:
+    enabled: true
+
+security:
+  networkPolicies:
+    enabled: true
+  podSecurityStandards:
+    enabled: true
+    enforce: restricted
+  serviceAccount:
+    create: true
+    name: houston-backend-sa
+
+secrets:
+  redis:
+    password: changeme123
+  postgres:
+    password: changeme456
+  jwt:
+    secret: your-jwt-secret-here

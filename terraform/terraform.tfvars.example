@@ -1,0 +1,35 @@
+# Houston Oil Airs Terraform Variables
+# Copy this file to terraform.tfvars and update with your values
+
+# Application Configuration
+namespace = "houston-oil-airs"
+app_name  = "houston-oil-airs"
+environment = "production"
+
+# Replica Configuration
+replicas = {
+  frontend = 2
+  backend  = 3
+}
+
+# Secrets (CHANGE THESE VALUES)
+redis_password    = "changeme123"
+postgres_password = "changeme456"
+jwt_secret       = "your-jwt-secret-here"
+grafana_admin_password = "admin123"
+
+# Optional: Cloud Provider Specific Settings
+# Uncomment and configure based on your cloud provider
+
+# AWS
+# aws_region = "us-west-2"
+# aws_availability_zones = ["us-west-2a", "us-west-2b", "us-west-2c"]
+
+# GCP
+# gcp_project = "your-project-id"
+# gcp_region  = "us-central1"
+# gcp_zone    = "us-central1-a"
+
+# Azure
+# azure_location = "West US 2"
+# azure_resource_group = "houston-oil-airs-rg"
