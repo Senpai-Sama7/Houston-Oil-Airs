@@ -880,290 +880,325 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
 
     <script>
-        // --- 1. HERO 3D ANIMATION ---
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#hero-canvas'), alpha: true, antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        camera.position.z = 50;
-
-        const group = new THREE.Group();
-        scene.add(group);
-
-        // Create AI-themed geometry
-        const geometry = new THREE.IcosahedronGeometry(15, 1);
-        const material = new THREE.MeshBasicMaterial({ color: 0x667eea, wireframe: true, transparent: true, opacity: 0.6 });
-        const sphere = new THREE.Mesh(geometry, material);
-        group.add(sphere);
-
-        // Add neural network nodes
-        const nodeGeometry = new THREE.SphereGeometry(1, 8, 8);
-        const nodeMaterial = new THREE.MeshBasicMaterial({ color: 0x764ba2 });
-        
-        for (let i = 0; i < 20; i++) {
-            const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
-            node.position.set(
-                (Math.random() - 0.5) * 60,
-                (Math.random() - 0.5) * 60,
-                (Math.random() - 0.5) * 60
-            );
-            group.add(node);
-        }
-
-        const animateHero = () => {
-            group.rotation.y += 0.002;
-            group.rotation.x += 0.001;
-            renderer.render(scene, camera);
-            window.requestAnimationFrame(animateHero);
-        };
-        animateHero();
-
-        window.addEventListener('resize', () => {
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-        });
-
-        // --- 2. ENHANCED PARALLAX SCROLLING ---
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const layers = document.querySelectorAll('.parallax-layer');
+        // Wait for page to load before initializing
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Houston Oil Airs loading...');
             
-            layers.forEach((layer, index) => {
-                const speed = (index + 1) * 0.3;
-                const yPos = -(scrolled * speed);
-                layer.style.transform = `translateY(${yPos}px)`;
-            });
-            
-            // Garden bed parallax
-            const gardenBed = document.querySelector('.garden-bed');
-            if (gardenBed) {
-                const gardenSpeed = scrolled * 0.1;
-                gardenBed.style.transform = `translateY(${gardenSpeed}px)`;
-            }
-        });
-
-        // --- 5. MINI GAME ---
-        class MiniGame {
-            constructor() {
-                this.mario = document.getElementById('mario');
-                this.gameContainer = document.getElementById('miniGame');
-                this.scoreElement = document.getElementById('gameScore');
-                this.startButton = document.getElementById('gameStartButton');
-                this.gameOverScreen = document.getElementById('gameOverScreen');
-                this.finalScoreElement = document.getElementById('finalScore');
-                this.restartButton = document.getElementById('gameRestartButton');
-                this.score = 0;
-                this.isJumping = false;
-                this.gameRunning = false;
-                this.gameStarted = false;
-                this.obstacles = [];
-                
-                this.init();
-            }
-            
-            init() {
-                this.startButton.addEventListener('click', () => this.startGame());
-                this.restartButton.addEventListener('click', () => this.restartGame());
-                
-                this.gameContainer.addEventListener('click', (e) => {
-                    if (this.gameRunning && e.target !== this.startButton && e.target !== this.restartButton) {
-                        this.jump();
-                    }
-                });
-                
-                document.addEventListener('keydown', (e) => {
-                    if ((e.code === 'Space' || e.code === 'ArrowUp') && this.gameRunning) {
-                        e.preventDefault();
-                        this.jump();
-                    }
-                });
-            }
-            
-            startGame() {
-                this.gameRunning = true;
-                this.gameStarted = true;
-                this.score = 0;
-                this.scoreElement.textContent = this.score;
-                this.startButton.style.display = 'none';
-                this.gameOverScreen.style.display = 'none';
-                
-                this.spawnObstacles();
-                this.gameLoop();
-            }
-            
-            restartGame() {
-                this.obstacles.forEach(obstacle => {
-                    if (obstacle.parentNode) {
-                        obstacle.parentNode.removeChild(obstacle);
-                    }
-                });
-                this.obstacles = [];
-                this.startGame();
-            }
-            
-            jump() {
-                if (!this.isJumping && this.gameRunning) {
-                    this.isJumping = true;
-                    this.mario.style.bottom = '140px';
-                    
-                    setTimeout(() => {
-                        this.mario.style.bottom = '80px';
-                        this.isJumping = false;
-                    }, 300);
+            // Initialize components with error handling
+            try {
+                if (typeof THREE !== 'undefined') {
+                    initHero3D();
                 }
+                initParallax();
+                if (typeof gsap !== 'undefined') {
+                    initScrollAnimations();
+                }
+                if (typeof Chart !== 'undefined') {
+                    initCharts();
+                }
+                initMiniGame();
+            } catch (error) {
+                console.error('Error initializing:', error);
             }
+        });
+        
+        function initHero3D() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const canvas = document.querySelector('#hero-canvas');
+            if (!canvas) return;
             
-            spawnObstacles() {
-                if (!this.gameRunning) return;
-                
-                const obstacle = document.createElement('div');
-                obstacle.className = 'obstacle';
-                this.gameContainer.appendChild(obstacle);
-                this.obstacles.push(obstacle);
-                
-                setTimeout(() => {
-                    if (obstacle.parentNode) {
-                        obstacle.parentNode.removeChild(obstacle);
-                    }
-                    this.obstacles = this.obstacles.filter(obs => obs !== obstacle);
-                }, 3000);
-                
-                setTimeout(() => this.spawnObstacles(), Math.random() * 2000 + 1500);
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.position.z = 50;
+
+            const group = new THREE.Group();
+            scene.add(group);
+
+            const geometry = new THREE.IcosahedronGeometry(15, 1);
+            const material = new THREE.MeshBasicMaterial({ color: 0x667eea, wireframe: true, transparent: true, opacity: 0.6 });
+            const sphere = new THREE.Mesh(geometry, material);
+            group.add(sphere);
+
+            const nodeGeometry = new THREE.SphereGeometry(1, 8, 8);
+            const nodeMaterial = new THREE.MeshBasicMaterial({ color: 0x764ba2 });
+            
+            for (let i = 0; i < 20; i++) {
+                const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
+                node.position.set(
+                    (Math.random() - 0.5) * 60,
+                    (Math.random() - 0.5) * 60,
+                    (Math.random() - 0.5) * 60
+                );
+                group.add(node);
             }
-            
-            checkCollisions() {
-                const marioRect = this.mario.getBoundingClientRect();
+
+            function animateHero() {
+                group.rotation.y += 0.002;
+                group.rotation.x += 0.001;
+                renderer.render(scene, camera);
+                requestAnimationFrame(animateHero);
+            }
+            animateHero();
+
+            window.addEventListener('resize', () => {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+            });
+        }
+        
+        function initParallax() {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const layers = document.querySelectorAll('.parallax-layer');
                 
-                this.obstacles.forEach(obstacle => {
-                    const obstacleRect = obstacle.getBoundingClientRect();
-                    
-                    if (marioRect.left < obstacleRect.right &&
-                        marioRect.right > obstacleRect.left &&
-                        marioRect.top < obstacleRect.bottom &&
-                        marioRect.bottom > obstacleRect.top) {
-                        
-                        if (!this.isJumping) {
-                            this.gameOver();
-                        } else {
-                            this.score += 10;
-                            this.scoreElement.textContent = this.score;
-                            obstacle.style.display = 'none';
+                layers.forEach((layer, index) => {
+                    const speed = (index + 1) * 0.3;
+                    const yPos = -(scrolled * speed);
+                    layer.style.transform = `translateY(${yPos}px)`;
+                });
+                
+                const gardenBed = document.querySelector('.garden-bed');
+                if (gardenBed) {
+                    const gardenSpeed = scrolled * 0.1;
+                    gardenBed.style.transform = `translateY(${gardenSpeed}px)`;
+                }
+            });
+        }
+        
+        function initScrollAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.utils.toArray('.widget').forEach(widget => {
+                gsap.fromTo(widget, 
+                    { y: 50, opacity: 0 }, 
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 1,
+                        scrollTrigger: {
+                            trigger: widget,
+                            start: 'top 85%',
+                            end: 'bottom 20%',
+                            toggleActions: 'play none none reverse',
                         }
                     }
+                );
+            });
+        }
+        
+        function initCharts() {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: 'var(--text-secondary)' }, grid: { color: 'var(--border-color)' } },
+                    y: { ticks: { color: 'var(--text-secondary)' }, grid: { color: 'var(--border-color)' } }
+                }
+            };
+
+            const lineCanvas = document.getElementById('lineChart');
+            if (lineCanvas) {
+                new Chart(lineCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+                        datasets: [{
+                            label: 'Traditional Research',
+                            data: [120, 135, 142, 158, 165, 172],
+                            borderColor: 'var(--text-secondary)',
+                            backgroundColor: 'rgba(94, 103, 120, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }, {
+                            label: 'AI-Enhanced Research',
+                            data: [45, 89, 156, 234, 387, 542],
+                            borderColor: 'var(--accent-primary)',
+                            backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: { ...chartOptions, plugins: { legend: { display: true, labels: {color: 'var(--text-primary)'} } } }
                 });
             }
             
-            gameLoop() {
-                if (this.gameRunning) {
-                    this.checkCollisions();
-                    this.score += 1;
-                    this.scoreElement.textContent = this.score;
-                    
-                    setTimeout(() => this.gameLoop(), 100);
-                }
+            const barCanvas = document.getElementById('barChart');
+            if (barCanvas) {
+                new Chart(barCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: ['ML/DL', 'Computer Vision', 'NLP', 'Robotics'],
+                        datasets: [{
+                            label: 'Active Projects',
+                            data: [680, 420, 380, 240],
+                            backgroundColor: ['#667eea', '#764ba2', '#ff6b6b', '#7cb342'],
+                        }]
+                    },
+                    options: { ...chartOptions }
+                });
             }
             
-            gameOver() {
-                this.gameRunning = false;
-                this.finalScoreElement.textContent = this.score;
-                this.gameOverScreen.style.display = 'flex';
+            const doughnutCanvas = document.getElementById('doughnutChart');
+            if (doughnutCanvas) {
+                new Chart(doughnutCanvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['3D Visualization', 'Data Analysis', 'Collaboration', 'Reporting'],
+                        datasets: [{
+                            label: 'Usage Distribution',
+                            data: [45, 25, 20, 10],
+                            backgroundColor: ['#667eea', '#764ba2', '#ff6b6b', '#7cb342'],
+                            borderColor: 'var(--bg-card)',
+                        }]
+                    },
+                    options: {
+                         responsive: true,
+                         maintainAspectRatio: false,
+                         plugins: { legend: { position: 'right', labels: { color: 'var(--text-primary)' } } }
+                    }
+                });
             }
         }
         
-        // Initialize mini game when page loads
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                new MiniGame();
-            }, 3000); // Start after entrance animation
-        });
-
-        // --- 3. GSAP SCROLL ANIMATIONS ---
-        gsap.registerPlugin(ScrollTrigger);
-        gsap.utils.toArray('.widget').forEach(widget => {
-            gsap.fromTo(widget, 
-                { y: 50, opacity: 0 }, 
-                {
-                    y: 0,
-                    opacity: 1,
-                    duration: 1,
-                    scrollTrigger: {
-                        trigger: widget,
-                        start: 'top 85%',
-                        end: 'bottom 20%',
-                        toggleActions: 'play none none reverse',
+        function initMiniGame() {
+            class MiniGame {
+                constructor() {
+                    this.mario = document.getElementById('mario');
+                    this.gameContainer = document.getElementById('miniGame');
+                    this.scoreElement = document.getElementById('gameScore');
+                    this.startButton = document.getElementById('gameStartButton');
+                    this.gameOverScreen = document.getElementById('gameOverScreen');
+                    this.finalScoreElement = document.getElementById('finalScore');
+                    this.restartButton = document.getElementById('gameRestartButton');
+                    
+                    if (!this.mario || !this.gameContainer) return;
+                    
+                    this.score = 0;
+                    this.isJumping = false;
+                    this.gameRunning = false;
+                    this.obstacles = [];
+                    
+                    this.init();
+                }
+                
+                init() {
+                    if (this.startButton) {
+                        this.startButton.addEventListener('click', () => this.startGame());
+                    }
+                    if (this.restartButton) {
+                        this.restartButton.addEventListener('click', () => this.restartGame());
+                    }
+                    
+                    this.gameContainer.addEventListener('click', (e) => {
+                        if (this.gameRunning && e.target !== this.startButton && e.target !== this.restartButton) {
+                            this.jump();
+                        }
+                    });
+                    
+                    document.addEventListener('keydown', (e) => {
+                        if ((e.code === 'Space' || e.code === 'ArrowUp') && this.gameRunning) {
+                            e.preventDefault();
+                            this.jump();
+                        }
+                    });
+                }
+                
+                startGame() {
+                    this.gameRunning = true;
+                    this.score = 0;
+                    if (this.scoreElement) this.scoreElement.textContent = this.score;
+                    if (this.startButton) this.startButton.style.display = 'none';
+                    if (this.gameOverScreen) this.gameOverScreen.style.display = 'none';
+                    
+                    this.spawnObstacles();
+                    this.gameLoop();
+                }
+                
+                restartGame() {
+                    this.obstacles.forEach(obstacle => {
+                        if (obstacle.parentNode) {
+                            obstacle.parentNode.removeChild(obstacle);
+                        }
+                    });
+                    this.obstacles = [];
+                    this.startGame();
+                }
+                
+                jump() {
+                    if (!this.isJumping && this.gameRunning) {
+                        this.isJumping = true;
+                        this.mario.style.bottom = '140px';
+                        
+                        setTimeout(() => {
+                            this.mario.style.bottom = '80px';
+                            this.isJumping = false;
+                        }, 300);
                     }
                 }
-            );
-        });
-
-        // --- 3. CHART.JS VISUALIZATIONS ---
-        const chartOptions = {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { ticks: { color: 'var(--text-secondary)' }, grid: { color: 'var(--border-color)' } },
-                y: { ticks: { color: 'var(--text-secondary)' }, grid: { color: 'var(--border-color)' } }
+                
+                spawnObstacles() {
+                    if (!this.gameRunning) return;
+                    
+                    const obstacle = document.createElement('div');
+                    obstacle.className = 'obstacle';
+                    this.gameContainer.appendChild(obstacle);
+                    this.obstacles.push(obstacle);
+                    
+                    setTimeout(() => {
+                        if (obstacle.parentNode) {
+                            obstacle.parentNode.removeChild(obstacle);
+                        }
+                        this.obstacles = this.obstacles.filter(obs => obs !== obstacle);
+                    }, 3000);
+                    
+                    setTimeout(() => this.spawnObstacles(), Math.random() * 2000 + 1500);
+                }
+                
+                checkCollisions() {
+                    const marioRect = this.mario.getBoundingClientRect();
+                    
+                    this.obstacles.forEach(obstacle => {
+                        const obstacleRect = obstacle.getBoundingClientRect();
+                        
+                        if (marioRect.left < obstacleRect.right &&
+                            marioRect.right > obstacleRect.left &&
+                            marioRect.top < obstacleRect.bottom &&
+                            marioRect.bottom > obstacleRect.top) {
+                            
+                            if (!this.isJumping) {
+                                this.gameOver();
+                            } else {
+                                this.score += 10;
+                                if (this.scoreElement) this.scoreElement.textContent = this.score;
+                                obstacle.style.display = 'none';
+                            }
+                        }
+                    });
+                }
+                
+                gameLoop() {
+                    if (this.gameRunning) {
+                        this.checkCollisions();
+                        this.score += 1;
+                        if (this.scoreElement) this.scoreElement.textContent = this.score;
+                        
+                        setTimeout(() => this.gameLoop(), 100);
+                    }
+                }
+                
+                gameOver() {
+                    this.gameRunning = false;
+                    if (this.finalScoreElement) this.finalScoreElement.textContent = this.score;
+                    if (this.gameOverScreen) this.gameOverScreen.style.display = 'flex';
+                }
             }
-        };
-
-        // Line Chart - AI Research Growth
-        new Chart('lineChart', {
-            type: 'line',
-            data: {
-                labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
-                datasets: [{
-                    label: 'Traditional Research',
-                    data: [120, 135, 142, 158, 165, 172],
-                    borderColor: 'var(--text-secondary)',
-                    backgroundColor: 'rgba(94, 103, 120, 0.1)',
-                    fill: true,
-                    tension: 0.3
-                }, {
-                    label: 'AI-Enhanced Research',
-                    data: [45, 89, 156, 234, 387, 542],
-                    borderColor: 'var(--accent-primary)',
-                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
-                    fill: true,
-                    tension: 0.3
-                }]
-            },
-            options: { ...chartOptions, plugins: { legend: { display: true, labels: {color: 'var(--text-primary)'} } } }
-        });
-        
-        // Bar Chart - Research Domains
-        new Chart('barChart', {
-            type: 'bar',
-            data: {
-                labels: ['ML/DL', 'Computer Vision', 'NLP', 'Robotics'],
-                datasets: [{
-                    label: 'Active Projects',
-                    data: [680, 420, 380, 240],
-                    backgroundColor: ['#667eea', '#764ba2', '#ff6b6b', '#7cb342'],
-                }]
-            },
-            options: { ...chartOptions }
-        });
-        
-        // Doughnut Chart - Platform Usage
-        new Chart('doughnutChart', {
-            type: 'doughnut',
-            data: {
-                labels: ['3D Visualization', 'Data Analysis', 'Collaboration', 'Reporting'],
-                datasets: [{
-                    label: 'Usage Distribution',
-                    data: [45, 25, 20, 10],
-                    backgroundColor: ['#667eea', '#764ba2', '#ff6b6b', '#7cb342'],
-                    borderColor: 'var(--bg-card)',
-                }]
-            },
-            options: {
-                 responsive: true,
-                 maintainAspectRatio: false,
-                 plugins: { legend: { position: 'right', labels: { color: 'var(--text-primary)' } } }
-            }
-        });
+            
+            setTimeout(() => {
+                new MiniGame();
+            }, 1000);
+        }
 
     </script>
 </body>
