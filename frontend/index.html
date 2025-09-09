@@ -259,10 +259,50 @@
             text-decoration: none;
             border-radius: 5px;
             font-weight: bold;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         .cta-button:hover {
             background-color: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+        
+        .email-button {
+            position: relative;
+        }
+        
+        .email-tooltip {
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .email-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--text-primary);
+        }
+        
+        .email-button:hover .email-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-5px);
         }
         
         /* Enhanced Animated Background & Parallax Layer */
@@ -858,17 +898,26 @@
                 <div class="widget cta-card">
                     <h3>Researchers</h3>
                     <p>Access cutting-edge visualization tools and collaborate on groundbreaking AI research projects.</p>
-                    <a href="https://github.com/Senpai-Sama7/Houston-Oil-Airs" class="cta-button">Start Research</a>
+                    <a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Research%20Collaboration%20Inquiry" class="cta-button email-button">
+                        Start Research
+                        <div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div>
+                    </a>
                 </div>
                 <div class="widget cta-card">
                     <h3>Developers</h3>
                     <p>Contribute to our open-source platform and help build the future of AI research tools.</p>
-                    <a href="CONTRIBUTING.md" class="cta-button">Contribute Code</a>
+                    <a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Development%20Contribution%20Interest" class="cta-button email-button">
+                        Contribute Code
+                        <div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div>
+                    </a>
                 </div>
                 <div class="widget cta-card">
                     <h3>Institutions</h3>
                     <p>Deploy our enterprise-ready platform in your organization and accelerate your research capabilities.</p>
-                    <a href="DEPLOYMENT.md" class="cta-button">Deploy Platform</a>
+                    <a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Enterprise%20Deployment%20Inquiry" class="cta-button email-button">
+                        Deploy Platform
+                        <div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div>
+                    </a>
                 </div>
             </div>
         </section>
