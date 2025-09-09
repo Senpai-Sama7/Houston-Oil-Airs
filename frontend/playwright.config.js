@@ -14,6 +14,7 @@ const config = {
     baseURL: 'http://localhost:3000',
   },
   testDir: './tests',
+  testMatch: /.*\.spec\.js$/,
 };
 
 export default config;
