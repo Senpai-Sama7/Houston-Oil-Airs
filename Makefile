@@ -24,7 +24,8 @@ build: ## Build Docker images
 
 test: ## Run tests
 	@echo "Running tests..."
-	@cd frontend && npm test
+	@cd frontend && npm ci && npx playwright install-deps && npx playwright install && npm run test:unit && npm test
+	@cd backend/node-server && npm test
 	@cd backend/java-services && mvn test
 	@echo "✓ All tests passed"
 
