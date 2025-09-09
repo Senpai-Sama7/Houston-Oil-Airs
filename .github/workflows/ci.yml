@@ -2,111 +2,70 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
   pull_request:
-    branches: [ main, master ]
 
 jobs:
-  node-backend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend/node-server
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-      - run: npm ci || npm install
-      - run: node -v && npm -v
-      - run: npm run lint
-      - run: npm test --silent || echo "Tests not configured fully; proceeding"
-
   frontend:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: '18'
-      - run: npm ci || npm install
-      - run: npm run lint
-      - run: npm run build
-
-  frontend-e2e:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
+          node-version: 18
+      - name: Install dependencies
         working-directory: frontend
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-      - run: npm ci || npm install
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-      - name: Run Playwright tests
-        run: npx playwright test
+        run: |
+          npm ci
+          npx playwright install-deps
+          npx playwright install
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+      - name: Unit tests
+        working-directory: frontend
+        run: npm run test:unit
+      - name: E2E tests
+        working-directory: frontend
+        run: npm test
+      - name: Audit
+        working-directory: frontend
+        run: npm audit --production --audit-level=high
 
-  java-services:
+  backend-node:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend/java-services
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        working-directory: backend/node-server
+        run: npm ci
+      - name: Lint
+        working-directory: backend/node-server
+        run: npm run lint
+      - name: Test
+        working-directory: backend/node-server
+        run: npm test
+
+  backend-java:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11'
-      - run: mvn -q -DskipTests=false test
+          java-version: 17
+      - name: Test
+        working-directory: backend/java-services
+        run: mvn -B test
 
-  cpp-build:
+  backend-cpp:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backend/cpp-engine
     steps:
-      - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y cmake libjsoncpp-dev
-      - name: Configure and build
+      - uses: actions/checkout@v3
+      - name: Build
+        working-directory: backend/cpp-engine
         run: |
           cmake -S . -B build
-          cmake --build build --config Release -j
-
-  project-graph:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-      - name: Build project graph
-        run: node tools/project-graph/build-graph.js
-      - name: Build per-service subsets
-        run: |
-          node tools/project-graph/build-graph.js --root=app:frontend --depth=6 --outfile=project-graph.frontend
-          node tools/project-graph/build-graph.js --root=app:node --depth=6 --outfile=project-graph.node
-          node tools/project-graph/build-graph.js --root=app:java --depth=6 --outfile=project-graph.java
-          node tools/project-graph/build-graph.js --root=app:cpp --depth=6 --outfile=project-graph.cpp
-      - name: Upload project graph artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: project-graph
-          path: |
-            docs/project-graph.json
-            docs/project-graph.dot
-            docs/project-graph.graphml
-            docs/project-graph.mmd
-            docs/project-graph.frontend.json
-            docs/project-graph.node.json
-            docs/project-graph.java.json
-            docs/project-graph.cpp.json
-            docs/project-graph.cypher
+          cmake --build build

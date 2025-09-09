@@ -11,8 +11,7 @@ set_target_properties(data_processor PROPERTIES OUTPUT_NAME "data_processor")
 include_directories(src)
 
 # Link libraries
-find_package(Boost REQUIRED)
 find_package(jsoncpp CONFIG REQUIRED)
 
-# Link Boost and JsonCpp
-target_link_libraries(data_processor Boost::boost JsonCpp::JsonCpp)
+# Link JsonCpp
+target_link_libraries(data_processor JsonCpp::JsonCpp)
