@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Houston Oil Airs - Advanced AI Research Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-light: #f4f7f9;
+            --bg-card: #ffffff;
+            --text-primary: #1d2129;
+            --text-secondary: #5e6778;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --border-color: #dee2e6;
+            --tree-color: #4a7c59;
+            --flower-color: #ff6b6b;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            height: 100vh;
+            overflow-y: auto;
+            perspective: 1px;
+            transform-style: preserve-3d;
+        }
+        
+        main {
+            position: relative;
+            z-index: 2;
+        }
+
+        .section {
+            padding: 100px 5vw;
+            width: 100%;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            background-color: transparent;
+        }
+        
+        #hero, #mission, #dashboard, #charts, #join-us {
+            background-color: rgba(244, 247, 249, 0.9);
+        }
+
+        /* Hero Section */
+        #hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .garden-title {
+            display: flex;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+        .garden-title span {
+            position: relative;
+            min-width: 0.5ch;
+        }
+        .garden-title .space {
+            width: 1ch;
+        }
+
+        .garden-title span[data-letter]::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 95%;
+            width: 80%;
+            transform: translateX(-50%);
+            height: 0;
+            background: var(--tree-color);
+            border-radius: 5px 5px 0 0;
+            animation: grow-grass 3s ease-out forwards;
+        }
+
+        .garden-title span[data-letter]::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 100%;
+            width: 10px;
+            height: 10px;
+            transform: translateX(-50%);
+            background: transparent;
+            animation: pop-flowers 3s ease-out forwards;
+        }
+        
+        .garden-title span:nth-child(1)::after, .garden-title span:nth-child(1)::before { animation-delay: 0.1s; }
+        .garden-title span:nth-child(2)::after, .garden-title span:nth-child(2)::before { animation-delay: 0.2s; }
+        .garden-title span:nth-child(3)::after, .garden-title span:nth-child(3)::before { animation-delay: 0.3s; }
+        .garden-title span:nth-child(4)::after, .garden-title span:nth-child(4)::before { animation-delay: 0.4s; }
+        .garden-title span:nth-child(5)::after, .garden-title span:nth-child(5)::before { animation-delay: 0.5s; }
+        .garden-title span:nth-child(6)::after, .garden-title span:nth-child(6)::before { animation-delay: 0.6s; }
+        .garden-title span:nth-child(7)::after, .garden-title span:nth-child(7)::before { animation-delay: 0.7s; }
+        .garden-title span:nth-child(9)::after, .garden-title span:nth-child(9)::before { animation-delay: 0.8s; }
+        .garden-title span:nth-child(10)::after, .garden-title span:nth-child(10)::before { animation-delay: 0.9s; }
+        .garden-title span:nth-child(11)::after, .garden-title span:nth-child(11)::before { animation-delay: 1.0s; }
+        .garden-title span:nth-child(13)::after, .garden-title span:nth-child(13)::before { animation-delay: 1.1s; }
+        .garden-title span:nth-child(14)::after, .garden-title span:nth-child(14)::before { animation-delay: 1.2s; }
+        .garden-title span:nth-child(15)::after, .garden-title span:nth-child(15)::before { animation-delay: 1.3s; }
+        .garden-title span:nth-child(16)::after, .garden-title span:nth-child(16)::before { animation-delay: 1.4s; }
+
+        @keyframes grow-grass {
+            0% { height: 0; }
+            40%, 100% { height: 15px; }
+        }
+
+        @keyframes pop-flowers {
+            0%, 30% { box-shadow: none; transform: scale(0); }
+            60% {
+                transform: scale(1);
+                box-shadow: -8px 0 0 0 var(--flower-color);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 
+                    -12px 0 0 0 var(--flower-color),
+                    8px -5px 0 0 #7cb342;
+            }
+        }
+
+        #hero p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+        }
+        
+        .scroll-down {
+            position: absolute;
+            bottom: 30px;
+            z-index: 2;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        /* General Content & Widgets */
+        .widget {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        
+        .widget-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 60px;
+        }
+        
+        .text-content {
+            max-width: 800px;
+            margin: 0 auto 60px auto;
+            text-align: center;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        /* Dashboard Section */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .kpi {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 10px;
+        }
+        
+        .kpi-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        /* Charts Section */
+        #charts {
+            background-color: rgba(233, 236, 239, 0.9);
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 450px;
+        }
+
+        /* Call to Action / Join Us Section */
+        #join-us {
+            text-align: center;
+        }
+        .cta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .cta-card {
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .cta-card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        .cta-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background-color: var(--accent-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-button:hover {
+            background-color: var(--accent-secondary);
+            transform: translateY(-2px);
+        }
+        
+        .email-button {
+            position: relative;
+        }
+        
+        .email-tooltip {
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .email-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--text-primary);
+        }
+        
+        .email-button:hover .email-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-5px);
+        }
+        
+        /* Enhanced Animated Background & Parallax Layer */
+        .parallax-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6b6b 100%);
+            overflow: hidden;
+        }
+        
+        .parallax-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: 200px 200px;
+            animation: moveBackground 20s linear infinite;
+        }
+        
+        .layer-1 {
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 2px),
+                radial-gradient(circle at 75% 75%, rgba(255,255,255,0.05) 1px, transparent 1px);
+            animation-duration: 25s;
+        }
+        
+        .layer-2 {
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08) 3px, transparent 3px),
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.03) 2px, transparent 2px);
+            animation-duration: 30s;
+            animation-direction: reverse;
+        }
+        
+        .layer-3 {
+            background-image: 
+                linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%);
+            background-size: 100px 100px;
+            animation-duration: 35s;
+        }
+        
+        @keyframes moveBackground {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-200px, -200px); }
+        }
+        
+        /* Entrance Overlay */
+        .entrance-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            animation: fadeOut 3s ease-in-out 2s forwards;
+        }
+        
+        .entrance-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: slideUp 1s ease-out 0.5s forwards;
+        }
+        
+        .entrance-subtitle {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.8);
+            opacity: 0;
+            animation: slideUp 1s ease-out 1s forwards;
+        }
+        
+        .loading-bar {
+            width: 300px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            margin-top: 2rem;
+            overflow: hidden;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            background: white;
+            width: 0;
+            animation: loadProgress 2s ease-in-out forwards;
+        }
+        
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+        
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        
+        .garden-bed {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 25vh;
+        }
+
+        .fern {
+            position: absolute;
+            bottom: 0;
+            width: 10px;
+            height: 0;
+            background: var(--tree-color);
+            transform-origin: bottom;
+            animation: grow-fern 8s infinite ease-in-out;
+        }
+
+        .fern::before, .fern::after {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+        }
+
+        .fern::before {
+            transform: skew(30deg);
+        }
+        .fern::after {
+            transform: skew(-30deg);
+        }
+
+        @keyframes grow-fern {
+            0% { height: 0; }
+            50% { height: 100px; }
+            100% { height: 0; }
+        }
+
+        .fern-1 { left: 15%; animation-delay: 0s; }
+        .fern-2 { left: 80%; animation-delay: 3s; }
+        .fern-3 { left: 45%; animation-delay: 6s; }
+
+        .flower-bush {
+            position: absolute;
+            bottom: 10px;
+        }
+
+        .flower-bush .stem {
+            width: 5px;
+            height: 50px;
+            background: var(--tree-color);
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+        }
+
+        .flower-bush .petal {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: var(--flower-color);
+            border-radius: 50%;
+            bottom: 45px;
+            left: calc(50% - 7.5px);
+            transform-origin: center;
+            opacity: 0;
+            animation: bloom-flower 10s infinite;
+        }
+
+        .flower-bush .petal.p1 { transform: translate(-10px, -5px); animation-delay: 1s; }
+        .flower-bush .petal.p2 { transform: translate(10px, -5px); animation-delay: 1.5s; }
+        .flower-bush .petal.p3 { transform: translate(0, 10px); animation-delay: 2s; }
+        
+        @keyframes bloom-flower {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            10%, 90% { opacity: 1; transform: scale(1); }
+        }
+
+        .flower-bush-1 { left: 30%; }
+        .flower-bush-2 { left: 65%; }
+
+        .grass {
+            position: absolute;
+            bottom: 0;
+            width: 4px;
+            height: 60px;
+            background: #7cb342;
+            transform-origin: bottom;
+            border-radius: 2px 2px 0 0;
+            animation: sway-grass 5s infinite ease-in-out;
+        }
+
+        @keyframes sway-grass {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        .grass-1 { left: 5%; animation-delay: 0.5s; }
+        .grass-2 { left: 95%; animation-delay: 1s; }
+        .grass-3 { left: 50%; animation-delay: 0.2s; }
+        
+        /* Mini Game Styles */
+        .mini-game {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 70%, #8FBC8F 70%, #228B22 100%);
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .game-ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 80px;
+            background: #8B4513;
+            border-top: 4px solid #654321;
+        }
+        
+        .mario {
+            position: absolute;
+            bottom: 80px;
+            left: 50px;
+            width: 32px;
+            height: 32px;
+            background: #FF0000;
+            border-radius: 4px;
+            transition: bottom 0.3s ease;
+        }
+        
+        .mario::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 4px;
+            width: 24px;
+            height: 16px;
+            background: #8B4513;
+            border-radius: 50%;
+        }
+        
+        .mario::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 16px;
+            height: 16px;
+            background: #0000FF;
+            border-radius: 2px;
+        }
+        
+        .obstacle {
+            position: absolute;
+            bottom: 80px;
+            width: 24px;
+            height: 24px;
+            background: #228B22;
+            border-radius: 4px;
+            animation: moveObstacle 3s linear infinite;
+        }
+        
+        .obstacle::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 4px;
+            width: 16px;
+            height: 16px;
+            background: #32CD32;
+            border-radius: 50%;
+        }
+        
+        @keyframes moveObstacle {
+            0% { right: -30px; }
+            100% { right: 100%; }
+        }
+        
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            opacity: 0.8;
+            animation: moveClouds 15s linear infinite;
+        }
+        
+        .cloud::before,
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+        }
+        
+        .cloud1 {
+            width: 60px;
+            height: 20px;
+            top: 20%;
+            animation-delay: 0s;
+        }
+        
+        .cloud1::before {
+            width: 30px;
+            height: 30px;
+            top: -15px;
+            left: 10px;
+        }
+        
+        .cloud1::after {
+            width: 40px;
+            height: 25px;
+            top: -10px;
+            right: 10px;
+        }
+        
+        .cloud2 {
+            width: 80px;
+            height: 25px;
+            top: 10%;
+            animation-delay: -7s;
+        }
+        
+        .cloud2::before {
+            width: 35px;
+            height: 35px;
+            top: -18px;
+            left: 15px;
+        }
+        
+        .cloud2::after {
+            width: 45px;
+            height: 30px;
+            top: -12px;
+            right: 15px;
+        }
+        
+        @keyframes moveClouds {
+            0% { right: -100px; }
+            100% { right: 100%; }
+        }
+        
+        .game-score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: 'Space Mono', monospace;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .game-instructions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .game-start-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+        
+        .game-start-button:hover {
+            background: var(--accent-secondary);
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+        
+        .game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            z-index: 10;
+        }
+        
+        .game-over-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .game-over-score {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .game-restart-button {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .game-restart-button:hover {
+            background: var(--accent-secondary);
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Entrance Overlay -->
+    <div class="entrance-overlay">
+        <div class="entrance-logo">HOUSTON OIL AIRS</div>
+        <div class="entrance-subtitle">Advanced AI Research Platform</div>
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+    </div>
+
+    <div class="parallax-bg">
+        <div class="parallax-layer layer-1"></div>
+        <div class="parallax-layer layer-2"></div>
+        <div class="parallax-layer layer-3"></div>
+        <div class="garden-bed">
+            <div class="fern fern-1"></div>
+            <div class="fern fern-2"></div>
+            <div class="fern fern-3"></div>
+
+            <div class="flower-bush flower-bush-1">
+                <div class="stem"></div>
+                <div class="petal p1"></div>
+                <div class="petal p2"></div>
+                <div class="petal p3"></div>
+            </div>
+             <div class="flower-bush flower-bush-2">
+                <div class="stem"></div>
+                <div class="petal p1"></div>
+                <div class="petal p2"></div>
+                <div class="petal p3"></div>
+            </div>
+
+            <div class="grass grass-1"></div>
+            <div class="grass grass-2"></div>
+            <div class="grass grass-3"></div>
+        </div>
+    </div>
+
+    <main>
+        <section id="hero">
+            <canvas id="hero-canvas"></canvas>
+            <div class="garden-title">
+                <span data-letter="H">H</span>
+                <span data-letter="O">O</span>
+                <span data-letter="U">U</span>
+                <span data-letter="S">S</span>
+                <span data-letter="T">T</span>
+                <span data-letter="O">O</span>
+                <span data-letter="N">N</span>
+                <span class="space"></span>
+                <span data-letter="O">O</span>
+                <span data-letter="I">I</span>
+                <span data-letter="L">L</span>
+                <span class="space"></span>
+                <span data-letter="A">A</span>
+                <span data-letter="I">I</span>
+                <span data-letter="R">R</span>
+                <span data-letter="S">S</span>
+            </div>
+            <p>Advancing responsible AI through cutting-edge research visualization and immersive 3D analytics.</p>
+            <div class="scroll-down">EXPLORE OUR PLATFORM</div>
+        </section>
+        
+        <section id="mission" class="section">
+            <h2 class="section-title">Our Mission</h2>
+            <p class="text-content">
+                We are pioneering the future of AI research through advanced visualization technologies. Our platform combines immersive 3D environments, real-time analytics, and interactive network analysis to accelerate scientific discovery and foster responsible AI development across research institutions worldwide.
+            </p>
+        </section>
+    
+        <section id="dashboard" class="section">
+            <h2 class="section-title">Platform Metrics</h2>
+            <div class="dashboard-grid">
+                <div class="widget">
+                    <div class="widget-title">Active Research Projects</div>
+                    <p class="kpi">2.4K</p>
+                    <p class="kpi-label">Collaborative Studies</p>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">3D Visualizations</div>
+                    <p class="kpi">15.7M</p>
+                    <p class="kpi-label">Data Points Rendered</p>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">Performance Gain</div>
+                    <p class="kpi">+340%</p>
+                    <p class="kpi-label">Analysis Speed Improvement</p>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">Enterprise Readiness</div>
+                    <p class="kpi">100%</p>
+                    <p class="kpi-label">Production Deployment</p>
+                </div>
+            </div>
+            <div class="cta-grid" style="margin-top: 30px;">
+                <div class="widget cta-card">
+                    <h3>Join Our Team</h3>
+                    <p>Full-stack developers, DevOps engineers, AI/ML researchers, UI/UX designers</p>
+                    <a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Employment%20Opportunity%20Interest" class="cta-button email-button">
+                        Apply Now
+                        <div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div>
+                    </a>
+                </div>
+                <div class="widget cta-card">
+                    <h3>Internship Program</h3>
+                    <p>Summer research internships, part-time development roles, academic collaboration</p>
+                    <a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Internship%20Program%20Interest" class="cta-button email-button">
+                        Learn More
+                        <div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div>
+                    </a>
+                </div>
+                <div class="widget cta-card">
+                    <h3>Open Source</h3>
+                    <p>Contribute code, documentation, or ideas to our growing open source community</p>
+                    <a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Open%20Source%20Contribution%20Interest" class="cta-button email-button">
+                        Contribute
+                        <div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    
+        <section id="charts" class="section">
+            <h2 class="section-title">Research Analytics</h2>
+            <div class="dashboard-grid">
+                <div class="widget" style="grid-column: 1 / -1;">
+                    <div class="widget-title">AI Research Output Growth</div>
+                    <div class="chart-container">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">Research Domains</div>
+                     <div class="chart-container" style="height: 300px;">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">Platform Usage</div>
+                     <div class="chart-container" style="height: 300px;">
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">AI Research Runner</div>
+                    <div class="mini-game" id="miniGame">
+                        <div class="cloud cloud1"></div>
+                        <div class="cloud cloud2"></div>
+                        <div class="game-score">Score: <span id="gameScore">0</span></div>
+                        <div class="game-instructions">Click to Jump!</div>
+                        <button class="game-start-button" id="gameStartButton">Start Game</button>
+                        <div class="mario" id="mario"></div>
+                        <div class="game-ground"></div>
+                        <div class="game-over-screen" id="gameOverScreen">
+                            <div class="game-over-title">Game Over!</div>
+                            <div class="game-over-score">Final Score: <span id="finalScore">0</span></div>
+                            <button class="game-restart-button" id="gameRestartButton">Play Again</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+        <section id="join-us" class="section">
+            <h2 class="section-title">Join Our Research Community</h2>
+            <p class="text-content">
+                Accelerating AI research requires collaboration between the brightest minds in academia, industry, and innovation. Whether you're a researcher, developer, or institution, there's a place for you in our growing ecosystem of responsible AI advancement.
+            </p>
+            <div class="cta-grid">
+                <div class="widget cta-card">
+                    <h3>Researchers</h3>
+                    <p>Access cutting-edge visualization tools and collaborate on groundbreaking AI research projects.</p>
+                    <a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Research%20Collaboration%20Inquiry" class="cta-button email-button">
+                        Start Research
+                        <div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div>
+                    </a>
+                </div>
+                <div class="widget cta-card">
+                    <h3>Developers</h3>
+                    <p>Contribute to our open-source platform and help build the future of AI research tools.</p>
+                    <a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Development%20Contribution%20Interest" class="cta-button email-button">
+                        Contribute Code
+                        <div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div>
+                    </a>
+                </div>
+                <div class="widget cta-card">
+                    <h3>Institutions</h3>
+                    <p>Deploy our enterprise-ready platform in your organization and accelerate your research capabilities.</p>
+                    <a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Enterprise%20Deployment%20Inquiry" class="cta-button email-button">
+                        Deploy Platform
+                        <div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="investment" class="section">
+            <h2 class="section-title">Investment Opportunity</h2>
+            <p class="text-content">
+                Join us in revolutionizing AI research. We're building the future of collaborative research visualization with cutting-edge 3D technology and enterprise-ready infrastructure.
+            </p>
+            <div class="dashboard-grid">
+                <div class="widget">
+                    <div class="widget-title">Market Opportunity</div>
+                    <p class="kpi">$8.2B</p>
+                    <p class="kpi-label">AI Research Tools Market (28% CAGR)</p>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">Technology Advantage</div>
+                    <p class="kpi">2x</p>
+                    <p class="kpi-label">Faster Than Traditional Tools</p>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">Development Status</div>
+                    <p class="kpi">MVP</p>
+                    <p class="kpi-label">Working Prototype Ready</p>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">Investment Range</div>
+                    <p class="kpi">$50+</p>
+                    <p class="kpi-label">Accessible Entry Points</p>
+                </div>
+            </div>
+            <div class="cta-grid" style="margin-top: 40px;">
+                <div class="widget cta-card">
+                    <h3>Community Supporter</h3>
+                    <p><strong>$50 - $5K</strong><br>0.1% - 0.5% equity<br>Updates, early access, recognition</p>
+                    <a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Community%20Investment%20Interest" class="cta-button email-button">
+                        Support Us
+                        <div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div>
+                    </a>
+                    <div style="margin-top: 10px; font-size: 0.9rem; color: var(--text-secondary);">CashApp: $Windbreaker713</div>
+                </div>
+                <div class="widget cta-card">
+                    <h3>Angel Investor</h3>
+                    <p><strong>$5K - $25K</strong><br>0.5% - 2% equity<br>Early access & quarterly updates</p>
+                    <a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Angel%20Investment%20Interest" class="cta-button email-button">
+                        Invest Now
+                        <div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div>
+                    </a>
+                </div>
+                <div class="widget cta-card">
+                    <h3>Strategic Partner</h3>
+                    <p><strong>$100K+</strong><br>5%+ equity<br>Co-development & enterprise deals</p>
+                    <a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Strategic%20Partnership%20Interest" class="cta-button email-button">
+                        Partner
+                        <div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
+
+    <script>
+        // Wait for page to load before initializing
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Houston Oil Airs loading...');
+            
+            // Initialize components with error handling
+            try {
+                if (typeof THREE !== 'undefined') {
+                    initHero3D();
+                }
+                initParallax();
+                if (typeof gsap !== 'undefined') {
+                    initScrollAnimations();
+                }
+                if (typeof Chart !== 'undefined') {
+                    initCharts();
+                }
+                initMiniGame();
+            } catch (error) {
+                console.error('Error initializing:', error);
+            }
+        });
+        
+        function initHero3D() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const canvas = document.querySelector('#hero-canvas');
+            if (!canvas) return;
+            
+            const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.position.z = 50;
+
+            const group = new THREE.Group();
+            scene.add(group);
+
+            const geometry = new THREE.IcosahedronGeometry(15, 1);
+            const material = new THREE.MeshBasicMaterial({ color: 0x667eea, wireframe: true, transparent: true, opacity: 0.6 });
+            const sphere = new THREE.Mesh(geometry, material);
+            group.add(sphere);
+
+            const nodeGeometry = new THREE.SphereGeometry(1, 8, 8);
+            const nodeMaterial = new THREE.MeshBasicMaterial({ color: 0x764ba2 });
+            
+            for (let i = 0; i < 20; i++) {
+                const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
+                node.position.set(
+                    (Math.random() - 0.5) * 60,
+                    (Math.random() - 0.5) * 60,
+                    (Math.random() - 0.5) * 60
+                );
+                group.add(node);
+            }
+
+            function animateHero() {
+                group.rotation.y += 0.002;
+                group.rotation.x += 0.001;
+                renderer.render(scene, camera);
+                requestAnimationFrame(animateHero);
+            }
+            animateHero();
+
+            window.addEventListener('resize', () => {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+            });
+        }
+        
+        function initParallax() {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const layers = document.querySelectorAll('.parallax-layer');
+                
+                layers.forEach((layer, index) => {
+                    const speed = (index + 1) * 0.3;
+                    const yPos = -(scrolled * speed);
+                    layer.style.transform = `translateY(${yPos}px)`;
+                });
+                
+                const gardenBed = document.querySelector('.garden-bed');
+                if (gardenBed) {
+                    const gardenSpeed = scrolled * 0.1;
+                    gardenBed.style.transform = `translateY(${gardenSpeed}px)`;
+                }
+            });
+        }
+        
+        function initScrollAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.utils.toArray('.widget').forEach(widget => {
+                gsap.fromTo(widget, 
+                    { y: 50, opacity: 0 }, 
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 1,
+                        scrollTrigger: {
+                            trigger: widget,
+                            start: 'top 85%',
+                            end: 'bottom 20%',
+                            toggleActions: 'play none none reverse',
+                        }
+                    }
+                );
+            });
+        }
+        
+        function initCharts() {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: 'var(--text-secondary)' }, grid: { color: 'var(--border-color)' } },
+                    y: { ticks: { color: 'var(--text-secondary)' }, grid: { color: 'var(--border-color)' } }
+                }
+            };
+
+            const lineCanvas = document.getElementById('lineChart');
+            if (lineCanvas) {
+                new Chart(lineCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+                        datasets: [{
+                            label: 'Traditional Research',
+                            data: [120, 135, 142, 158, 165, 172],
+                            borderColor: 'var(--text-secondary)',
+                            backgroundColor: 'rgba(94, 103, 120, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }, {
+                            label: 'AI-Enhanced Research',
+                            data: [45, 89, 156, 234, 387, 542],
+                            borderColor: 'var(--accent-primary)',
+                            backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: { ...chartOptions, plugins: { legend: { display: true, labels: {color: 'var(--text-primary)'} } } }
+                });
+            }
+            
+            const barCanvas = document.getElementById('barChart');
+            if (barCanvas) {
+                new Chart(barCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: ['ML/DL', 'Computer Vision', 'NLP', 'Robotics'],
+                        datasets: [{
+                            label: 'Active Projects',
+                            data: [680, 420, 380, 240],
+                            backgroundColor: ['#667eea', '#764ba2', '#ff6b6b', '#7cb342'],
+                        }]
+                    },
+                    options: { ...chartOptions }
+                });
+            }
+            
+            const doughnutCanvas = document.getElementById('doughnutChart');
+            if (doughnutCanvas) {
+                new Chart(doughnutCanvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['3D Visualization', 'Data Analysis', 'Collaboration', 'Reporting'],
+                        datasets: [{
+                            label: 'Usage Distribution',
+                            data: [45, 25, 20, 10],
+                            backgroundColor: ['#667eea', '#764ba2', '#ff6b6b', '#7cb342'],
+                            borderColor: 'var(--bg-card)',
+                        }]
+                    },
+                    options: {
+                         responsive: true,
+                         maintainAspectRatio: false,
+                         plugins: { legend: { position: 'right', labels: { color: 'var(--text-primary)' } } }
+                    }
+                });
+            }
+        }
+        
+        function initMiniGame() {
+            class MiniGame {
+                constructor() {
+                    this.mario = document.getElementById('mario');
+                    this.gameContainer = document.getElementById('miniGame');
+                    this.scoreElement = document.getElementById('gameScore');
+                    this.startButton = document.getElementById('gameStartButton');
+                    this.gameOverScreen = document.getElementById('gameOverScreen');
+                    this.finalScoreElement = document.getElementById('finalScore');
+                    this.restartButton = document.getElementById('gameRestartButton');
+                    
+                    if (!this.mario || !this.gameContainer) return;
+                    
+                    this.score = 0;
+                    this.isJumping = false;
+                    this.gameRunning = false;
+                    this.obstacles = [];
+                    
+                    this.init();
+                }
+                
+                init() {
+                    if (this.startButton) {
+                        this.startButton.addEventListener('click', () => this.startGame());
+                    }
+                    if (this.restartButton) {
+                        this.restartButton.addEventListener('click', () => this.restartGame());
+                    }
+                    
+                    this.gameContainer.addEventListener('click', (e) => {
+                        if (this.gameRunning && e.target !== this.startButton && e.target !== this.restartButton) {
+                            this.jump();
+                        }
+                    });
+                    
+                    document.addEventListener('keydown', (e) => {
+                        if ((e.code === 'Space' || e.code === 'ArrowUp') && this.gameRunning) {
+                            e.preventDefault();
+                            this.jump();
+                        }
+                    });
+                }
+                
+                startGame() {
+                    this.gameRunning = true;
+                    this.score = 0;
+                    if (this.scoreElement) this.scoreElement.textContent = this.score;
+                    if (this.startButton) this.startButton.style.display = 'none';
+                    if (this.gameOverScreen) this.gameOverScreen.style.display = 'none';
+                    
+                    this.spawnObstacles();
+                    this.gameLoop();
+                }
+                
+                restartGame() {
+                    this.obstacles.forEach(obstacle => {
+                        if (obstacle.parentNode) {
+                            obstacle.parentNode.removeChild(obstacle);
+                        }
+                    });
+                    this.obstacles = [];
+                    this.startGame();
+                }
+                
+                jump() {
+                    if (!this.isJumping && this.gameRunning) {
+                        this.isJumping = true;
+                        this.mario.style.bottom = '140px';
+                        
+                        setTimeout(() => {
+                            this.mario.style.bottom = '80px';
+                            this.isJumping = false;
+                        }, 300);
+                    }
+                }
+                
+                spawnObstacles() {
+                    if (!this.gameRunning) return;
+                    
+                    const obstacle = document.createElement('div');
+                    obstacle.className = 'obstacle';
+                    this.gameContainer.appendChild(obstacle);
+                    this.obstacles.push(obstacle);
+                    
+                    setTimeout(() => {
+                        if (obstacle.parentNode) {
+                            obstacle.parentNode.removeChild(obstacle);
+                        }
+                        this.obstacles = this.obstacles.filter(obs => obs !== obstacle);
+                    }, 3000);
+                    
+                    setTimeout(() => this.spawnObstacles(), Math.random() * 2000 + 1500);
+                }
+                
+                checkCollisions() {
+                    const marioRect = this.mario.getBoundingClientRect();
+                    
+                    this.obstacles.forEach(obstacle => {
+                        const obstacleRect = obstacle.getBoundingClientRect();
+                        
+                        if (marioRect.left < obstacleRect.right &&
+                            marioRect.right > obstacleRect.left &&
+                            marioRect.top < obstacleRect.bottom &&
+                            marioRect.bottom > obstacleRect.top) {
+                            
+                            if (!this.isJumping) {
+                                this.gameOver();
+                            } else {
+                                this.score += 10;
+                                if (this.scoreElement) this.scoreElement.textContent = this.score;
+                                obstacle.style.display = 'none';
+                            }
+                        }
+                    });
+                }
+                
+                gameLoop() {
+                    if (this.gameRunning) {
+                        this.checkCollisions();
+                        this.score += 1;
+                        if (this.scoreElement) this.scoreElement.textContent = this.score;
+                        
+                        setTimeout(() => this.gameLoop(), 100);
+                    }
+                }
+                
+                gameOver() {
+                    this.gameRunning = false;
+                    if (this.finalScoreElement) this.finalScoreElement.textContent = this.score;
+                    if (this.gameOverScreen) this.gameOverScreen.style.display = 'flex';
+                }
+            }
+            
+            setTimeout(() => {
+                new MiniGame();
+            }, 1000);
+        }
+
+    </script>
+</body>
+</html>
