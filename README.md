@@ -336,6 +336,7 @@ This project is licensed under the [MIT License](LICENSE).
 ### 📞 **Join Our Journey**
 
 **Contact**: [DouglasMitchell@HoustonOilAirs.org](mailto:DouglasMitchell@HoustonOilAirs.org?subject=Investment%20Interest%20-%20Houston%20Oil%20Airs)  
+**CashApp**: $Windbreaker713  
 **Business Plan**: Available for serious inquiries  
 **Demo**: Live platform walkthrough available
 
