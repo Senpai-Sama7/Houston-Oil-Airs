@@ -6,10 +6,9 @@ const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const Redis = require('redis');
-let ffi, ref;
+let ffi;
 try {
   ffi = require('ffi-napi');
-  ref = require('ref-napi');
 } catch (e) {
   // Optional: FFI not available in some environments
 }
@@ -101,6 +100,14 @@ class HighPerformanceWebServer {
     setupRoutes() {
         // Initialize per-route counters
         this.routeCounts = { viz: 0, network: 0, updateMetrics: 0, analytics: 0 };
+        this.routeErrors = { viz: 0, network: 0, updateMetrics: 0, analytics: 0 };
+        this.durationBuckets = [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10];
+        this.routeDurations = {
+            viz: new Array(this.durationBuckets.length).fill(0),
+            network: new Array(this.durationBuckets.length).fill(0),
+            updateMetrics: new Array(this.durationBuckets.length).fill(0),
+            analytics: new Array(this.durationBuckets.length).fill(0)
+        };
 
         // High-performance data endpoints
         this.app.get('/api/research/visualization-data/:category', async (req, res) => {
@@ -217,7 +224,7 @@ class HighPerformanceWebServer {
                 for (let i = 0; i < this.durationBuckets.length; i++) {
                     const le = this.durationBuckets[i];
                     const count = buckets[i];
-                    lines.push(`app_route_duration_seconds_bucket{route=\"${key}\",le=\"${le}\"} ${count}`);
+                    lines.push(`app_route_duration_seconds_bucket{route="${key}",le="${le}"} ${count}`);
                 }
             };
             dumpHist('viz', this.routeDurations.viz);
@@ -316,11 +323,13 @@ class HighPerformanceWebServer {
                         buffer.writeDoubleLE(value, index * 8);
                     });
                     
-                    nativeProcessor.update_real_time_data(
-                        this.dataProcessor,
-                        buffer,
-                        simulatedMetrics.length
-                    );
+                    if (this.nativeAvailable) {
+                        nativeLib.update_real_time_data(
+                            this.dataProcessor,
+                            buffer,
+                            simulatedMetrics.length
+                        );
+                    }
                     
                     // Broadcast to subscribed clients
                     this.io.to(`category:${category}`).emit('data_update', {
@@ -384,7 +393,7 @@ class HighPerformanceWebServer {
     }
     
     async getRealTimeData(params) {
-        const { category, timeRange } = params;
+        const { category } = params;
         
         // Get fresh data from native processor or fallback
         let parsedData;
@@ -439,7 +448,11 @@ class HighPerformanceWebServer {
     shutdown() {
         console.log('Shutting down server...');
         if (this.nativeAvailable && this.dataProcessor) {
-            try { nativeLib.destroy_processor(this.dataProcessor); } catch (e) {}
+            try { 
+                nativeLib.destroy_processor(this.dataProcessor); 
+            } catch (e) {
+                console.error('Error destroying native processor:', e);
+            }
         }
         this.redis.quit();
         clearInterval(this.streamingInterval);
@@ -453,13 +466,21 @@ if (require.main === module) {
     // Graceful shutdown handlers are registered after server instantiation
     process.on('SIGINT', () => {
         console.log('Received SIGINT, shutting down gracefully...');
-        try { server.shutdown(); } catch (e) { /* noop */ }
+        try { 
+            server.shutdown(); 
+        } catch (e) { 
+            console.error('Error during shutdown:', e);
+        }
         process.exit(0);
     });
 
     process.on('SIGTERM', () => {
         console.log('Received SIGTERM, shutting down gracefully...');
-        try { server.shutdown(); } catch (e) { /* noop */ }
+        try { 
+            server.shutdown(); 
+        } catch (e) { 
+            console.error('Error during shutdown:', e);
+        }
         process.exit(0);
     });
 
