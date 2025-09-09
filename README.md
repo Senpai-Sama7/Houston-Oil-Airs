@@ -3,7 +3,6 @@
 </p>
 
 # 🌟 Houston Oil Airs - Advanced AI Research Platform
-# Contact Founder & Visionary - DouglasMitchell@HoustonOilAirs.org
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](docker/)
@@ -30,6 +29,7 @@ make dev-setup
 ```
 
 **Live Demo**: [https://houstonoilairs.org](https://senpai-sama7.github.io/Houston-Oil-Airs/))
+**# Contact Founder & Visionary**: DouglasMitchell@HoustonOilAirs.org
 
 ---
 
