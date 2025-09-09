@@ -9,7 +9,7 @@
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-blue.svg)](helm/)
 [![Helm](https://img.shields.io/badge/Helm-v3-blue.svg)](helm/houston-oil-airs/)
 
-> **Created by**: Douglas D Mitchell
+> **Created by**: Douglas D. Mitchell
 > **Vision**: Advancing responsible AI through cutting-edge research visualization  
 > **Enterprise Ready**: Production-grade deployment with Kubernetes, monitoring, and security
 
@@ -259,7 +259,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ## 📧 **Support**
 
-- **Email**: [support@houstonoilairs.org](mailto:support@houstonoilairs.org)
+- **Email**: [support@houstonoilairs.org](mailto:DouglasMitchell@houstonoilairs.org)
 - **Issues**: [GitHub Issues](https://github.com/Senpai-Sama7/Houston-Oil-Airs/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/Senpai-Sama7/Houston-Oil-Airs/discussions)
 
