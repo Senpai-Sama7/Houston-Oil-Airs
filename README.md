@@ -3,13 +3,14 @@
 </p>
 
 # 🌟 Houston Oil Airs - Advanced AI Research Platform
+# Contact Founder & Visionary - DouglasMitchell@HoustonOilAirs.org
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](docker/)
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-Ready-blue.svg)](helm/)
 [![Helm](https://img.shields.io/badge/Helm-v3-blue.svg)](helm/houston-oil-airs/)
 
-> **Created by**: Senpai-Sama7  
+> **Created by**: Douglas D Mitchell
 > **Vision**: Advancing responsible AI through cutting-edge research visualization  
 > **Enterprise Ready**: Production-grade deployment with Kubernetes, monitoring, and security
 
