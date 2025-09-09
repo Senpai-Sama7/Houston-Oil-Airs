@@ -29,7 +29,8 @@ make dev-setup
 ```
 
 **Live Demo**: [https://houstonoilairs.org](https://senpai-sama7.github.io/Houston-Oil-Airs/))
-**# Contact Founder & Visionary**: DouglasMitchell@HoustonOilAirs.org
+
+**Contact Founder & Visionary**: DouglasMitchell@HoustonOilAirs.org
 
 ---
 
