@@ -302,9 +302,24 @@ This project is licensed under the [MIT License](LICENSE).
 
 | **Investment Level** | **Amount** | **Equity** | **Benefits** |
 |---------------------|------------|------------|-------------|
+| **Community Supporter** | $50 - $5K | 0.1% - 0.5% | Updates, early access, community recognition |
 | **Angel Investor** | $5K - $25K | 0.5% - 2% | Early access, quarterly updates |
 | **Seed Contributor** | $25K - $100K | 2% - 5% | Product input, beta testing |
 | **Strategic Partner** | $100K+ | 5%+ | Co-development, enterprise deals |
+
+### 🛠️ **Contribute Your Skills**
+
+**💼 Employment Opportunities:**
+- Full-stack developers (React, Node.js, Three.js)
+- DevOps engineers (Kubernetes, AWS)
+- AI/ML researchers and data scientists
+- UI/UX designers for 3D interfaces
+
+**🎓 Internship Programs:**
+- Summer research internships (3-6 months)
+- Part-time development roles (10-20 hrs/week)
+- Academic collaboration projects
+- Open source contribution mentorship
 
 ### 🎯 **What We're Building**
 
