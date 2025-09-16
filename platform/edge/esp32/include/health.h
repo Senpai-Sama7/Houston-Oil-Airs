@@ -6,8 +6,6 @@
 
 class HealthMonitor {
 private:
-  volatile uint8_t event_count;
-  volatile unsigned long last_event_time;
   unsigned long last_reset;
   
 public:

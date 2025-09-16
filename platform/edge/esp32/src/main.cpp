@@ -7,10 +7,8 @@
 #include "crypto.h"
 #include "health.h"
 
-// Include legacy sensors
-extern "C" {
-  #include "../../../../firmware/sensors.h"
-}
+// Include local sensors
+#include "sensors.h"
 
 WiFiClient espClient;
 PubSubClient client(espClient);

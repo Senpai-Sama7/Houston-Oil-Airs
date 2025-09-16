@@ -4,11 +4,16 @@
 #define HEALTH_BUTTON_PIN 2
 #define DEBOUNCE_DELAY 50
 
+// Static variables for ISR
+static volatile uint8_t event_count = 0;
+static volatile unsigned long last_event_time = 0;
+
 void HealthMonitor::init() {
   pinMode(HEALTH_BUTTON_PIN, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(HEALTH_BUTTON_PIN), healthEventISR, FALLING);
   event_count = 0;
   last_event_time = 0;
+  last_reset = millis();
   Serial.println("Health monitoring initialized");
 }
 
