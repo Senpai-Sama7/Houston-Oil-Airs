@@ -292,9 +292,3 @@ make -f Makefile.ej-ai up
 ```
 
 ---
-
-**🎉 You just transformed a single-sensor science project into a community-run, AI-powered, cash-paying environmental-justice platform—without losing a single byte of your original work.**
-
----
-
-*Original Houston-Oil-Airs documentation continues below...*
