@@ -19,6 +19,27 @@ services:
     networks:
       - houston-network
 
+  # PostgreSQL database for persistent data
+  postgres:
+    image: postgres:15-alpine
+    container_name: houston-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=houston_oil_airs
+      - POSTGRES_USER=houston_user
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-houston_pass}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U houston_user -d houston_oil_airs"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - houston-network
+
   # Backend services (C++, Java, Node.js)
   backend:
     build:
@@ -32,6 +53,11 @@ services:
       - NODE_ENV=production
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=houston_oil_airs
+      - POSTGRES_USER=houston_user
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-houston_pass}
       - JAVA_SERVICE_URL=http://localhost:8080
       - FRONTEND_URL=http://frontend
     volumes:
@@ -39,6 +65,8 @@ services:
       - ./backend_config.json:/app/config/config.json:ro
     depends_on:
       redis:
+        condition: service_healthy
+      postgres:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
@@ -145,6 +173,8 @@ services:
 
 volumes:
   redis_data:
+    driver: local
+  postgres_data:
     driver: local
   backend_logs:
     driver: local
