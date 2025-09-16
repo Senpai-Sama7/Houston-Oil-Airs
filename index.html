@@ -1302,7 +1302,7 @@
                 const widgets = document.querySelectorAll('.widget');
                 widgets.forEach(widget => {
                     const rect = widget.getBoundingClientRect();
-                    const isVisible = rect.top < window.innerHeight * 0.8;
+                    const isVisible = rect.top < window.innerHeight * 0.9;
                     
                     if (isVisible) {
                         widget.classList.add('visible');
