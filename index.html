@@ -31,6 +31,7 @@
             overflow-y: auto;
             perspective: 1px;
             transform-style: preserve-3d;
+            scroll-behavior: smooth;
         }
         
         main {
@@ -45,10 +46,77 @@
             position: relative;
             overflow: hidden;
             background-color: transparent;
+            transform-style: preserve-3d;
+        }
+        
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 107, 107, 0.05) 0%, transparent 50%);
+            animation: float-bg 20s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        @keyframes float-bg {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(1deg); }
+            66% { transform: translateY(10px) rotate(-1deg); }
         }
         
         #hero, #mission, #dashboard, #charts, #join-us {
             background-color: rgba(244, 247, 249, 0.9);
+        }
+
+        /* Navigation */
+        .nav-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 10px 20px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            display: flex;
+            gap: 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .nav-menu a {
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-menu a:hover {
+            background: var(--accent-primary);
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
         }
 
         /* Hero Section */
@@ -167,13 +235,43 @@
 
         /* General Content & Widgets */
         .widget {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
             opacity: 0;
-            transform: translateY(50px);
+            transform: translateY(100px) rotateX(15deg);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .widget.visible {
+            opacity: 1;
+            transform: translateY(0) rotateX(0deg);
+        }
+        
+        .widget::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, 
+                rgba(255,255,255,0.1) 0%, 
+                rgba(255,255,255,0.05) 50%, 
+                rgba(255,255,255,0.1) 100%);
+            border-radius: inherit;
+            z-index: -1;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
         
         .widget-title {
@@ -190,6 +288,16 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 3rem;
             margin-bottom: 60px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px 40px;
+            display: inline-block;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%) translateZ(10px);
         }
         
         .text-content {
@@ -199,6 +307,13 @@
             font-size: 1.1rem;
             line-height: 1.7;
             color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transform: translateZ(20px);
         }
 
         /* Dashboard Section */
@@ -790,6 +905,13 @@
         </div>
     </div>
 
+    <nav class="nav-menu">
+        <a href="#mission">Mission</a>
+        <a href="#dashboard">Platform</a>
+        <a href="#houston-intelligence">Houston</a>
+        <a href="#investment">Invest</a>
+    </nav>
+
     <main>
         <section id="hero">
             <canvas id="hero-canvas"></canvas>
@@ -811,15 +933,29 @@
                 <span data-letter="R">R</span>
                 <span data-letter="S">S</span>
             </div>
-            <p>Advancing responsible AI through cutting-edge research visualization and immersive 3D analytics.</p>
+            <p>Advancing responsible AI through cutting-edge research visualization and community-centered urban intelligence.</p>
             <div class="scroll-down">EXPLORE OUR PLATFORM</div>
         </section>
         
         <section id="mission" class="section">
             <h2 class="section-title">Our Mission</h2>
             <p class="text-content">
-                We are pioneering the future of AI research through advanced visualization technologies. Our platform combines immersive 3D environments, real-time analytics, and interactive network analysis to accelerate scientific discovery and foster responsible AI development across research institutions worldwide.
+                We are pioneering the future of AI research through advanced visualization technologies that create real-world impact. Our platform combines immersive 3D environments, real-time analytics, and interactive network analysis to accelerate scientific discovery, foster responsible AI development, and address urban challenges through community-centered data science.
             </p>
+            <div class="dashboard-grid" style="margin-top: 40px;">
+                <div class="widget">
+                    <div class="widget-title">AI Research Platform</div>
+                    <p style="font-size: 1rem; line-height: 1.6;">Advanced 3D visualization tools for collaborative research across institutions worldwide</p>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">Urban Intelligence</div>
+                    <p style="font-size: 1rem; line-height: 1.6;">Network analysis and environmental monitoring for data-driven city planning and policy</p>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">Community Impact</div>
+                    <p style="font-size: 1rem; line-height: 1.6;">Bridging academic research with grassroots advocacy for environmental and social justice</p>
+                </div>
+            </div>
         </section>
     
         <section id="dashboard" class="section">
@@ -948,6 +1084,63 @@
             </div>
         </section>
         
+        <section id="houston-intelligence" class="section">
+            <h2 class="section-title">Houston Urban Intelligence</h2>
+            <p class="text-content">
+                Our AI platform extends beyond research visualization to real-world impact. We're pioneering data-driven solutions for Houston's urban challenges through advanced network analysis, environmental monitoring, and community-centered technology.
+            </p>
+            <div class="dashboard-grid">
+                <div class="widget">
+                    <div class="widget-title">Environmental Justice</div>
+                    <p class="kpi">15.4M</p>
+                    <p class="kpi-label">Network Nodes Analyzed</p>
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-secondary);">Mapping pollution exposure, flood risk, and community resilience through multi-layer graph analysis</p>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">Community Sensors</div>
+                    <p class="kpi">487</p>
+                    <p class="kpi-label">Air Quality Monitors</p>
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-secondary);">Real-time PM₂.₅ and ozone monitoring across Houston neighborhoods</p>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">Policy Impact</div>
+                    <p class="kpi">71.8M</p>
+                    <p class="kpi-label">Relationship Edges</p>
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-secondary);">Connecting demographics, health, infrastructure, and governance data</p>
+                </div>
+                <div class="widget">
+                    <div class="widget-title">Community Trust</div>
+                    <p class="kpi">0.71</p>
+                    <p class="kpi-label">Network Modularity</p>
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-secondary);">Measuring social cohesion and identifying bridge-building opportunities</p>
+                </div>
+            </div>
+            <div class="cta-grid" style="margin-top: 40px;">
+                <div class="widget cta-card">
+                    <h3>Re-Drawing Houston</h3>
+                    <p>Comprehensive advocacy playbook combining environmental justice with advanced AI visualization for community-driven change</p>
+                    <a href="docs/Re-Drawing_Houston.txt" class="cta-button" target="_blank">
+                        Read Playbook
+                    </a>
+                </div>
+                <div class="widget cta-card">
+                    <h3>Houston Intelligence Report</h3>
+                    <p>Full-spectrum analysis of Houston's social, economic, and environmental networks with actionable insights</p>
+                    <a href="docs/Taco-Truck_Can_Save_Houston.txt" class="cta-button" target="_blank">
+                        View Analysis
+                    </a>
+                </div>
+                <div class="widget cta-card">
+                    <h3>Community Partnership</h3>
+                    <p>Join our network of researchers, community organizations, and civic technologists working for equitable solutions</p>
+                    <a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Community%20Partnership%20Interest" class="cta-button email-button">
+                        Get Involved
+                        <div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <section id="investment" class="section">
             <h2 class="section-title">Investment Opportunity</h2>
             <p class="text-content">
@@ -1095,6 +1288,31 @@
                     const gardenSpeed = scrolled * 0.1;
                     gardenBed.style.transform = `translateY(${gardenSpeed}px)`;
                 }
+                
+                // Parallax for sections
+                const sections = document.querySelectorAll('.section');
+                sections.forEach((section, index) => {
+                    const rect = section.getBoundingClientRect();
+                    const speed = 0.5;
+                    const yPos = -(rect.top * speed);
+                    section.style.transform = `translateY(${yPos * 0.1}px)`;
+                });
+                
+                // Widget visibility and parallax
+                const widgets = document.querySelectorAll('.widget');
+                widgets.forEach(widget => {
+                    const rect = widget.getBoundingClientRect();
+                    const isVisible = rect.top < window.innerHeight * 0.8;
+                    
+                    if (isVisible) {
+                        widget.classList.add('visible');
+                    }
+                    
+                    // Parallax effect for widgets
+                    const parallaxSpeed = 0.1;
+                    const yOffset = (window.innerHeight - rect.top) * parallaxSpeed;
+                    widget.style.transform = `translateY(${yOffset}px) rotateX(${isVisible ? 0 : 15}deg)`;
+                });
             });
         }
         

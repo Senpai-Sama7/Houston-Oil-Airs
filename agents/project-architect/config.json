@@ -1,0 +1,16 @@
+{
+  "agent_name": "ProjectArchitect",
+  "version": "1.0.0",
+  "description": "Analyzes a project's directory structure to identify the technology stack, infer its purpose, and pinpoint critical files for review.",
+  "author": "Douglas Mitchell",
+  "parameters": {
+    "required": [
+      {
+        "name": "project_root_path",
+        "type": "string",
+        "description": "The absolute path to the project's root directory."
+      }
+    ]
+  },
+  "output_format": "json"
+}

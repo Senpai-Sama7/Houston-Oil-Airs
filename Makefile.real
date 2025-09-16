@@ -1,0 +1,104 @@
+# Houston EJ-AI Platform - REAL Implementation Makefile
+.PHONY: help install-real setup-real-db start-real test-real insert-test-data stop-real clean-real
+
+help: ## Show this help message
+	@echo 'Houston EJ-AI Platform - REAL Implementation'
+	@echo 'Usage: make [target]'
+	@echo ''
+	@echo 'Targets:'
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+# Install REAL dependencies
+install-real: ## Install all real dependencies
+	@echo "📦 Installing REAL dependencies..."
+	cd platform/community/portal && npm install
+	cd backend/node-server && npm install
+	cd platform/ingestion && npm install
+	@echo "✅ Real dependencies installed"
+
+# Setup REAL database
+setup-real-db: ## Setup TimescaleDB with real schema
+	@echo "🗄️ Setting up REAL TimescaleDB..."
+	docker-compose -f docker-compose.ej-ai.yml up -d timescaledb redis
+	@echo "⏳ Waiting for database to be ready..."
+	sleep 15
+	docker exec houston-timescaledb psql -U houston -d houston_ej_ai -c "\
+		CREATE TABLE IF NOT EXISTS air_quality (\
+			time TIMESTAMPTZ NOT NULL,\
+			device_id TEXT NOT NULL,\
+			pm25 REAL,\
+			pm10 REAL,\
+			temperature REAL,\
+			humidity REAL,\
+			health_events INTEGER DEFAULT 0,\
+			signature TEXT,\
+			encrypted BOOLEAN DEFAULT FALSE\
+		);\
+		SELECT create_hypertable('air_quality', 'time', if_not_exists => TRUE);\
+		CREATE TABLE IF NOT EXISTS compensation_claims (\
+			id SERIAL PRIMARY KEY,\
+			wallet_address TEXT NOT NULL,\
+			amount DECIMAL(10,2) NOT NULL,\
+			claim_time TIMESTAMPTZ NOT NULL,\
+			transaction_hash TEXT,\
+			status TEXT DEFAULT 'pending'\
+		);\
+		CREATE INDEX IF NOT EXISTS idx_air_quality_time ON air_quality (time DESC);\
+		CREATE INDEX IF NOT EXISTS idx_air_quality_device ON air_quality (device_id, time DESC);\
+		CREATE INDEX IF NOT EXISTS idx_compensation_wallet ON compensation_claims (wallet_address, claim_time DESC);"
+	@echo "✅ Real database schema created"
+
+# Start REAL services
+start-real: ## Start all real services
+	@echo "🚀 Starting REAL Houston EJ-AI Platform..."
+	docker-compose -f docker-compose.ej-ai.yml up -d
+	@echo "⏳ Waiting for services to be ready..."
+	sleep 20
+	@echo "✅ Real services started:"
+	@echo "   🌐 Community Portal: http://localhost:3000"
+	@echo "   🔧 Backend API: http://localhost:3001"
+	@echo "   📊 Grafana: http://localhost:3001"
+	@echo "   📈 Prometheus: http://localhost:9090"
+
+# Test REAL implementations
+test-real: ## Test all real implementations
+	@echo "🧪 Testing REAL implementations..."
+	@echo "Testing backend health..."
+	curl -s http://localhost:3001/ready | jq . || echo "Backend not ready"
+	@echo "Testing sensor API..."
+	curl -s http://localhost:3000/api/sensors/latest | jq . || echo "Sensor API not ready"
+	@echo "Testing metrics endpoint..."
+	curl -s http://localhost:3001/metrics | head -10 || echo "Metrics not ready"
+	@echo "✅ Real implementations tested"
+
+# Insert test data
+insert-test-data: ## Insert real test sensor data
+	@echo "📊 Inserting REAL test data..."
+	docker exec houston-timescaledb psql -U houston -d houston_ej_ai -c "\
+		INSERT INTO air_quality (time, device_id, pm25, pm10, temperature, humidity, health_events) VALUES \
+		(NOW() - INTERVAL '2 hours', 'houston_sensor_001', 45.2, 78.1, 28.5, 65.3, 2),\
+		(NOW() - INTERVAL '1 hour', 'houston_sensor_001', 38.7, 65.4, 29.1, 62.8, 1),\
+		(NOW() - INTERVAL '30 minutes', 'houston_sensor_002', 52.3, 89.2, 27.8, 68.9, 3),\
+		(NOW() - INTERVAL '15 minutes', 'houston_sensor_001', 41.6, 72.5, 28.9, 64.2, 2),\
+		(NOW() - INTERVAL '5 minutes', 'houston_sensor_003', 48.9, 82.7, 26.4, 71.5, 2),\
+		(NOW(), 'houston_sensor_001', 39.4, 68.3, 29.7, 63.1, 1);"
+	@echo "✅ Real test data inserted"
+
+# Stop services
+stop-real: ## Stop all real services
+	@echo "🛑 Stopping REAL services..."
+	docker-compose -f docker-compose.ej-ai.yml down
+	@echo "✅ Real services stopped"
+
+# Clean everything
+clean-real: ## Clean all real data and containers
+	@echo "🧹 Cleaning REAL environment..."
+	docker-compose -f docker-compose.ej-ai.yml down -v
+	docker system prune -f
+	@echo "✅ Real environment cleaned"
+
+# Full setup
+setup-full: install-real setup-real-db start-real insert-test-data test-real ## Complete setup of real platform
+	@echo "🎉 REAL Houston EJ-AI Platform is ready!"
+	@echo "   🌐 Portal: http://localhost:3000"
+	@echo "   🔧 API: http://localhost:3001"

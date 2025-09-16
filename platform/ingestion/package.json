@@ -1,0 +1,17 @@
+{
+  "name": "houston-ej-ai-ingestion",
+  "version": "2.0.0",
+  "description": "Data ingestion pipeline for Houston EJ-AI platform",
+  "main": "mqtt-kafka-bridge.js",
+  "scripts": {
+    "start": "node mqtt-kafka-bridge.js",
+    "dev": "nodemon mqtt-kafka-bridge.js"
+  },
+  "dependencies": {
+    "mqtt": "^4.3.7",
+    "kafkajs": "^2.2.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

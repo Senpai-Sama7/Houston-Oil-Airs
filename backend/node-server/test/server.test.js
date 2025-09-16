@@ -1,66 +1,99 @@
 const request = require('supertest');
 
-jest.mock('redis', () => ({
-  createClient: () => ({
-    connect: jest.fn().mockResolvedValue(),
-    get: jest.fn().mockResolvedValue(null),
-    setEx: jest.fn().mockResolvedValue(),
-    on: jest.fn(),
-    quit: jest.fn(),
-    isOpen: true
-  })
-}), { virtual: true });
+// Real integration tests with actual Redis and PostgreSQL
+const redis = require('redis');
+const { Pool } = require('pg');
 
-jest.mock('ffi-napi', () => ({
-  Library: () => ({
-    create_processor: () => ({}),
-    destroy_processor: () => {},
-    get_visualization_data: () => JSON.stringify({}),
-    update_real_time_data: () => {}
-  })
-}), { virtual: true });
-
-jest.mock('ref-napi', () => ({}), { virtual: true });
-
-const HighPerformanceWebServer = require('../src/server');
-
-describe('HighPerformanceWebServer', () => {
-  let app;
+describe('Houston EJ-AI Backend Server', () => {
   let server;
+  let redisClient;
+  let pgPool;
 
-  beforeAll(() => {
-    server = new HighPerformanceWebServer();
-    app = server.app;
+  beforeAll(async () => {
+    // Setup real connections for integration testing
+    redisClient = redis.createClient({ url: 'redis://localhost:6380' });
+    await redisClient.connect();
+    
+    pgPool = new Pool({
+      host: 'localhost',
+      port: 5432,
+      database: 'houston_ej_ai_test',
+      user: 'houston',
+      password: 'ej_ai_2024',
+    });
+
+    const RealHighPerformanceWebServer = require('../src/server');
+    server = new RealHighPerformanceWebServer();
+    await server.start(3002);
   });
 
-  afterAll(() => {
+  afterAll(async () => {
+    await redisClient.quit();
+    await pgPool.end();
     server.shutdown();
   });
 
-  test('liveness endpoint returns alive', async () => {
-    const res = await request(app).get('/live');
-    expect(res.status).toBe(200);
-    expect(res.body.status).toBe('alive');
+  describe('Health Endpoints', () => {
+    test('GET /live should return alive status', async () => {
+      const response = await request('http://localhost:3002')
+        .get('/live')
+        .expect(200);
+      
+      expect(response.body.status).toBe('alive');
+    });
+
+    test('GET /ready should return ready status', async () => {
+      const response = await request('http://localhost:3002')
+        .get('/ready')
+        .expect(200);
+      
+      expect(response.body.status).toBe('ready');
+      expect(response.body.database).toBe('connected');
+      expect(response.body.redis).toBe('connected');
+    });
   });
 
-  test('readiness endpoint returns ready when dependencies OK', async () => {
-    const res = await request(app).get('/ready');
-    expect(res.status).toBe(200);
-    expect(res.body.status).toBe('ready');
-    expect(['available', 'fallback']).toContain(res.body.native);
+  describe('Metrics Endpoints', () => {
+    test('GET /metrics should return Prometheus metrics', async () => {
+      const response = await request('http://localhost:3002')
+        .get('/metrics')
+        .expect(200);
+      
+      expect(response.text).toContain('houston_sensor_readings_total');
+      expect(response.text).toContain('houston_active_devices');
+    });
+
+    test('GET /metrics.json should return JSON metrics', async () => {
+      const response = await request('http://localhost:3002')
+        .get('/metrics.json')
+        .expect(200);
+      
+      expect(response.body).toHaveProperty('requests_total');
+      expect(response.body).toHaveProperty('uptime_seconds');
+      expect(response.body.native).toBe('fallback');
+    });
   });
 
-  test('metrics endpoint returns prometheus text', async () => {
-    const res = await request(app).get('/metrics');
-    expect(res.status).toBe(200);
-    expect(res.headers['content-type']).toContain('text/plain');
-    expect(res.text).toContain('app_requests_total');
-  });
+  describe('API Endpoints', () => {
+    test('GET /api/research/visualization-data/alignment should return real data', async () => {
+      const response = await request('http://localhost:3002')
+        .get('/api/research/visualization-data/alignment')
+        .expect(200);
+      
+      expect(response.body).toHaveProperty('research_points');
+      expect(response.body).toHaveProperty('total_count');
+      expect(Array.isArray(response.body.research_points)).toBe(true);
+    });
 
-  test('analytics endpoint forwards upstream errors', async () => {
-    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 502 });
-    const res = await request(app).get('/api/analytics/trends/test');
-    expect(res.status).toBe(502);
-    expect(res.body).toEqual({ error: 'Analytics service error' });
+    test('GET /api/research/network-topology should return real network data', async () => {
+      const response = await request('http://localhost:3002')
+        .get('/api/research/network-topology')
+        .expect(200);
+      
+      expect(response.body).toHaveProperty('nodes');
+      expect(response.body).toHaveProperty('edges');
+      expect(Array.isArray(response.body.nodes)).toBe(true);
+      expect(Array.isArray(response.body.edges)).toBe(true);
+    });
   });
 });

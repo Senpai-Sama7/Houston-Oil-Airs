@@ -1,0 +1,141 @@
+# Houston EJ-AI Platform Docker Compose
+version: '3.8'
+
+services:
+  # MQTT Broker
+  mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: houston-mqtt
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./platform/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    restart: unless-stopped
+
+  # Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: houston-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: houston-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # TimescaleDB
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    container_name: houston-timescaledb
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: houston_ej_ai
+      POSTGRES_USER: houston
+      POSTGRES_PASSWORD: ej_ai_2024
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+      - ./platform/config/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: houston-redis
+    ports:
+      - "6380:6379"
+    restart: unless-stopped
+
+  # Data Ingestion Service
+  ingestion:
+    build:
+      context: ./platform/ingestion
+      dockerfile: Dockerfile
+    container_name: houston-ingestion
+    depends_on:
+      - mosquitto
+      - kafka
+      - timescaledb
+    environment:
+      MQTT_URL: mqtt://mosquitto:1883
+      KAFKA_BROKERS: kafka:9092
+      DB_HOST: timescaledb
+      DB_PORT: 5432
+      DB_NAME: houston_ej_ai
+      DB_USER: houston
+      DB_PASSWORD: ej_ai_2024
+    restart: unless-stopped
+
+  # Real Backend Server
+  backend:
+    build:
+      context: ./backend/node-server
+      dockerfile: Dockerfile
+    container_name: houston-backend
+    ports:
+      - "3001:3001"
+    depends_on:
+      - timescaledb
+      - redis
+    environment:
+      DB_HOST: timescaledb
+      DB_PORT: 5432
+      DB_NAME: houston_ej_ai
+      DB_USER: houston
+      DB_PASSWORD: ej_ai_2024
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PORT: 3001
+    restart: unless-stopped
+
+  # Real Community Portal
+  portal:
+    build:
+      context: ./platform/community/portal
+      dockerfile: Dockerfile
+    container_name: houston-portal
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+      - timescaledb
+    environment:
+      DB_HOST: timescaledb
+      DB_PORT: 5432
+      DB_NAME: houston_ej_ai
+      DB_USER: houston
+      DB_PASSWORD: ej_ai_2024
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+    restart: unless-stopped
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: houston-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./platform/config/grafana:/etc/grafana/provisioning
+    depends_on:
+      - timescaledb
+
+volumes:
+  timescale_data:
+  grafana_data:
+
+networks:
+  default:
+    name: houston-ej-ai
