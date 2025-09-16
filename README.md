@@ -18,8 +18,8 @@
 
 ## 📚 **Houston Intelligence Documentation**
 
-### 🗺️ **Re-Drawing Houston Playbook**
-[**View Document**](docs/Re-Drawing_Houston.txt)
+### 🚀 **AI-Powered Environmental Justice Playbook**
+[**View Document**](docs/AI-Powered-Environmental-Justice-Playbook.md)
 
 A comprehensive advocacy and repair playbook that combines environmental justice with advanced AI visualization. This field-tested guide provides:
 
@@ -29,10 +29,10 @@ A comprehensive advocacy and repair playbook that combines environmental justice
 - **Policy Change Pathways** - City, county, state, and federal intervention strategies
 - **Repair & Compensation Toolkit** - Health, property, and financial remediation frameworks
 
-### 🔍 **Houston Intelligence Analysis**
-[**View Document**](docs/Taco-Truck_Can_Save_Houston.txt)
+### 🧠 **Houston Urban Intelligence Analysis**
+[**View Document**](docs/Houston-Urban-Intelligence-Analysis.md)
 
-A full-spectrum, graph-aware intelligence dossier providing forensic analysis of Houston's urban systems:
+A comprehensive, graph-aware intelligence dossier providing forensic analysis of Houston's urban systems:
 
 - **Network Graph Model** - 15.4M nodes, 71.8M edges mapping the city's social and physical infrastructure
 - **Psychological Profiling** - Multi-persona analysis of Houston's collective identity and trauma responses
