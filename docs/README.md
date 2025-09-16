@@ -1,6 +1,6 @@
 # Houston Oil Airs Documentation
 
-Welcome to the Houston Oil Airs documentation hub. This directory contains comprehensive guides and references for deploying, developing, and maintaining the platform.
+Welcome to the Houston Oil Airs documentation hub. This directory contains comprehensive guides and references for deploying, developing, and maintaining the AI research platform and Houston urban intelligence system.
 
 ## 📚 Documentation Index
 
@@ -8,6 +8,12 @@ Welcome to the Houston Oil Airs documentation hub. This directory contains compr
 - [**README.md**](../README.md) - Project overview and quick start
 - [**FAQ.md**](../FAQ.md) - Frequently asked questions
 - [**DEPLOYMENT.md**](../DEPLOYMENT.md) - Complete deployment guide
+
+### Houston Intelligence
+- [**Re-Drawing Houston Playbook**](Re-Drawing_Houston.txt) - Environmental justice advocacy guide
+- [**Houston Intelligence Analysis**](Taco-Truck_Can_Save_Houston.txt) - Full-spectrum urban systems analysis
+- [**Research Ethics Framework**](RESEARCH_ETHICS_FRAMEWORK.md) - Ethical guidelines for urban intelligence
+- [**Strategic Plan**](STRATEGIC_PLAN.md) - Long-term vision and roadmap
 
 ### Development
 - [**CONTRIBUTING.md**](../CONTRIBUTING.md) - Contribution guidelines
@@ -47,17 +53,25 @@ Welcome to the Houston Oil Airs documentation hub. This directory contains compr
 
 ```
 Houston Oil Airs Platform
-├── Frontend (React/Vite)
-│   ├── 3D Visualization Engine
+├── Frontend (React/Vite + Glassmorphism UI)
+│   ├── 3D Visualization Engine (WebGL/Three.js)
 │   ├── Real-time Analytics Dashboard
-│   └── Interactive Network Analysis
+│   ├── Interactive Network Analysis
+│   ├── Houston Urban Intelligence Interface
+│   └── Parallax Scroll Effects & Animations
 ├── Backend Services
 │   ├── Node.js API Server
 │   ├── Java Microservices
 │   └── C++ Processing Engine
+├── Houston Intelligence Layer
+│   ├── Environmental Sensor Network (487 monitors)
+│   ├── Network Graph Analysis (15.4M nodes, 71.8M edges)
+│   ├── Community Trust Metrics
+│   └── Policy Impact Analysis
 ├── Data Layer
 │   ├── PostgreSQL Database
-│   └── Redis Cache
+│   ├── Redis Cache
+│   └── Environmental Data Streams
 └── Infrastructure
     ├── Kubernetes Orchestration
     ├── Helm Package Management

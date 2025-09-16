@@ -2,7 +2,7 @@
   <img src="frontend/IMAGE.jpeg" alt="Houston Oil Airs" width="300"/>
 </p>
 
-# 🌟 Houston Oil Airs - Advanced AI Research Platform
+# 🌟 Houston Oil Airs - Advanced AI Research Platform & Urban Intelligence
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](docker/)
@@ -10,8 +10,35 @@
 [![Helm](https://img.shields.io/badge/Helm-v3-blue.svg)](helm/houston-oil-airs/)
 
 > **Created by**: Douglas D. Mitchell
-> **Vision**: Advancing responsible AI through cutting-edge research visualization  
+> **Vision**: Advancing responsible AI through cutting-edge research visualization and community-centered urban intelligence  
 > **Enterprise Ready**: Production-grade deployment with Kubernetes, monitoring, and security
+> **Real-World Impact**: Environmental justice and urban planning through data-driven solutions
+
+---
+
+## 📚 **Houston Intelligence Documentation**
+
+### 🗺️ **Re-Drawing Houston Playbook**
+[**View Document**](docs/Re-Drawing_Houston.txt)
+
+A comprehensive advocacy and repair playbook that combines environmental justice with advanced AI visualization. This field-tested guide provides:
+
+- **Co-design Principles** - Community-controlled data sovereignty and dual-key encryption
+- **Community Nervous System** - Hardware/software/trust infrastructure for environmental monitoring
+- **Advanced Visualization Layer** - 3D Houston Human-Health Graph with real-time sensor feeds
+- **Policy Change Pathways** - City, county, state, and federal intervention strategies
+- **Repair & Compensation Toolkit** - Health, property, and financial remediation frameworks
+
+### 🔍 **Houston Intelligence Analysis**
+[**View Document**](docs/Taco-Truck_Can_Save_Houston.txt)
+
+A full-spectrum, graph-aware intelligence dossier providing forensic analysis of Houston's urban systems:
+
+- **Network Graph Model** - 15.4M nodes, 71.8M edges mapping the city's social and physical infrastructure
+- **Psychological Profiling** - Multi-persona analysis of Houston's collective identity and trauma responses
+- **Cross-Layer Findings** - Connections between demographics, economics, health, and environmental justice
+- **Red-Team Scenarios** - Security analysis and creative exploitation potential
+- **Policy Interventions** - Data-driven recommendations for systemic change
 
 ---
 
@@ -36,12 +63,22 @@ make dev-setup
 
 ## ✨ **Features**
 
-- 🎨 **Immersive 3D Visualizations** - WebGL-powered research data exploration
+### 🔬 **AI Research Platform**
+- 🎨 **Immersive 3D Visualizations** - WebGL-powered research data exploration with glassmorphism UI
 - 🔄 **Real-time Analytics** - Live AI research metrics and collaboration networks
 - 🌐 **Interactive Network Analysis** - Dynamic research collaboration mapping
 - ⚡ **High Performance** - Native C++, Java, and Node.js backend architecture
+- 📱 **Responsive Design** - Parallax scroll effects and modern glassmorphism aesthetics
+
+### 🏙️ **Houston Urban Intelligence**
+- 🌍 **Environmental Justice** - 15.4M network nodes analyzing pollution exposure and community resilience
+- 📊 **Community Sensors** - 487 air quality monitors providing real-time PM₂.₅ and ozone data
+- 🔗 **Policy Impact Analysis** - 71.8M relationship edges connecting demographics, health, and governance
+- 🤝 **Community Trust Metrics** - Network modularity analysis for social cohesion measurement
+- 📋 **Advocacy Playbook** - Comprehensive guide for environmental justice and community organizing
+
+### 🛡️ **Enterprise & Security**
 - 🔒 **Enterprise Security** - Advanced authentication, RBAC, and network policies
-- 📱 **Responsive Design** - Optimized for all devices and screen sizes
 - 📈 **Production Monitoring** - Prometheus metrics, Grafana dashboards, alerting
 - 🧠 **Architecture Graph** - Auto-generated, queryable project graph with HTML viewer
 - ☸️ **Cloud Native** - Kubernetes-ready with Helm charts and Kustomize overlays
