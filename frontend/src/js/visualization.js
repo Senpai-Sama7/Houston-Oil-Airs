@@ -1,5 +1,5 @@
 /**
- * REAL Visualization Engine for Houston Oil Airs - NO MORE FAKE DATA
+ * PRODUCTION Visualization Engine for Houston Oil Airs
  * Connects to actual sensor data and real-time streams
  */
 import * as THREE from 'three';
@@ -157,7 +157,7 @@ class RealParticleSystem {
             this.object3D.geometry = this.geometry;
         }
 
-        console.log(`Loaded ${count} real data points for visualization`);
+        console.log(`Loaded ${count} production data points for visualization`);
         return true;
     }
 

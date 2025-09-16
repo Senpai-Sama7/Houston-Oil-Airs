@@ -1,4 +1,4 @@
-// REAL blockchain compensation API - NO MORE FAKE TRANSACTIONS
+// PRODUCTION blockchain compensation API - Enterprise-grade implementation
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { ethers } from 'ethers';
 import { Pool } from 'pg';

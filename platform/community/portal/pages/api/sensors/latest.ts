@@ -1,8 +1,10 @@
-// REAL API endpoint for latest sensor data - NO MORE FAKE DATA
+// PRODUCTION API endpoint for latest sensor data - Enterprise-grade implementation
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 import fs from 'fs';
 import path from 'path';
+import { SensorData } from '../../../types';
+import { handleApiError, logError, createErrorResponse } from '../../../utils/errorHandler';
 
 interface SensorData {
   pm25: number;
@@ -27,27 +29,28 @@ const pool = new Pool({
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<SensorData | { error: string }>
+  res: NextApiResponse<SensorData | { success: false; error: string; code?: string; timestamp: number }>
 ) {
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ success: false, error: 'Method not allowed', timestamp: Date.now() });
   }
 
   try {
-    // Try to get real data from TimescaleDB first
+    // Production database query with comprehensive error handling
     const dbResult = await pool.query(`
       SELECT 
         pm25, pm10, temperature, humidity, health_events, 
         EXTRACT(EPOCH FROM time) * 1000 as timestamp,
         device_id, signature, encrypted
       FROM air_quality 
+      WHERE time >= NOW() - INTERVAL '1 hour'
       ORDER BY time DESC 
       LIMIT 1
     `);
 
     if (dbResult.rows.length > 0) {
       const row = dbResult.rows[0];
-      return res.status(200).json({
+      const sensorData: SensorData = {
         pm25: parseFloat(row.pm25) || 0,
         pm10: parseFloat(row.pm10) || 0,
         temperature: parseFloat(row.temperature) || 0,
@@ -57,10 +60,12 @@ export default async function handler(
         device_id: row.device_id || 'houston_sensor_001',
         signature: row.signature,
         encrypted: row.encrypted || false
-      });
+      };
+      
+      return res.status(200).json(sensorData);
     }
 
-    // Fallback to CSV file (legacy support)
+    // Fallback to CSV file (legacy support) with proper error handling
     const csvPath = path.join(process.cwd(), 'data', 'air_quality_data.csv');
     
     if (fs.existsSync(csvPath)) {
@@ -70,7 +75,7 @@ export default async function handler(
         const lastLine = lines[lines.length - 1];
         const [timestamp, pm25, pm10, temperature, humidity, device_id, health_events] = lastLine.split(',');
         
-        return res.status(200).json({
+        const sensorData: SensorData = {
           pm25: parseFloat(pm25) || 0,
           pm10: parseFloat(pm10) || 0,
           temperature: parseFloat(temperature) || 0,
@@ -78,15 +83,24 @@ export default async function handler(
           health_events: parseInt(health_events) || 0,
           timestamp: parseInt(timestamp) || Date.now(),
           device_id: device_id || 'houston_sensor_001'
-        });
+        };
+        
+        return res.status(200).json(sensorData);
       }
     }
 
-    // No data available
-    return res.status(404).json({ error: 'No sensor data available' });
+    // No data available - return 404
+    return res.status(404).json({ 
+      success: false, 
+      error: 'No sensor data available', 
+      code: 'NO_DATA',
+      timestamp: Date.now() 
+    });
 
   } catch (error) {
-    console.error('Database error:', error);
-    return res.status(500).json({ error: 'Database connection failed' });
+    const apiError = handleApiError(error);
+    logError(apiError, { endpoint: '/api/sensors/latest', method: req.method });
+    
+    return res.status(apiError.statusCode).json(createErrorResponse(apiError));
   }
 }

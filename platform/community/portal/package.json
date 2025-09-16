@@ -6,7 +6,10 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "production": "NODE_ENV=production npm run build && npm start"
   },
   "dependencies": {
     "next": "^14.0.0",

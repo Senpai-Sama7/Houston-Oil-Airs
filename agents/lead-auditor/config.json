@@ -1,0 +1,16 @@
+{
+  "agent_name": "LeadAuditor",
+  "version": "1.0.0",
+  "description": "Synthesizes multiple Code Inspector reports into a single, high-level project verdict, providing a viability score and a recommended next action.",
+  "author": "Douglas Mitchell",
+  "parameters": {
+    "required": [
+      {
+        "name": "inspection_reports",
+        "type": "json_string",
+        "description": "A JSON string containing an array of reports from the CodeInspector agent."
+      }
+    ]
+  },
+  "output_format": "json"
+}

@@ -1,4 +1,4 @@
-// REAL high-performance server - NO MORE FAKE FFI OR SIMULATED DATA
+// PRODUCTION high-performance server - Enterprise-grade implementation
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
