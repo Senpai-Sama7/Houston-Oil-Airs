@@ -76,6 +76,48 @@ services:
       DB_PASSWORD: ej_ai_2024
     restart: unless-stopped
 
+  # Real Backend Server
+  backend:
+    build:
+      context: ./backend/node-server
+      dockerfile: Dockerfile
+    container_name: houston-backend
+    ports:
+      - "3001:3001"
+    depends_on:
+      - timescaledb
+      - redis
+    environment:
+      DB_HOST: timescaledb
+      DB_PORT: 5432
+      DB_NAME: houston_ej_ai
+      DB_USER: houston
+      DB_PASSWORD: ej_ai_2024
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      PORT: 3001
+    restart: unless-stopped
+
+  # Real Community Portal
+  portal:
+    build:
+      context: ./platform/community/portal
+      dockerfile: Dockerfile
+    container_name: houston-portal
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+      - timescaledb
+    environment:
+      DB_HOST: timescaledb
+      DB_PORT: 5432
+      DB_NAME: houston_ej_ai
+      DB_USER: houston
+      DB_PASSWORD: ej_ai_2024
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+    restart: unless-stopped
+
   # Grafana
   grafana:
     image: grafana/grafana:10.0.0
