@@ -8,8 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        
-        function initScrollAnimations() {:root {
+        :root {
             --bg-light: #f4f7f9;
             --bg-card: #ffffff;
             --text-primary: #1d2129;
@@ -1387,6 +1386,7 @@
             });
         }
         
+        function initScrollAnimations() {
             gsap.registerPlugin(ScrollTrigger);
             gsap.utils.toArray('.widget').forEach(widget => {
                 gsap.fromTo(widget, 
