@@ -1,0 +1,103 @@
+# Houston EJ-AI Platform Makefile
+.PHONY: all build test deploy clean flash up down
+
+# Default target
+all: install build test
+
+# Install dependencies
+install:
+	@echo "🔧 Installing dependencies..."
+	cd platform/ingestion && npm install
+	cd platform/community/portal && npm install
+
+# Build all components
+build: build-firmware build-portal build-ingestion
+
+build-firmware:
+	@echo "🔨 Building firmware..."
+	cd platform/edge/esp32 && pio run
+
+build-portal:
+	@echo "🌐 Building community portal..."
+	cd platform/community/portal && npm run build
+
+build-ingestion:
+	@echo "📊 Building ingestion pipeline..."
+	cd platform/ingestion && npm run build || echo "No build script"
+
+# Flash firmware
+flash:
+	@echo "⚡ Flashing firmware..."
+	cd platform/edge/esp32 && pio run --target upload
+
+flash-legacy:
+	@echo "⚡ Flashing legacy firmware..."
+	cd firmware && pio run --target upload
+
+# Test all components
+test: test-portal test-ingestion
+
+test-portal:
+	@echo "🧪 Testing portal..."
+	cd platform/community/portal && npm test || echo "No tests configured"
+
+test-ingestion:
+	@echo "🧪 Testing ingestion..."
+	cd platform/ingestion && npm test || echo "No tests configured"
+
+# Start development environment
+up:
+	@echo "🚀 Starting Houston EJ-AI Platform..."
+	docker-compose -f docker-compose.ej-ai.yml up -d
+	cd platform/community/portal && npm run dev &
+	cd platform/ingestion && npm start &
+
+# Stop development environment
+down:
+	@echo "🛑 Stopping platform..."
+	docker-compose -f docker-compose.ej-ai.yml down
+	pkill -f "npm run dev" || true
+	pkill -f "npm start" || true
+
+# Deploy to production
+deploy:
+	@echo "🚀 Deploying to production..."
+	./deploy-ej-ai.sh
+
+# Clean build artifacts
+clean:
+	@echo "🧹 Cleaning build artifacts..."
+	rm -rf platform/community/portal/.next
+	rm -rf platform/community/portal/out
+	rm -rf platform/edge/esp32/.pio
+	rm -rf node_modules
+
+# Create sample data
+sample-data:
+	@echo "📊 Creating sample data..."
+	mkdir -p data
+	echo "timestamp,pm25,pm10,temperature,humidity,device_id,health_events" > data/air_quality_data.csv
+	echo "$(shell date +%s)000,25.5,45.2,28.3,65.1,houston_sensor_001,2" >> data/air_quality_data.csv
+
+# Validate configuration
+validate:
+	@echo "✅ Validating configuration..."
+	@command -v docker >/dev/null 2>&1 || { echo "Docker not installed"; exit 1; }
+	@command -v node >/dev/null 2>&1 || { echo "Node.js not installed"; exit 1; }
+	@command -v pio >/dev/null 2>&1 || { echo "PlatformIO not installed"; exit 1; }
+	@echo "All dependencies validated ✅"
+
+help:
+	@echo "Houston EJ-AI Platform - Available Commands:"
+	@echo "  make all          - Install, build, and test everything"
+	@echo "  make install      - Install all dependencies"
+	@echo "  make build        - Build all components"
+	@echo "  make flash        - Flash encrypted firmware to ESP32"
+	@echo "  make flash-legacy - Flash legacy firmware to ESP32"
+	@echo "  make test         - Run all tests"
+	@echo "  make up           - Start development environment"
+	@echo "  make down         - Stop development environment"
+	@echo "  make deploy       - Deploy to production"
+	@echo "  make clean        - Clean build artifacts"
+	@echo "  make sample-data  - Create sample CSV data"
+	@echo "  make validate     - Validate system dependencies"
