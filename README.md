@@ -53,6 +53,9 @@ make deploy ENV=production
 
 # Set up local development
 make dev-setup
+
+# Start EJ-AI platform services
+docker-compose -f docker-compose.ej-ai.yml up -d
 ```
 
 **Live Demo**: [https://houstonoilairs.org](https://senpai-sama7.github.io/Houston-Oil-Airs/)
@@ -71,10 +74,10 @@ make dev-setup
 - 📱 **Responsive Design** - Parallax scroll effects and modern glassmorphism aesthetics
 
 ### 🏙️ **Houston Urban Intelligence**
-- 🌍 **Environmental Justice** - 15.4M network nodes analyzing pollution exposure and community resilience
-- 📊 **Community Sensors** - 487 air quality monitors providing real-time PM₂.₅ and ozone data
-- 🔗 **Policy Impact Analysis** - 71.8M relationship edges connecting demographics, health, and governance
-- 🤝 **Community Trust Metrics** - Network modularity analysis for social cohesion measurement
+- 🌍 **AI-Powered Environmental Justice** - 15.4M network nodes analyzing pollution exposure and community resilience
+- 📊 **Real-Time Data Visualization** - 487 air quality monitors providing live PM₂.₅ and ozone data
+- 🔗 **Graph-Based Policy Analysis** - 71.8M relationship edges connecting demographics, health, and governance
+- 🤝 **Community-Centered AI** - Network modularity analysis for social cohesion measurement
 - 📋 **Advocacy Playbook** - Comprehensive guide for environmental justice and community organizing
 
 ### 🛡️ **Enterprise & Security**
@@ -251,20 +254,30 @@ make test  # Runs all test suites
 
 ```
 Houston-Oil-Airs/
-├── helm/houston-oil-airs/          # Helm chart for Kubernetes deployment
-├── kustomize/                      # Environment-specific configurations
-├── terraform/                     # Infrastructure as Code
-│   └── modules/                   # Reusable Terraform modules
-├── frontend/                      # React/Vite frontend application
+├── .github/workflows/             # GitHub Actions CI/CD
+├── agents/                        # AI audit and validation agents
 ├── backend/                       # Multi-service backend
 │   ├── node-server/              # Node.js API server
 │   ├── java-services/            # Java microservices
 │   └── cpp-engine/               # C++ processing engine
-├── deployment/                    # Legacy YAML configurations
-├── tools/project-graph/          # Architecture analysis tools
-├── deploy.sh                     # Unified deployment script
-├── Makefile                      # Development workflow automation
-└── docs/                         # Documentation and graphs
+├── data/                         # Sample data and datasets
+├── database/                     # Database schemas and migrations
+├── docker/                       # Docker configurations
+├── docs/                         # Houston Intelligence documentation
+├── firmware/                     # IoT sensor firmware
+├── frontend/                     # Vite.js frontend application
+├── helm/houston-oil-airs/        # Helm chart for Kubernetes deployment
+├── kustomize/                    # Environment-specific configurations
+├── platform/                     # EJ-AI platform components
+│   ├── community/portal/         # Next.js community portal
+│   ├── edge/esp32/              # ESP32 sensor firmware
+│   └── ingestion/               # MQTT-Kafka data pipeline
+├── terraform/                    # Infrastructure as Code
+│   └── modules/                 # Reusable Terraform modules
+├── tools/                       # Development and analysis tools
+├── deploy.sh                    # Unified deployment script
+├── Makefile                     # Development workflow automation
+└── index.html                   # Main website
 ```
 
 ---
@@ -287,6 +300,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 - [Enterprise Implementation Summary](ENTERPRISE_IMPLEMENTATION_SUMMARY.md)
 - [Refactoring Summary](REFACTORING_SUMMARY.md)
+- [EJ-AI Platform README](README-EJ-AI.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Contributing Guidelines](CONTRIBUTING.md)
 - [License](LICENSE)
