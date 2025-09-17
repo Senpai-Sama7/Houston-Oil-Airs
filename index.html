@@ -1,470 +1,821 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Houston Oil Airs – Advanced AI Research Platform</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<title>Houston Oil Airs – Advanced AI Research Platform</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    
+<!-- fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-    <!-- fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- three + chart + gsap -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
 
-    <!-- three + chart + gsap -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
+<style>
+/* --------------  ORIGINAL CSS (FULL)  -------------- */
+:root {
+    --clay-primary: #d7ccc8;
+    --clay-secondary: #bcaaa4;
+    --clay-dark: #8d6e63;
+    --clay-darker: #5d4037;
+    --clay-accent: #a1887f;
+    --clay-highlight: #efdcd5;
+    --clay-shadow: #9e9e9e;
+    --text-primary: #4e342e;
+    --text-secondary: #795548;
+    --accent-primary: #8d6e63;
+    --accent-secondary: #6d4c41;
+    --border-color: #bcaaa4;
+    --tree-color: #7cb342;
+    --flower-color: #ff6b6b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+    background-color:var(--clay-primary);
+    color:var(--text-primary);
+    font-family:'Space Mono',monospace;
+    overflow-x:hidden;
+    scroll-behavior:smooth;
+    background-image:
+        radial-gradient(circle at 10% 20%,rgba(239,220,213,.3) 0%,transparent 20%),
+        radial-gradient(circle at 90% 80%,rgba(188,170,164,.2) 0%,transparent 20%);
+}
+main{position:relative;z-index:2}
+.section{padding:100px 5vw;width:100%;box-sizing:border-box;position:relative;overflow:hidden;background-color:transparent}
+.section::before{
+    content:'';
+    position:absolute;inset:0;
+    background:
+        radial-gradient(circle at 20% 80%,rgba(141,110,99,.1) 0%,transparent 50%),
+        radial-gradient(circle at 80% 20%,rgba(109,76,65,.1) 0%,transparent 50%),
+        radial-gradient(circle at 40% 40%,rgba(161,136,127,.05) 0%,transparent 50%);
+    animation:float-bg 20s ease-in-out infinite;z-index:-1;
+}
+@keyframes float-bg{0%,100%{transform:translateY(0) rotate(0deg)}33%{transform:translateY(-20px) rotate(1deg)}66%{transform:translateY(10px) rotate(-1deg)}}
 
-    <style>
-    /* --------------  ORIGINAL CSS (FULL)  -------------- */
-    :root {
-        --clay-primary: #d7ccc8;
-        --clay-secondary: #bcaaa4;
-        --clay-dark: #8d6e63;
-        --clay-darker: #5d4037;
-        --clay-accent: #a1887f;
-        --clay-highlight: #efdcd5;
-        --clay-shadow: #9e9e9e;
-        --text-primary: #4e342e;
-        --text-secondary: #795548;
-        --accent-primary: #8d6e63;
-        --accent-secondary: #6d4c41;
-        --border-color: #bcaaa4;
-        --tree-color: #7cb342;
-        --flower-color: #ff6b6b;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-        background-color:var(--clay-primary);
-        color:var(--text-primary);
-        font-family:'Space Mono',monospace;
-        overflow-x:hidden;
-        scroll-behavior:smooth;
-        background-image:
-            radial-gradient(circle at 10% 20%,rgba(239,220,213,.3) 0%,transparent 20%),
-            radial-gradient(circle at 90% 80%,rgba(188,170,164,.2) 0%,transparent 20%);
-    }
-    main{position:relative;z-index:2}
-    .section{padding:100px 5vw;width:100%;box-sizing:border-box;position:relative;overflow:hidden;background-color:transparent}
-    .section::before{
-        content:'';
-        position:absolute;inset:0;
-        background:
-            radial-gradient(circle at 20% 80%,rgba(141,110,99,.1) 0%,transparent 50%),
-            radial-gradient(circle at 80% 20%,rgba(109,76,65,.1) 0%,transparent 50%),
-            radial-gradient(circle at 40% 40%,rgba(161,136,127,.05) 0%,transparent 50%);
-        animation:float-bg 20s ease-in-out infinite;z-index:-1;
-    }
-    @keyframes float-bg{0%,100%{transform:translateY(0) rotate(0deg)}33%{transform:translateY(-20px) rotate(1deg)}66%{transform:translateY(10px) rotate(-1deg)}}
+/* nav - FIXED */
+.nav-menu{
+    position:fixed;top:20px;right:20px;z-index:1000;
+    background:rgba(188,170,164,.8);backdrop-filter:blur(20px);
+    border:1px solid rgba(141,110,99,.3);border-radius:25px;
+    padding:10px 20px;box-shadow:0 8px 32px rgba(93,64,55,.15),inset 0 1px 0 rgba(239,220,213,.5),0 2px 4px rgba(93,64,55,.2);
+    display:flex;gap:20px;font-size:.9rem;animation:float 6s ease-in-out infinite;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.nav-menu a{
+    padding:8px 12px;border-radius:15px;transition:all .3s;
+    background:rgba(239,220,213,.3);
+    box-shadow:inset 0 1px 2px rgba(255,255,255,.5),0 2px 3px rgba(93,64,55,.15);
+    /* FIXED: Added explicit color and text decoration */
+    color:var(--text-primary);
+    text-decoration:none;
+    font-weight:500;
+}
+.nav-menu a:hover{
+    background:var(--accent-primary);
+    color:#fff;
+    text-decoration:none;
+}
 
-    /* nav */
-    .nav-menu{
-        position:fixed;top:20px;right:20px;z-index:1000;
-        background:rgba(188,170,164,.8);backdrop-filter:blur(20px);
-        border:1px solid rgba(141,110,99,.3);border-radius:25px;
-        padding:10px 20px;box-shadow:0 8px 32px rgba(93,64,55,.15),inset 0 1px 0 rgba(239,220,213,.5),0 2px 4px rgba(93,64,55,.2);
-        display:flex;gap:20px;font-size:.9rem;animation:float 6s ease-in-out infinite;
-    }
-    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-    .nav-menu a{padding:8px 12px;border-radius:15px;transition:all .3s;background:rgba(239,220,213,.3);box-shadow:inset 0 1px 2px rgba(255,255,255,.5),0 2px 3px rgba(93,64,55,.15); color: var(--text-primary); text-decoration: none;}
-    .nav-menu a:hover{background:var(--accent-primary);color:#fff}
+/* hero */
+#hero{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+#hero-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1}
+.garden-title{
+    display:flex;font-family:'Space Grotesk',sans-serif;font-size:clamp(2.5rem,8vw,6rem);font-weight:700;position:relative;z-index:2;text-transform:uppercase;color:var(--text-primary);margin-bottom:20px;text-shadow:2px 2px 4px rgba(93,64,55,.2)
+}
+.garden-title span{position:relative;min-width:.5ch}
+.garden-title .space{width:1ch}
+.garden-title span[data-letter]::after{
+    content:'';position:absolute;left:50%;bottom:95%;width:80%;transform:translateX(-50%);height:0;background:var(--tree-color);border-radius:5px 5px 0 0;animation:grow-grass 3s ease-out forwards
+}
+.garden-title span[data-letter]::before{
+    content:'';position:absolute;left:50%;bottom:100%;width:10px;height:10px;transform:translateX(-50%);background:transparent;animation:pop-flowers 3s ease-out forwards
+}
+/* staggered delays kept */
+.garden-title span:nth-child(1)::after,.garden-title span:nth-child(1)::before{animation-delay:.1s}
+.garden-title span:nth-child(2)::after,.garden-title span:nth-child(2)::before{animation-delay:.2s}
+.garden-title span:nth-child(3)::after,.garden-title span:nth-child(3)::before{animation-delay:.3s}
+.garden-title span:nth-child(4)::after,.garden-title span:nth-child(4)::before{animation-delay:.4s}
+.garden-title span:nth-child(5)::after,.garden-title span:nth-child(5)::before{animation-delay:.5s}
+.garden-title span:nth-child(6)::after,.garden-title span:nth-child(6)::before{animation-delay:.6s}
+.garden-title span:nth-child(7)::after,.garden-title span:nth-child(7)::before{animation-delay:.7s}
+.garden-title span:nth-child(9)::after,.garden-title span:nth-child(9)::before{animation-delay:.8s}
+.garden-title span:nth-child(10)::after,.garden-title span:nth-child(10)::before{animation-delay:.9s}
+.garden-title span:nth-child(11)::after,.garden-title span:nth-child(11)::before{animation-delay:1s}
+.garden-title span:nth-child(13)::after,.garden-title span:nth-child(13)::before{animation-delay:1.1s}
+.garden-title span:nth-child(14)::after,.garden-title span:nth-child(14)::before{animation-delay:1.2s}
+.garden-title span:nth-child(15)::after,.garden-title span:nth-child(15)::before{animation-delay:1.3s}
+.garden-title span:nth-child(16)::after,.garden-title span:nth-child(16)::before{animation-delay:1.4s}
+@keyframes grow-grass{0%{height:0}40%,100%{height:15px}}
+@keyframes pop-flowers{0%,30%{box-shadow:none;transform:scale(0)}60%{transform:scale(1);box-shadow:-8px 0 0 0 var(--flower-color)}100%{transform:scale(1);box-shadow:-12px 0 0 0 var(--flower-color),8px -5px 0 0 #7cb342}}
+#hero p{font-size:clamp(1rem,2vw,1.2rem);color:var(--text-secondary);position:relative;z-index:2;max-width:600px;text-shadow:1px 1px 2px rgba(239,220,213,.8)}
+.scroll-down{position:absolute;bottom:30px;z-index:2;font-size:.8rem;color:var(--text-secondary);letter-spacing:1px}
 
-    /* hero */
-    #hero{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
-    #hero-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:1}
-    .garden-title{
-        display:flex;font-family:'Space Grotesk',sans-serif;font-size:clamp(2.5rem,8vw,6rem);font-weight:700;position:relative;z-index:2;text-transform:uppercase;color:var(--text-primary);margin-bottom:20px;text-shadow:2px 2px 4px rgba(93,64,55,.2)
-    }
-    .garden-title span{position:relative;min-width:.5ch}
-    .garden-title .space{width:1ch}
-    .garden-title span[data-letter]::after{
-        content:'';position:absolute;left:50%;bottom:95%;width:80%;transform:translateX(-50%);height:0;background:var(--tree-color);border-radius:5px 5px 0 0;animation:grow-grass 3s ease-out forwards
-    }
-    .garden-title span[data-letter]::before{
-        content:'';position:absolute;left:50%;bottom:100%;width:10px;height:10px;transform:translateX(-50%);background:transparent;animation:pop-flowers 3s ease-out forwards
-    }
-    /* staggered delays kept */
-    .garden-title span:nth-child(1)::after,.garden-title span:nth-child(1)::before{animation-delay:.1s}
-    .garden-title span:nth-child(2)::after,.garden-title span:nth-child(2)::before{animation-delay:.2s}
-    .garden-title span:nth-child(3)::after,.garden-title span:nth-child(3)::before{animation-delay:.3s}
-    .garden-title span:nth-child(4)::after,.garden-title span:nth-child(4)::before{animation-delay:.4s}
-    .garden-title span:nth-child(5)::after,.garden-title span:nth-child(5)::before{animation-delay:.5s}
-    .garden-title span:nth-child(6)::after,.garden-title span:nth-child(6)::before{animation-delay:.6s}
-    .garden-title span:nth-child(7)::after,.garden-title span:nth-child(7)::before{animation-delay:.7s}
-    .garden-title span:nth-child(9)::after,.garden-title span:nth-child(9)::before{animation-delay:.8s}
-    .garden-title span:nth-child(10)::after,.garden-title span:nth-child(10)::before{animation-delay:.9s}
-    .garden-title span:nth-child(11)::after,.garden-title span:nth-child(11)::before{animation-delay:1s}
-    .garden-title span:nth-child(13)::after,.garden-title span:nth-child(13)::before{animation-delay:1.1s}
-    .garden-title span:nth-child(14)::after,.garden-title span:nth-child(14)::before{animation-delay:1.2s}
-    .garden-title span:nth-child(15)::after,.garden-title span:nth-child(15)::before{animation-delay:1.3s}
-    .garden-title span:nth-child(16)::after,.garden-title span:nth-child(16)::before{animation-delay:1.4s}
-    @keyframes grow-grass{0%{height:0}40%,100%{height:15px}}
-    @keyframes pop-flowers{0%,30%{box-shadow:none;transform:scale(0)}60%{transform:scale(1);box-shadow:-8px 0 0 0 var(--flower-color)}100%{transform:scale(1);box-shadow:-12px 0 0 0 var(--flower-color),8px -5px 0 0 #7cb342}}
-    #hero p{font-size:clamp(1rem,2vw,1.2rem);color:var(--text-secondary);position:relative;z-index:2;max-width:600px;text-shadow:1px 1px 2px rgba(239,220,213,.8)}
-    .scroll-down{position:absolute;bottom:30px;z-index:2;font-size:.8rem;color:var(--text-secondary);letter-spacing:1px}
+/* widgets - FIXED */
+.widget{
+    background:rgba(239,220,213,.7);backdrop-filter:blur(10px);
+    border:1px solid rgba(188,170,164,.5);border-radius:16px;
+    padding:30px;
+    box-shadow:inset 0 2px 4px rgba(255,255,255,.7),inset 0 -2px 4px rgba(188,170,164,.4),0 5px 10px rgba(93,64,55,.15);
+    /* FIXED: Removed initial opacity and transform - let GSAP handle it */
+    transition:all .6s cubic-bezier(.4,0,.2,1);
+}
+.widget.visible{opacity:1;transform:translateY(0) rotateX(0deg)}
+.widget::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1) 0%,rgba(255,255,255,.05) 50%,rgba(255,255,255,.1) 100%);border-radius:inherit;z-index:-1;animation:shimmer 3s ease-in-out infinite}
+@keyframes shimmer{0%,100%{opacity:.5}50%{opacity:1}}
+.widget-title{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:500;margin-bottom:20px;border-bottom:1px solid var(--border-color);padding-bottom:15px;color:var(--clay-darker)}
+.section-title{text-align:center;font-family:'Space Grotesk',sans-serif;font-size:3rem;margin-bottom:60px;background:rgba(239,220,213,.7);backdrop-filter:blur(15px);border:1px solid rgba(188,170,164,.5);border-radius:20px;padding:20px 40px;display:inline-block;box-shadow:inset 0 2px 4px rgba(255,255,255,.7),inset 0 -2px 4px rgba(188,170,164,.4),0 5px 10px rgba(93,64,55,.15);position:relative;left:50%;transform:translateX(-50%);color:var(--clay-darker)}
+.text-content{max-width:800px;margin:0 auto 60px;text-align:center;font-size:1.1rem;line-height:1.7;color:var(--text-secondary);background:rgba(239,220,213,.7);backdrop-filter:blur(15px);border:1px solid rgba(188,170,164,.5);border-radius:25px;padding:40px;box-shadow:inset 0 2px 4px rgba(255,255,255,.7),inset 0 -2px 4px rgba(188,170,164,.4),0 5px 10px rgba(93,64,55,.15)}
 
-    /* widgets */
-    .widget, .text-content, .section-title {
-        background:rgba(239,220,213,.7);
-        backdrop-filter:blur(10px);
-        border:1px solid rgba(188,170,164,.5);
-        border-radius:16px;
-        padding:30px;
-        box-shadow:inset 0 2px 4px rgba(255,255,255,.7),inset 0 -2px 4px rgba(188,170,164,.4),0 5px 10px rgba(93,64,55,.15);
-        opacity:0;
-        transform:translateY(100px) rotateX(15deg);
-        transition:all .6s cubic-bezier(.4,0,.2,1)
-    }
-    .widget.visible, .text-content.visible, .section-title.visible {
-        opacity:1;
-        transform:translateY(0) rotateX(0deg)
-    }
-    .widget::before, .text-content::before, .section-title::before {
-        content:'';
-        position:absolute;
-        inset:0;
-        background:linear-gradient(135deg,rgba(255,255,255,.1) 0%,rgba(255,255,255,.05) 50%,rgba(255,255,255,.1) 100%);
-        border-radius:inherit;
-        z-index:-1;
-        animation:shimmer 3s ease-in-out infinite
-    }
-    @keyframes shimmer{0%,100%{opacity:.5}50%{opacity:1}}
-    .widget-title{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:500;margin-bottom:20px;border-bottom:1px solid var(--border-color);padding-bottom:15px;color:var(--clay-darker)}
-    .section-title{text-align:center;font-family:'Space Grotesk',sans-serif;font-size:3rem;margin-bottom:60px;padding:20px 40px;display:inline-block;position:relative;left:50%;transform:translateX(-50%);color:var(--clay-darker)}
-    .text-content{max-width:800px;margin:0 auto 60px;text-align:center;font-size:1.1rem;line-height:1.7;color:var(--text-secondary);padding:40px;}
+/* dashboard */
+.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.kpi{font-size:3rem;font-weight:700;color:var(--accent-primary);margin-bottom:10px;text-shadow:1px 1px 2px rgba(93,64,55,.2)}
+.kpi-label{color:var(--text-secondary);font-size:1rem}
+.chart-container{width:100%;height:450px}
 
-    /* dashboard */
-    .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
-    .kpi{font-size:3rem;font-weight:700;color:var(--accent-primary);margin-bottom:10px;text-shadow:1px 1px 2px rgba(93,64,55,.2)}
-    .kpi-label{color:var(--text-secondary);font-size:1rem}
-    .chart-container{width:100%;height:450px}
+/* cta */
+.cta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:30px;max-width:1200px;margin:0 auto}
+.cta-card{padding:40px 20px;text-align:center}
+.cta-card h3{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;margin-bottom:15px;color:var(--clay-darker)}
+.cta-button{display:inline-block;margin-top:20px;padding:12px 30px;background:var(--accent-primary);color:#fff;text-decoration:none;border-radius:12px;font-weight:bold;transition:all .3s;position:relative;overflow:hidden;box-shadow:inset 0 1px 2px rgba(255,255,255,.4),0 3px 6px rgba(93,64,55,.2);border:1px solid rgba(109,76,65,.3)}
+.cta-button:hover{background:var(--accent-secondary);transform:translateY(-2px);text-decoration:none}
+.email-button{position:relative}
+.email-tooltip{position:absolute;bottom:120%;left:50%;transform:translateX(-50%);background:var(--clay-darker);color:#fff;padding:8px 12px;border-radius:8px;font-size:.9rem;white-space:nowrap;opacity:0;visibility:hidden;transition:all .3s;z-index:100;box-shadow:0 3px 6px rgba(0,0,0,.16)}
+.email-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--clay-darker)}
+.email-button:hover .email-tooltip{opacity:1;visibility:visible;transform:translateX(-50%) translateY(-5px)}
 
-    /* cta */
-    .cta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:30px;max-width:1200px;margin:0 auto}
-    .cta-card{padding:40px 20px;text-align:center}
-    .cta-card h3{font-family:'Space Grotesk',sans-serif;font-size:1.8rem;margin-bottom:15px;color:var(--clay-darker)}
-    .cta-button{display:inline-block;margin-top:20px;padding:12px 30px;background:var(--accent-primary);color:#fff;text-decoration:none;border-radius:12px;font-weight:bold;transition:all .3s;position:relative;overflow:hidden;box-shadow:inset 0 1px 2px rgba(255,255,255,.4),0 3px 6px rgba(93,64,55,.2);border:1px solid rgba(109,76,65,.3)}
-    .cta-button:hover{background:var(--accent-secondary);transform:translateY(-2px)}
-    .email-button{position:relative}
-    .email-tooltip{position:absolute;bottom:120%;left:50%;transform:translateX(-50%);background:var(--clay-darker);color:#fff;padding:8px 12px;border-radius:8px;font-size:.9rem;white-space:nowrap;opacity:0;visibility:hidden;transition:all .3s;z-index:100;box-shadow:0 3px 6px rgba(0,0,0,.16)}
-    .email-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--clay-darker)}
-    .email-button:hover .email-tooltip{opacity:1;visibility:visible;transform:translateX(-50%) translateY(-5px)}
+/* entrance overlay */
+.entrance-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--clay-secondary) 0%,var(--clay-dark) 100%);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;animation:fadeOut 3s ease-in-out 2s forwards}
+.entrance-logo{font-family:'Space Grotesk',sans-serif;font-size:4rem;font-weight:700;color:#fff;margin-bottom:2rem;opacity:0;animation:slideUp 1s ease-out .5s forwards;text-shadow:2px 2px 4px rgba(93,64,55,.3)}
+.entrance-subtitle{font-family:'Space Mono',monospace;font-size:1.2rem;color:rgba(255,255,255,.8);opacity:0;animation:slideUp 1s ease-out 1s forwards}
+.loading-bar{width:300px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin-top:2rem;overflow:hidden}
+.loading-progress{height:100%;background:#fff;width:0;animation:loadProgress 2s ease-in-out forwards}
+@keyframes fadeOut{0%{opacity:1}100%{opacity:0;visibility:hidden}}
+@keyframes slideUp{0%{opacity:0;transform:translateY(30px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes loadProgress{0%{width:0%}100%{width:100%}}
 
-    /* entrance overlay */
-    .entrance-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--clay-secondary) 0%,var(--clay-dark) 100%);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;animation:fadeOut 3s ease-in-out 2s forwards}
-    .entrance-logo{font-family:'Space Grotesk',sans-serif;font-size:4rem;font-weight:700;color:#fff;margin-bottom:2rem;opacity:0;animation:slideUp 1s ease-out .5s forwards;text-shadow:2px 2px 4px rgba(93,64,55,.3)}
-    .entrance-subtitle{font-family:'Space Mono',monospace;font-size:1.2rem;color:rgba(255,255,255,.8);opacity:0;animation:slideUp 1s ease-out 1s forwards}
-    .loading-bar{width:300px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin-top:2rem;overflow:hidden}
-    .loading-progress{height:100%;background:#fff;width:0;animation:loadProgress 2s ease-in-out forwards}
-    @keyframes fadeOut{0%{opacity:1}100%{opacity:0;visibility:hidden}}
-    @keyframes slideUp{0%{opacity:0;transform:translateY(30px)}100%{opacity:1;transform:translateY(0)}}
-    @keyframes loadProgress{0%{width:0%}100%{width:100%}}
+/* garden bed */
+.garden-bed{position:absolute;bottom:0;width:100%;height:25vh}
+.fern{position:absolute;bottom:0;width:10px;height:0;background:var(--tree-color);transform-origin:bottom;animation:grow-fern 8s infinite ease-in-out}
+.fern::before,.fern::after{content:'';position:absolute;bottom:10px;width:100%;height:100%;background:inherit}
+.fern::before{transform:skew(30deg)}.fern::after{transform:skew(-30deg)}
+@keyframes grow-fern{0%{height:0}50%{height:100px}100%{height:0}}
+.fern-1{left:15%;animation-delay:0s}.fern-2{left:80%;animation-delay:3s}.fern-3{left:45%;animation-delay:6s}
+.flower-bush{position:absolute;bottom:10px}
+.flower-bush .stem{width:5px;height:50px;background:var(--tree-color);position:absolute;bottom:0;left:50%}
+.flower-bush .petal{position:absolute;width:15px;height:15px;background:var(--flower-color);border-radius:50%;bottom:45px;left:calc(50% - 7.5px);transform-origin:center;opacity:0;animation:bloom-flower 10s infinite}
+.flower-bush .petal.p1{transform:translate(-10px,-5px);animation-delay:1s}.flower-bush .petal.p2{transform:translate(10px,-5px);animation-delay:1.5s}.flower-bush .petal.p3{transform:translate(0,10px);animation-delay:2s}
+@keyframes bloom-flower{0%,100%{opacity:0;transform:scale(0)}10%,90%{opacity:1;transform:scale(1)}}
+.flower-bush-1{left:30%}.flower-bush-2{left:65%}
+.grass{position:absolute;bottom:0;width:4px;height:60px;background:#7cb342;transform-origin:bottom;border-radius:2px 2px 0 0;animation:sway-grass 5s infinite ease-in-out}
+@keyframes sway-grass{0%,100%{transform:rotate(0deg)}50%{transform:rotate(10deg)}}
+.grass-1{left:5%;animation-delay:.5s}.grass-2{left:95%;animation-delay:1s}.grass-3{left:50%;animation-delay:.2s}
 
-    /* garden bed */
-    .garden-bed{position:absolute;bottom:0;width:100%;height:25vh}
-    .fern{position:absolute;bottom:0;width:10px;height:0;background:var(--tree-color);transform-origin:bottom;animation:grow-fern 8s infinite ease-in-out}
-    .fern::before,.fern::after{content:'';position:absolute;bottom:10px;width:100%;height:100%;background:inherit}
-    .fern::before{transform:skew(30deg)}.fern::after{transform:skew(-30deg)}
-    @keyframes grow-fern{0%{height:0}50%{height:100px}100%{height:0}}
-    .fern-1{left:15%;animation-delay:0s}.fern-2{left:80%;animation-delay:3s}.fern-3{left:45%;animation-delay:6s}
-    .flower-bush{position:absolute;bottom:10px}
-    .flower-bush .stem{width:5px;height:50px;background:var(--tree-color);position:absolute;bottom:0;left:50%}
-    .flower-bush .petal{position:absolute;width:15px;height:15px;background:var(--flower-color);border-radius:50%;bottom:45px;left:calc(50% - 7.5px);transform-origin:center;opacity:0;animation:bloom-flower 10s infinite}
-    .flower-bush .petal.p1{transform:translate(-10px,-5px);animation-delay:1s}.flower-bush .petal.p2{transform:translate(10px,-5px);animation-delay:1.5s}.flower-bush .petal.p3{transform:translate(0,10px);animation-delay:2s}
-    @keyframes bloom-flower{0%,100%{opacity:0;transform:scale(0)}10%,90%{opacity:1;transform:scale(1)}}
-    .flower-bush-1{left:30%}.flower-bush-2{left:65%}
-    .grass{position:absolute;bottom:0;width:4px;height:60px;background:#7cb342;transform-origin:bottom;border-radius:2px 2px 0 0;animation:sway-grass 5s infinite ease-in-out}
-    @keyframes sway-grass{0%,100%{transform:rotate(0deg)}50%{transform:rotate(10deg)}}
-    .grass-1{left:5%;animation-delay:.5s}.grass-2{left:95%;animation-delay:1s}.grass-3{left:50%;animation-delay:.2s}
+/* mini-game */
+.mini-game{width:100%;height:300px;background:linear-gradient(to bottom,#87ceeb 0%,#87ceeb 70%,#8fbc8f 70%,#228b22 100%);position:relative;overflow:hidden;border-radius:12px;cursor:pointer;box-shadow:inset 0 2px 4px rgba(255,255,255,.6),inset 0 -2px 4px rgba(0,0,0,.2);border:1px solid rgba(188,170,164,.5)}
+.game-ground{position:absolute;bottom:0;width:100%;height:80px;background:#8b4513;border-top:4px solid #654321}
+.mario{position:absolute;bottom:80px;left:50px;width:32px;height:32px;background:#ff0000;border-radius:4px;transition:bottom .3s;box-shadow:0 2px 4px rgba(0,0,0,.3)}
+.mario::before{content:'';position:absolute;top:-8px;left:4px;width:24px;height:16px;background:#8b4513;border-radius:50%}
+.mario::after{content:'';position:absolute;top:8px;left:8px;width:16px;height:16px;background:#0000ff;border-radius:2px}
+.obstacle{position:absolute;bottom:80px;width:24px;height:24px;background:#228b22;border-radius:4px;animation:moveObstacle 3s linear infinite;box-shadow:0 2px 4px rgba(0,0,0,.3)}
+.obstacle::before{content:'';position:absolute;top:-8px;left:4px;width:16px;height:16px;background:#32cd32;border-radius:50%}
+@keyframes moveObstacle{0%{right:-30px}100%{right:100%}}
+.cloud{position:absolute;background:#fff;border-radius:50px;opacity:.8;animation:moveClouds 15s linear infinite;box-shadow:0 2px 4px rgba(0,0,0,.1)}
+.cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50px}
+.cloud1{width:60px;height:20px;top:20%;animation-delay:0s}
+.cloud1::before{width:30px;height:30px;top:-15px;left:10px}
+.cloud1::after{width:40px;height:25px;top:-10px;right:10px}
+.cloud2{width:80px;height:25px;top:10%;animation-delay:-7s}
+.cloud2::before{width:35px;height:35px;top:-18px;left:15px}
+.cloud2::after{width:45px;height:30px;top:-12px;right:15px}
+@keyframes moveClouds{0%{right:-100px}100%{right:100%}}
+.game-score{position:absolute;top:10px;left:10px;color:#fff;font-family:'Space Mono',monospace;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,.5)}
+.game-instructions{position:absolute;top:10px;right:10px;color:#fff;font-family:'Space Mono',monospace;font-size:.8rem;text-shadow:2px 2px 4px rgba(0,0,0,.5)}
+.game-start-button{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--accent-primary);color:#fff;border:none;padding:15px 30px;border-radius:25px;font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:bold;cursor:pointer;transition:all .3s;z-index:10;box-shadow:inset 0 1px 2px rgba(255,255,255,.4),0 3px 6px rgba(93,64,55,.2);border:1px solid rgba(109,76,65,.3)}
+.game-start-button:hover{background:var(--accent-secondary);transform:translate(-50%,-50%) scale(1.05)}
+.game-over-screen{position:absolute;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;flex-direction:column;color:#fff;font-family:'Space Grotesk',sans-serif;z-index:10;border-radius:12px}
+.game-over-title{font-size:2rem;font-weight:bold;margin-bottom:1rem}
+.game-over-score{font-size:1.5rem;margin-bottom:2rem}
+.game-restart-button{background:var(--accent-primary);color:#fff;border:none;padding:12px 24px;border-radius:20px;font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:bold;cursor:pointer;transition:all .3s;box-shadow:inset 0 1px 2px rgba(255,255,255,.4),0 3px 6px rgba(93,64,55,.2);border:1px solid rgba(109,76,65,.3)}
+.game-restart-button:hover{background:var(--accent-secondary);transform:scale(1.05)}
 
-    /* mini-game */
-    .mini-game{width:100%;height:300px;background:linear-gradient(to bottom,#87ceeb 0%,#87ceeb 70%,#8fbc8f 70%,#228b22 100%);position:relative;overflow:hidden;border-radius:12px;cursor:pointer;box-shadow:inset 0 2px 4px rgba(255,255,255,.6),inset 0 -2px 4px rgba(0,0,0,.2);border:1px solid rgba(188,170,164,.5)}
-    .game-ground{position:absolute;bottom:0;width:100%;height:80px;background:#8b4513;border-top:4px solid #654321}
-    .mario{position:absolute;bottom:80px;left:50px;width:32px;height:32px;background:#ff0000;border-radius:4px;transition:bottom .3s;box-shadow:0 2px 4px rgba(0,0,0,.3)}
-    .mario::before{content:'';position:absolute;top:-8px;left:4px;width:24px;height:16px;background:#8b4513;border-radius:50%}
-    .mario::after{content:'';position:absolute;top:8px;left:8px;width:16px;height:16px;background:#0000ff;border-radius:2px}
-    .obstacle{position:absolute;bottom:80px;width:24px;height:24px;background:#228b22;border-radius:4px;animation:moveObstacle 3s linear infinite;box-shadow:0 2px 4px rgba(0,0,0,.3)}
-    .obstacle::before{content:'';position:absolute;top:-8px;left:4px;width:16px;height:16px;background:#32cd32;border-radius:50%}
-    @keyframes moveObstacle{0%{right:-30px}100%{right:100%}}
-    .cloud{position:absolute;background:#fff;border-radius:50px;opacity:.8;animation:moveClouds 15s linear infinite;box-shadow:0 2px 4px rgba(0,0,0,.1)}
-    .cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50px}
-    .cloud1{width:60px;height:20px;top:20%;animation-delay:0s}
-    .cloud1::before{width:30px;height:30px;top:-15px;left:10px}
-    .cloud1::after{width:40px;height:25px;top:-10px;right:10px}
-    .cloud2{width:80px;height:25px;top:10%;animation-delay:-7s}
-    .cloud2::before{width:35px;height:35px;top:-18px;left:15px}
-    .cloud2::after{width:45px;height:30px;top:-12px;right:15px}
-    @keyframes moveClouds{0%{right:-100px}100%{right:100%}}
-    .game-score{position:absolute;top:10px;left:10px;color:#fff;font-family:'Space Mono',monospace;font-weight:bold;text-shadow:2px 2px 4px rgba(0,0,0,.5)}
-    .game-instructions{position:absolute;top:10px;right:10px;color:#fff;font-family:'Space Mono',monospace;font-size:.8rem;text-shadow:2px 2px 4px rgba(0,0,0,.5)}
-    .game-start-button{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--accent-primary);color:#fff;border:none;padding:15px 30px;border-radius:25px;font-family:'Space Grotesk',sans-serif;font-size:1.2rem;font-weight:bold;cursor:pointer;transition:all .3s;z-index:10;box-shadow:inset 0 1px 2px rgba(255,255,255,.4),0 3px 6px rgba(93,64,55,.2);border:1px solid rgba(109,76,65,.3)}
-    .game-start-button:hover{background:var(--accent-secondary);transform:translate(-50%,-50%) scale(1.05)}
-    .game-over-screen{position:absolute;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;flex-direction:column;color:#fff;font-family:'Space Grotesk',sans-serif;z-index:10;border-radius:12px}
-    .game-over-title{font-size:2rem;font-weight:bold;margin-bottom:1rem}
-    .game-over-score{font-size:1.5rem;margin-bottom:2rem}
-    .game-restart-button{background:var(--accent-primary);color:#fff;border:none;padding:12px 24px;border-radius:20px;font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:bold;cursor:pointer;transition:all .3s;box-shadow:inset 0 1px 2px rgba(255,255,255,.4),0 3px 6px rgba(93,64,55,.2);border:1px solid rgba(109,76,65,.3)}
-    .game-restart-button:hover{background:var(--accent-secondary);transform:scale(1.05)}
-
-    /* artifact section */
-    .artifact-section{margin:40px 0;border-radius:20px;overflow:hidden;box-shadow:inset 0 2px 4px rgba(255,255,255,.7),inset 0 -2px 4px rgba(188,170,164,.4),0 8px 16px rgba(93,64,55,.2);border:1px solid rgba(188,170,164,.5)}
-    .artifact-header{background:rgba(239,220,213,.8);padding:15px 20px;border-bottom:1px solid rgba(188,170,164,.5);font-family:'Space Grotesk',sans-serif;font-size:1.2rem;color:var(--clay-darker);display:flex;align-items:center;justify-content:space-between}
-    .artifact-content{background:rgba(239,220,213,.5);padding:20px}
-    .artifact-frame{border-radius:12px;overflow:hidden;box-shadow:0 4px 8px rgba(93,64,55,.15);border:1px solid rgba(188,170,164,.5)}
-    </style>
+/* artifact section */
+.artifact-section{margin:40px 0;border-radius:20px;overflow:hidden;box-shadow:inset 0 2px 4px rgba(255,255,255,.7),inset 0 -2px 4px rgba(188,170,164,.4),0 8px 16px rgba(93,64,55,.2);border:1px solid rgba(188,170,164,.5)}
+.artifact-header{background:rgba(239,220,213,.8);padding:15px 20px;border-bottom:1px solid rgba(188,170,164,.5);font-family:'Space Grotesk',sans-serif;font-size:1.2rem;color:var(--clay-darker);display:flex;align-items:center;justify-content:space-between}
+.artifact-content{background:rgba(239,220,213,.5);padding:20px}
+.artifact-frame{border-radius:12px;overflow:hidden;box-shadow:0 4px 8px rgba(93,64,55,.15);border:1px solid rgba(188,170,164,.5)}
+</style>
+  
 </head>
 <body>
-
 <!-- entrance overlay -->
 <div class="entrance-overlay">
-    <div class="entrance-logo">Houston Oil Airs</div>
-    <div class="entrance-subtitle">Advanced AI Research Platform</div>
-    <div class="loading-bar"><div class="loading-progress"></div></div>
+<div class="entrance-logo">Houston Oil Airs</div>
+<div class="entrance-subtitle">Advanced AI Research Platform</div>
+<div class="loading-bar"><div class="loading-progress"></div></div>
 </div>
 
 <!-- subtle animated background -->
 <div class="parallax-bg">
-    <div class="garden-bed">
-        <div class="fern fern-1"></div><div class="fern fern-2"></div><div class="fern fern-3"></div>
-        <div class="flower-bush flower-bush-1"><div class="stem"></div><div class="petal p1"></div><div class="petal p2"></div><div class="petal p3"></div></div>
-        <div class="flower-bush flower-bush-2"><div class="stem"></div><div class="petal p1"></div><div class="petal p2"></div><div class="petal p3"></div></div>
-        <div class="grass grass-1"></div><div class="grass grass-2"></div><div class="grass grass-3"></div>
-    </div>
+<div class="garden-bed">
+<div class="fern fern-1"></div><div class="fern fern-2"></div><div class="fern fern-3"></div>
+<div class="flower-bush flower-bush-1"><div class="stem"></div><div class="petal p1"></div><div class="petal p2"></div><div class="petal p3"></div></div>
+<div class="flower-bush flower-bush-2"><div class="stem"></div><div class="petal p1"></div><div class="petal p2"></div><div class="petal p3"></div></div>
+<div class="grass grass-1"></div><div class="grass grass-2"></div><div class="grass grass-3"></div>
+</div>
 </div>
 
 <nav class="nav-menu">
-    <a href="#mission">Mission</a>
-    <a href="#dashboard">Platform</a>
-    <a href="#houston-intelligence">Houston</a>
-    <a href="#investment">Invest</a>
-    <a href="#artifact">Artifact</a>
+<a href="#mission">Mission</a>
+<a href="#dashboard">Platform</a>
+<a href="#houston-intelligence">Houston</a>
+<a href="#investment">Invest</a>
+<a href="#artifact">Artifact</a>
 </nav>
 
 <main>
-    <!-- HERO -->
-    <section id="hero">
-        <canvas id="hero-canvas"></canvas>
-        <div class="garden-title">
-            <span data-letter="H">H</span><span data-letter="O">O</span><span data-letter="U">U</span><span data-letter="S">S</span><span data-letter="T">T</span><span data-letter="O">O</span><span data-letter="N">N</span><span class="space"></span>
-            <span data-letter="O">O</span><span data-letter="I">I</span><span data-letter="L">L</span><span class="space"></span>
-            <span data-letter="A">A</span><span data-letter="I">I</span><span data-letter="R">R</span><span data-letter="S">S</span>
-        </div>
-        <p>Advanced AI research platform powering real-world environmental justice through 3D network visualization, community sensor networks, and data-driven urban intelligence.</p>
-        <div class="scroll-down">EXPLORE OUR PLATFORM</div>
-    </section>
+<!-- HERO -->
+<section id="hero">
+<canvas id="hero-canvas"></canvas>
+<div class="garden-title">
+<span data-letter="H">H</span><span data-letter="O">O</span><span data-letter="U">U</span><span data-letter="S">S</span><span data-letter="T">T</span><span data-letter="O">O</span><span data-letter="N">N</span><span class="space"></span>
+<span data-letter="O">O</span><span data-letter="I">I</span><span data-letter="L">L</span><span class="space"></span>
+<span data-letter="A">A</span><span data-letter="I">I</span><span data-letter="R">R</span><span data-letter="S">S</span>
+</div>
+<p>Advanced AI research platform powering real-world environmental justice through 3D network visualization, community sensor networks, and data-driven urban intelligence.</p>
+<div class="scroll-down">EXPLORE OUR PLATFORM</div>
+</section>
 
-    <!-- MISSION -->
-    <section id="mission" class="section">
-        <h2 class="section-title">Our Mission</h2>
-        <p class="text-content">
-            Houston Oil Airs is an advanced AI research platform that demonstrates responsible AI through real-world impact. Our cutting-edge 3D visualization technology, network analysis algorithms, and interactive research tools are actively deployed in Houston to address environmental justice, urban planning, and community health challenges. We prove that AI research isn't just academic—it's a powerful force for social change.
-        </p>
-        <div class="dashboard-grid" style="margin-top:40px;">
-            <div class="widget"><div class="widget-title">AI Research Technology</div><p>3D visualization, network analysis, and real-time data processing engines</p></div>
-            <div class="widget"><div class="widget-title">Houston Deployment</div><p>Live implementation monitoring 487 sensors across Houston's environmental justice communities</p></div>
-            <div class="widget"><div class="widget-title">Proven Impact</div><p>Research platform driving policy change and community empowerment through data visualization</p></div>
-        </div>
-    </section>
+<!-- MISSION -->
+<section id="mission" class="section">
+    <h2 class="section-title">Our Mission</h2>
+    <p class="text-content">
+        Houston Oil Airs is an advanced AI research platform that demonstrates responsible AI through real-world impact. Our cutting-edge 3D visualization technology, network analysis algorithms, and interactive research tools are actively deployed in Houston to address environmental justice, urban planning, and community health challenges. We prove that AI research isn't just academic—it's a powerful force for social change.
+    </p>
+    <div class="dashboard-grid" style="margin-top:40px;">
+        <div class="widget"><div class="widget-title">AI Research Technology</div><p>3D visualization, network analysis, and real-time data processing engines</p></div>
+        <div class="widget"><div class="widget-title">Houston Deployment</div><p>Live implementation monitoring 487 sensors across Houston's environmental justice communities</p></div>
+        <div class="widget"><div class="widget-title">Proven Impact</div><p>Research platform driving policy change and community empowerment through data visualization</p></div>
+    </div>
+</section>
 
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="section">
-        <h2 class="section-title">Platform in Action</h2>
-        <div class="dashboard-grid">
-            <div class="widget"><div class="widget-title">Houston Network Graph</div><p class="kpi">15.4M</p><p class="kpi-label">Nodes Analyzed</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Our AI platform maps Houston's social, environmental, and political networks in real-time</p></div>
-            <div class="widget"><div class="widget-title">3D Visualizations</div><p class="kpi">71.8M</p><p class="kpi-label">Relationship Edges</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Interactive 3D graphs connecting pollution, health, demographics, and policy data</p></div>
-            <div class="widget"><div class="widget-title">Live Sensor Network</div><p class="kpi">487</p><p class="kpi-label">Air Quality Monitors</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Real-time environmental data feeding our AI analysis and visualization engines</p></div>
-            <div class="widget"><div class="widget-title">Research Impact</div><p class="kpi">100%</p><p class="kpi-label">Community-Driven</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">AI research platform designed with and for environmental justice communities</p></div>
-        </div>
-        <div class="cta-grid" style="margin-top:30px;">
-            <div class="widget cta-card"><h3>Join Our Team</h3><p>Full-stack developers, DevOps engineers, AI/ML researchers, UI/UX designers</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Employment%20Opportunity%20Interest" class="cta-button email-button">Apply Now<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
-            <div class="widget cta-card"><h3>Internship Program</h3><p>Summer research internships, part-time development roles, academic collaboration</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Internship%20Program%20Interest" class="cta-button email-button">Learn More<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
-            <div class="widget cta-card"><h3>Open Source</h3><p>Contribute code, documentation, or ideas to our growing open source community</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Open%20Source%20Contribution%20Interest" class="cta-button email-button">Contribute<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
-        </div>
-    </section>
+<!-- DASHBOARD -->
+<section id="dashboard" class="section">
+    <h2 class="section-title">Platform in Action</h2>
+    <div class="dashboard-grid">
+        <div class="widget"><div class="widget-title">Houston Network Graph</div><p class="kpi">15.4M</p><p class="kpi-label">Nodes Analyzed</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Our AI platform maps Houston's social, environmental, and political networks in real-time</p></div>
+        <div class="widget"><div class="widget-title">3D Visualizations</div><p class="kpi">71.8M</p><p class="kpi-label">Relationship Edges</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Interactive 3D graphs connecting pollution, health, demographics, and policy data</p></div>
+        <div class="widget"><div class="widget-title">Live Sensor Network</div><p class="kpi">487</p><p class="kpi-label">Air Quality Monitors</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Real-time environmental data feeding our AI analysis and visualization engines</p></div>
+        <div class="widget"><div class="widget-title">Research Impact</div><p class="kpi">100%</p><p class="kpi-label">Community-Driven</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">AI research platform designed with and for environmental justice communities</p></div>
+    </div>
+    <div class="cta-grid" style="margin-top:30px;">
+        <div class="widget cta-card"><h3>Join Our Team</h3><p>Full-stack developers, DevOps engineers, AI/ML researchers, UI/UX designers</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Employment%20Opportunity%20Interest" class="cta-button email-button">Apply Now<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
+        <div class="widget cta-card"><h3>Internship Program</h3><p>Summer research internships, part-time development roles, academic collaboration</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Internship%20Program%20Interest" class="cta-button email-button">Learn More<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
+        <div class="widget cta-card"><h3>Open Source</h3><p>Contribute code, documentation, or ideas to our growing open source community</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Open%20Source%20Contribution%20Interest" class="cta-button email-button">Contribute<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
+    </div>
+</section>
 
-    <!-- ARTIFACT (FIXED IFRAME) -->
-    <section id="artifact" class="section">
-        <h2 class="section-title">Claude Artifact</h2>
-        <div class="artifact-section">
-            <div class="artifact-header"><span>Interactive Research Visualization</span></div>
-            <div class="artifact-content">
-                <div class="artifact-frame">
-                    <iframe src="https://claude.site/public/artifacts/0c5bc1b3-3d8c-4656-918d-dfa0ef53d0d4/embed"
-                            title="Claude Artifact" width="100%" height="600" frameborder="0"
-                            allow="clipboard-write" allowfullscreen>
-                    </iframe>
+<!-- ARTIFACT (FIXED IFRAME) -->
+<section id="artifact" class="section">
+    <h2 class="section-title">Claude Artifact</h2>
+    <div class="artifact-section">
+        <div class="artifact-header"><span>Interactive Research Visualization</span></div>
+        <div class="artifact-content">
+            <div class="artifact-frame">
+                <!-- SANDBOXED PUBLIC EMBED – works everywhere -->
+                <iframe src="https://claude.site/public/artifacts/0c5bc1b3-3d8c-4656-918d-dfa0ef53d0d4/embed"
+                        title="Claude Artifact" width="100%" height="600" frameborder="0"
+                        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+                        allow="clipboard-write" allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CHARTS + MINI-GAME -->
+<section id="charts" class="section">
+    <h2 class="section-title">Research Analytics</h2>
+    <div class="dashboard-grid">
+        <div class="widget" style="grid-column:1/-1;">
+            <div class="widget-title">AI Research Output Growth</div>
+            <div class="chart-container"><canvas id="lineChart"></canvas></div>
+        </div>
+        <div class="widget">
+            <div class="widget-title">Research Domains</div>
+            <div class="chart-container" style="height:300px;"><canvas id="barChart"></canvas></div>
+        </div>
+        <div class="widget">
+            <div class="widget-title">Platform Usage</div>
+            <div class="chart-container" style="height:300px;"><canvas id="doughnutChart"></canvas></div>
+        </div>
+        <div class="widget">
+            <div class="widget-title">AI Research Runner</div>
+            <div class="mini-game" id="miniGame">
+                <div class="cloud cloud1"></div><div class="cloud cloud2"></div>
+                <div class="game-score">Score: <span id="gameScore">0</span></div>
+                <div class="game-instructions">Click to Jump!</div>
+                <button class="game-start-button" id="gameStartButton">Start Game</button>
+                <div class="mario" id="mario"></div>
+                <div class="game-ground"></div>
+                <div class="game-over-screen" id="gameOverScreen">
+                    <div class="game-over-title">Game Over!</div>
+                    <div class="game-over-score">Final Score: <span id="finalScore">0</span></div>
+                    <button class="game-restart-button" id="gameRestartButton">Play Again</button>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- CHARTS + MINI-GAME -->
-    <section id="charts" class="section">
-        <h2 class="section-title">Research Analytics</h2>
-        <div class="dashboard-grid">
-            <div class="widget" style="grid-column:1/-1;">
-                <div class="widget-title">AI Research Output Growth</div>
-                <div class="chart-container"><canvas id="lineChart"></canvas></div>
-            </div>
-            <div class="widget">
-                <div class="widget-title">Research Domains</div>
-                <div class="chart-container" style="height:300px;"><canvas id="barChart"></canvas></div>
-            </div>
-            <div class="widget">
-                <div class="widget-title">Platform Usage</div>
-                <div class="chart-container" style="height:300px;"><canvas id="doughnutChart"></canvas></div>
-            </div>
-            <div class="widget">
-                <div class="widget-title">AI Research Runner</div>
-                <div class="mini-game" id="miniGame">
-                    <div class="cloud cloud1"></div><div class="cloud cloud2"></div>
-                    <div class="game-score">Score: <span id="gameScore">0</span></div>
-                    <div class="game-instructions">Click to Jump!</div>
-                    <button class="game-start-button" id="gameStartButton">Start Game</button>
-                    <div class="mario" id="mario"></div>
-                    <div class="game-ground"></div>
-                    <div class="game-over-screen" id="gameOverScreen">
-                        <div class="game-over-title">Game Over!</div>
-                        <div class="game-over-score">Final Score: <span id="finalScore">0</span></div>
-                        <button class="game-restart-button" id="gameRestartButton">Play Again</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- JOIN US -->
+<section id="join-us" class="section">
+    <h2 class="section-title">Join Our Research Community</h2>
+    <p class="text-content">
+        Accelerating AI research requires collaboration between the brightest minds in academia, industry, and innovation. Whether you're a researcher, developer, or institution, there's a place for you in our growing ecosystem of responsible AI advancement.
+    </p>
+    <div class="cta-grid">
+        <div class="widget cta-card"><h3>Researchers</h3><p>Access cutting-edge visualization tools and collaborate on groundbreaking AI research projects.</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Research%20Collaboration%20Inquiry" class="cta-button email-button">Start Research<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
+        <div class="widget cta-card"><h3>Developers</h3><p>Contribute to our open-source platform and help build the future of AI research tools.</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Development%20Contribution%20Interest" class="cta-button email-button">Contribute Code<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
+        <div class="widget cta-card"><h3>Institutions</h3><p>Deploy our enterprise-ready platform in your organization and accelerate your research capabilities.</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Enterprise%20Deployment%20Inquiry" class="cta-button email-button">Deploy Platform<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
+    </div>
+</section>
 
-    <!-- JOIN US -->
-    <section id="join-us" class="section">
-        <h2 class="section-title">Join Our Research Community</h2>
-        <p class="text-content">
-            Accelerating AI research requires collaboration between the brightest minds in academia, industry, and innovation. Whether you're a researcher, developer, or institution, there's a place for you in our growing ecosystem of responsible AI advancement.
-        </p>
-        <div class="cta-grid">
-            <div class="widget cta-card"><h3>Researchers</h3><p>Access cutting-edge visualization tools and collaborate on groundbreaking AI research projects.</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Research%20Collaboration%20Inquiry" class="cta-button email-button">Start Research<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
-            <div class="widget cta-card"><h3>Developers</h3><p>Contribute to our open-source platform and help build the future of AI research tools.</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Development%20Contribution%20Interest" class="cta-button email-button">Contribute Code<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
-            <div class="widget cta-card"><h3>Institutions</h3><p>Deploy our enterprise-ready platform in your organization and accelerate your research capabilities.</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Enterprise%20Deployment%20Inquiry" class="cta-button email-button">Deploy Platform<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
-        </div>
-    </section>
+<!-- HOUSTON INTELLIGENCE -->
+<section id="houston-intelligence" class="section">
+    <h2 class="section-title">Houston: Our Living Laboratory</h2>
+    <p class="text-content">
+        Houston serves as the real-world testing ground for our AI research platform. Every algorithm, visualization technique, and network analysis method is validated through actual deployment in Houston's environmental justice communities. This isn't just research—it's research with purpose, proving that advanced AI can drive meaningful social change.
+    </p>
+    <div class="dashboard-grid">
+        <div class="widget"><div class="widget-title">AI-Powered Environmental Justice</div><p class="kpi">15.4 M</p><p class="kpi-label">Network Nodes</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Our network analysis algorithms map pollution exposure patterns and community resilience</p></div>
+        <div class="widget"><div class="widget-title">Real-Time Data Visualization</div><p class="kpi">487</p><p class="kpi-label">Connected Sensors</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Live PM₂.₅ and ozone data powering our 3D Houston Human-Health Graph</p></div>
+        <div class="widget"><div class="widget-title">Graph-Based Policy Analysis</div><p class="kpi">71.8 M</p><p class="kpi-label">Data Relationships</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Our platform reveals hidden connections between demographics, health, and governance</p></div>
+        <div class="widget"><div class="widget-title">Community-Centered AI</div><p class="kpi">0.71</p><p class="kpi-label">Network Modularity</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Measuring social cohesion and designing AI tools that strengthen community bonds</p></div>
+    </div>
+    <div class="cta-grid" style="margin-top:40px;">
+        <div class="widget cta-card"><h3>The Houston Playbook</h3><p>See how our AI research platform powers real environmental justice advocacy through data visualization and community organizing</p><a href="docs/Re-Drawing_Houston.txt" class="cta-button" target="_blank">View Implementation</a></div>
+        <div class="widget cta-card"><h3>Technical Deep Dive</h3><p>Explore the full technical analysis of how our AI platform processes Houston's 15.4M node network graph</p><a href="docs/Taco-Truck_Can_Save_Houston.txt" class="cta-button" target="_blank">Read Analysis</a></div>
+        <div class="widget cta-card"><h3>Deploy Our Platform</h3><p>Use our proven AI research platform in your city or organization for data-driven social impact</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Platform%20Deployment%20Interest" class="cta-button email-button">Get Started<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
+    </div>
+</section>
 
-    <!-- HOUSTON INTELLIGENCE -->
-    <section id="houston-intelligence" class="section">
-        <h2 class="section-title">Houston: Our Living Laboratory</h2>
-        <p class="text-content">
-            Houston serves as the real-world testing ground for our AI research platform. Every algorithm, visualization technique, and network analysis method is validated through actual deployment in Houston's environmental justice communities. This isn't just research—it's research with purpose, proving that advanced AI can drive meaningful social change.
-        </p>
-        <div class="dashboard-grid">
-            <div class="widget"><div class="widget-title">AI-Powered Environmental Justice</div><p class="kpi">15.4 M</p><p class="kpi-label">Network Nodes</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Our network analysis algorithms map pollution exposure patterns and community resilience</p></div>
-            <div class="widget"><div class="widget-title">Real-Time Data Visualization</div><p class="kpi">487</p><p class="kpi-label">Connected Sensors</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Live PM₂.₅ and ozone data powering our 3D Houston Human-Health Graph</p></div>
-            <div class="widget"><div class="widget-title">Graph-Based Policy Analysis</div><p class="kpi">71.8 M</p><p class="kpi-label">Data Relationships</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Our platform reveals hidden connections between demographics, health, and governance</p></div>
-            <div class="widget"><div class="widget-title">Community-Centered AI</div><p class="kpi">0.71</p><p class="kpi-label">Network Modularity</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-secondary);">Measuring social cohesion and designing AI tools that strengthen community bonds</p></div>
-        </div>
-        <div class="cta-grid" style="margin-top:40px;">
-            <div class="widget cta-card"><h3>The Houston Playbook</h3><p>See how our AI research platform powers real environmental justice advocacy through data visualization and community organizing</p><a href="docs/Re-Drawing_Houston.txt" class="cta-button" target="_blank">View Implementation</a></div>
-            <div class="widget cta-card"><h3>Technical Deep Dive</h3><p>Explore the full technical analysis of how our AI platform processes Houston's 15.4M node network graph</p><a href="docs/Taco-Truck_Can_Save_Houston.txt" class="cta-button" target="_blank">Read Analysis</a></div>
-            <div class="widget cta-card"><h3>Deploy Our Platform</h3><p>Use our proven AI research platform in your city or organization for data-driven social impact</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Platform%20Deployment%20Interest" class="cta-button email-button">Get Started<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
-        </div>
-    </section>
-
-    <!-- INVESTMENT -->
-    <section id="investment" class="section">
-        <h2 class="section-title">Investment Opportunity</h2>
-        <p class="text-content">
-            Join us in revolutionizing AI research. We're building the future of collaborative research visualization with cutting-edge 3D technology and enterprise-ready infrastructure.
-        </p>
-        <div class="dashboard-grid">
-            <div class="widget"><div class="widget-title">Market Opportunity</div><p class="kpi">$8.2 B</p><p class="kpi-label">AI Research Tools Market (28% CAGR)</p></div>
-            <div class="widget"><div class="widget-title">Technology Advantage</div><p class="kpi">2×</p><p class="kpi-label">Faster Than Traditional Tools</p></div>
-            <div class="widget"><div class="widget-title">Development Status</div><p class="kpi">MVP</p><p class="kpi-label">Working Prototype Ready</p></div>
-            <div class="widget"><div class="widget-title">Investment Range</div><p class="kpi">$50+</p><p class="kpi-label">Accessible Entry Points</p></div>
-        </div>
-        <div class="cta-grid" style="margin-top:40px;">
-            <div class="widget cta-card"><h3>Community Supporter</h3><p><strong>$50 - $5 K</strong><br>0.1% - 0.5% equity<br>Updates, early access, recognition</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Community%20Investment%20Interest" class="cta-button email-button">Support Us<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a><div style="margin-top:10px;font-size:.9rem;color:var(--text-secondary);">CashApp: $Windbreaker713</div></div>
-            <div class="widget cta-card"><h3>Angel Investor</h3><p><strong>$5 K - $25 K</strong><br>0.5% - 2% equity<br>Early access & quarterly updates</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Angel%20Investment%20Interest" class="cta-button email-button">Invest Now<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
-            <div class="widget cta-card"><h3>Strategic Partner</h3><p><strong>$100 K+</strong><br>5%+ equity<br>Co-development & enterprise deals</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Strategic%20Partnership%20Interest" class="cta-button email-button">Partner<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
-        </div>
-    </section>
+<!-- INVESTMENT -->
+<section id="investment" class="section">
+    <h2 class="section-title">Investment Opportunity</h2>
+    <p class="text-content">
+        Join us in revolutionizing AI research. We're building the future of collaborative research visualization with cutting-edge 3D technology and enterprise-ready infrastructure.
+    </p>
+    <div class="dashboard-grid">
+        <div class="widget"><div class="widget-title">Market Opportunity</div><p class="kpi">$8.2 B</p><p class="kpi-label">AI Research Tools Market (28% CAGR)</p></div>
+        <div class="widget"><div class="widget-title">Technology Advantage</div><p class="kpi">2×</p><p class="kpi-label">Faster Than Traditional Tools</p></div>
+        <div class="widget"><div class="widget-title">Development Status</div><p class="kpi">MVP</p><p class="kpi-label">Working Prototype Ready</p></div>
+        <div class="widget"><div class="widget-title">Investment Range</div><p class="kpi">$50+</p><p class="kpi-label">Accessible Entry Points</p></div>
+    </div>
+    <div class="cta-grid" style="margin-top:40px;">
+        <div class="widget cta-card"><h3>Community Supporter</h3><p><strong>$50 - $5 K</strong><br>0.1% - 0.5% equity<br>Updates, early access, recognition</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Community%20Investment%20Interest" class="cta-button email-button">Support Us<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a><div style="margin-top:10px;font-size:.9rem;color:var(--text-secondary);">CashApp: $Windbreaker713</div></div>
+        <div class="widget cta-card"><h3>Angel Investor</h3><p><strong>$5 K - $25 K</strong><br>0.5% - 2% equity<br>Early access & quarterly updates</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Angel%20Investment%20Interest" class="cta-button email-button">Invest Now<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
+        <div class="widget cta-card"><h3>Strategic Partner</h3><p><strong>$100 K+</strong><br>5%+ equity<br>Co-development & enterprise deals</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Strategic%20Partnership%20Interest" class="cta-button email-button">Partner<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
+    </div>
+</section>
+  
 </main>
 
 <script>
-/* --------------  ORIGINAL JS (PARALLAX STRIPPED)  -------------- */
-document.addEventListener('DOMContentLoaded',()=>{
-    try{
-        if(typeof THREE!=='undefined')initHero3D();
-        if(typeof Chart!=='undefined')initCharts();
-        if(typeof gsap!=='undefined')initScrollAnimations();
+/* -------------- ENHANCED JAVASCRIPT WITH FIXES -------------- */
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        if (typeof THREE !== 'undefined') initHero3D();
+        if (typeof Chart !== 'undefined') initCharts();
+        if (typeof gsap !== 'undefined') {
+            initScrollAnimations();
+        } else {
+            // Fallback for when GSAP is not loaded
+            initBasicScrollAnimations();
+        }
         initMiniGame();
-    }catch(e){console.error(e)}
+    } catch(e) {
+        console.error('Initialization error:', e);
+    }
 });
 
-/* ---- HERO 3D (unchanged) ---- */
-function initHero3D(){
-    const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.1,1e3);
-    const canvas=document.getElementById('hero-canvas');if(!canvas)return;
-    const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
-    renderer.setSize(innerWidth,innerHeight);camera.position.z=50;
-    const group=new THREE.Group();scene.add(group);
-    const geo=new THREE.IcosahedronGeometry(15,1),mat=new THREE.MeshBasicMaterial({color:0x8d6e63,wireframe:true,transparent:true,opacity:.6});
-    const sphere=new THREE.Mesh(geo,mat);group.add(sphere);
-    const nodeGeo=new THREE.SphereGeometry(1,8,8),nodeMat=new THREE.MeshBasicMaterial({color:0x6d4c41});
-    for(let i=0;i<20;i++){const n=new THREE.Mesh(nodeGeo,nodeMat);n.position.set((Math.random()-.5)*60,(Math.random()-.5)*60,(Math.random()-.5)*60);group.add(n)}
-    function animate(){group.rotation.y+=.002;group.rotation.x+=.001;renderer.render(scene,camera);requestAnimationFrame(animate)}animate();
-    addEventListener('resize',()=>{renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()});
-}
-
-/* ---- SCROLL ANIMATIONS (GSAP kept, parallax removed) ---- */
-function initScrollAnimations(){
-    gsap.registerPlugin(ScrollTrigger);
-    gsap.utils.toArray('.widget, .text-content, .section-title').forEach(el => {
-        gsap.fromTo(el,
-            { y: 50, opacity: 0 },
-            { 
-                y: 0, 
-                opacity: 1, 
-                duration: 1,
-                scrollTrigger: {
-                    trigger: el,
-                    start: 'top 90%',
-                    end: 'bottom 20%',
-                    toggleActions: 'play none none reverse'
-                }
-            }
+/* ---- HERO 3D (Enhanced) ---- */
+function initHero3D() {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const canvas = document.getElementById('hero-canvas');
+    if (!canvas) return;
+    
+    const renderer = new THREE.WebGLRenderer({canvas, alpha: true, antialias: true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.position.z = 50;
+    
+    const group = new THREE.Group();
+    scene.add(group);
+    
+    // Main wireframe sphere
+    const geometry = new THREE.IcosahedronGeometry(15, 1);
+    const material = new THREE.MeshBasicMaterial({
+        color: 0x8d6e63,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.6
+    });
+    const sphere = new THREE.Mesh(geometry, material);
+    group.add(sphere);
+    
+    // Network nodes
+    const nodeGeometry = new THREE.SphereGeometry(1, 8, 8);
+    const nodeMaterial = new THREE.MeshBasicMaterial({color: 0x6d4c41});
+    
+    for (let i = 0; i < 20; i++) {
+        const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
+        node.position.set(
+            (Math.random() - 0.5) * 60,
+            (Math.random() - 0.5) * 60,
+            (Math.random() - 0.5) * 60
         );
+        group.add(node);
+    }
+    
+    function animate() {
+        group.rotation.y += 0.002;
+        group.rotation.x += 0.001;
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+    }
+    animate();
+    
+    window.addEventListener('resize', () => {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
     });
 }
 
-/* ---- CHARTS (unchanged) ---- */
-function initCharts(){
-    const opt={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'var(--text-secondary)'},grid:{color:'var(--border-color)'}},y:{ticks:{color:'var(--text-secondary)'},grid:{color:'var(--border-color)'}}}};
-    const lineCan=document.getElementById('lineChart');if(lineCan)new Chart(lineCan,{type:'line',data:{labels:['2020','2021','2022','2023','2024','2025'],datasets:[{label:'Traditional Research',data:[120,135,142,158,165,172],borderColor:'var(--text-secondary)',backgroundColor:'rgba(121,85,72,.1)',fill:true,tension:.3},{label:'AI-Enhanced Research',data:[45,89,156,234,387,542],borderColor:'var(--accent-primary)',backgroundColor:'rgba(141,110,99,.2)',fill:true,tension:.3}]},options:{...opt,plugins:{legend:{display:true,labels:{color:'var(--text-primary)'}}}});
-    const barCan=document.getElementById('barChart');if(barCan)new Chart(barCan,{type:'bar',data:{labels:['ML/DL','Computer Vision','NLP','Robotics'],datasets:[{label:'Active Projects',data:[680,420,380,240],backgroundColor:['#8d6e63','#6d4c41','#a1887f','#7cb342']}]},options:opt});
-    const doughCan=document.getElementById('doughnutChart');if(doughCan)new Chart(doughCan,{type:'doughnut',data:{labels:['3D Visualization','Data Analysis','Collaboration','Reporting'],datasets:[{label:'Usage Distribution',data:[45,25,20,10],backgroundColor:['#8d6e63','#6d4c41','#a1887f','#7cb342'],borderColor:'var(--bg-card)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'var(--text-primary)'}}}});
+/* ---- ENHANCED SCROLL ANIMATIONS (GSAP) ---- */
+function initScrollAnimations() {
+    gsap.registerPlugin(ScrollTrigger);
+    
+    // Animate widgets with better timing
+    gsap.utils.toArray('.widget').forEach((widget, index) => {
+        gsap.fromTo(widget, {
+            y: 100,
+            opacity: 0,
+            rotationX: 15
+        }, {
+            y: 0,
+            opacity: 1,
+            rotationX: 0,
+            duration: 1.2,
+            delay: index * 0.1,
+            ease: "power3.out",
+            scrollTrigger: {
+                trigger: widget,
+                start: 'top 85%',
+                end: 'bottom 20%',
+                toggleActions: 'play none none reverse'
+            }
+        });
+    });
+    
+    // Animate section titles
+    gsap.utils.toArray('.section-title').forEach(title => {
+        gsap.fromTo(title, {
+            y: 50,
+            opacity: 0,
+            scale: 0.9
+        }, {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 1,
+            ease: "back.out(1.7)",
+            scrollTrigger: {
+                trigger: title,
+                start: 'top 90%',
+                end: 'bottom 20%',
+                toggleActions: 'play none none reverse'
+            }
+        });
+    });
+    
+    // Animate text content
+    gsap.utils.toArray('.text-content').forEach(content => {
+        gsap.fromTo(content, {
+            y: 30,
+            opacity: 0
+        }, {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            scrollTrigger: {
+                trigger: content,
+                start: 'top 90%',
+                end: 'bottom 20%',
+                toggleActions: 'play none none reverse'
+            }
+        });
+    });
 }
 
-/* ---- MINI-GAME (unchanged) ---- */
-function initMiniGame(){
-    class MiniGame{
-        constructor(){
-            this.mario=document.getElementById('mario');this.gameContainer=document.getElementById('miniGame');
-            this.scoreEl=document.getElementById('gameScore');this.startBtn=document.getElementById('gameStartButton');
-            this.gameOverScr=document.getElementById('gameOverScreen');this.finalScoreEl=document.getElementById('finalScore');
-            this.restartBtn=document.getElementById('gameRestartButton');
-            if(!this.mario||!this.gameContainer)return;
-            this.score=0;this.isJumping=false;this.gameRunning=false;this.obstacles=[];
+/* ---- FALLBACK SCROLL ANIMATIONS (NO GSAP) ---- */
+function initBasicScrollAnimations() {
+    const widgets = document.querySelectorAll('.widget');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0) rotateX(0deg)';
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+    
+    widgets.forEach(widget => {
+        widget.style.opacity = '0';
+        widget.style.transform = 'translateY(100px) rotateX(15deg)';
+        widget.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        observer.observe(widget);
+    });
+}
+
+/* ---- CHARTS (Enhanced) ---- */
+function initCharts() {
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
+                labels: {
+                    color: 'var(--text-primary)'
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {color: 'var(--text-secondary)'},
+                grid: {color: 'var(--border-color)'}
+            },
+            y: {
+                ticks: {color: 'var(--text-secondary)'},
+                grid: {color: 'var(--border-color)'}
+            }
+        }
+    };
+    
+    // Line Chart
+    const lineCanvas = document.getElementById('lineChart');
+    if (lineCanvas) {
+        new Chart(lineCanvas, {
+            type: 'line',
+            data: {
+                labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+                datasets: [{
+                    label: 'Traditional Research',
+                    data: [120, 135, 142, 158, 165, 172],
+                    borderColor: 'var(--text-secondary)',
+                    backgroundColor: 'rgba(121,85,72,0.1)',
+                    fill: true,
+                    tension: 0.3
+                }, {
+                    label: 'AI-Enhanced Research',
+                    data: [45, 89, 156, 234, 387, 542],
+                    borderColor: 'var(--accent-primary)',
+                    backgroundColor: 'rgba(141,110,99,0.2)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                ...commonOptions,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {color: 'var(--text-primary)'}
+                    }
+                }
+            }
+        });
+    }
+    
+    // Bar Chart
+    const barCanvas = document.getElementById('barChart');
+    if (barCanvas) {
+        new Chart(barCanvas, {
+            type: 'bar',
+            data: {
+                labels: ['ML/DL', 'Computer Vision', 'NLP', 'Robotics'],
+                datasets: [{
+                    label: 'Active Projects',
+                    data: [680, 420, 380, 240],
+                    backgroundColor: ['#8d6e63', '#6d4c41', '#a1887f', '#7cb342']
+                }]
+            },
+            options: commonOptions
+        });
+    }
+    
+    // Doughnut Chart
+    const doughnutCanvas = document.getElementById('doughnutChart');
+    if (doughnutCanvas) {
+        new Chart(doughnutCanvas, {
+            type: 'doughnut',
+            data: {
+                labels: ['3D Visualization', 'Data Analysis', 'Collaboration', 'Reporting'],
+                datasets: [{
+                    label: 'Usage Distribution',
+                    data: [45, 25, 20, 10],
+                    backgroundColor: ['#8d6e63', '#6d4c41', '#a1887f', '#7cb342'],
+                    borderColor: 'var(--clay-primary)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {color: 'var(--text-primary)'}
+                    }
+                }
+            }
+        });
+    }
+}
+
+/* ---- MINI-GAME (Enhanced) ---- */
+function initMiniGame() {
+    class MiniGame {
+        constructor() {
+            this.mario = document.getElementById('mario');
+            this.gameContainer = document.getElementById('miniGame');
+            this.scoreElement = document.getElementById('gameScore');
+            this.startButton = document.getElementById('gameStartButton');
+            this.gameOverScreen = document.getElementById('gameOverScreen');
+            this.finalScoreElement = document.getElementById('finalScore');
+            this.restartButton = document.getElementById('gameRestartButton');
+            
+            if (!this.mario || !this.gameContainer) return;
+            
+            this.score = 0;
+            this.isJumping = false;
+            this.gameRunning = false;
+            this.obstacles = [];
+            this.gameLoopId = null;
+            this.obstacleSpawnId = null;
+            
             this.init();
         }
-        init(){
-            this.startBtn&&this.startBtn.addEventListener('click',()=>this.startGame());
-            this.restartBtn&&this.restartBtn.addEventListener('click',()=>this.restartGame());
-            this.gameContainer.addEventListener('click',e=>{if(this.gameRunning&&e.target!==this.startBtn&&e.target!==this.restartBtn)this.jump()});
-            addEventListener('keydown',e=>{if((e.code==='Space'||e.code==='ArrowUp')&&this.gameRunning){e.preventDefault();this.jump()}});
+        
+        init() {
+            if (this.startButton) {
+                this.startButton.addEventListener('click', () => this.startGame());
+            }
+            
+            if (this.restartButton) {
+                this.restartButton.addEventListener('click', () => this.restartGame());
+            }
+            
+            this.gameContainer.addEventListener('click', (e) => {
+                if (this.gameRunning && 
+                    e.target !== this.startButton && 
+                    e.target !== this.restartButton) {
+                    this.jump();
+                }
+            });
+            
+            window.addEventListener('keydown', (e) => {
+                if ((e.code === 'Space' || e.code === 'ArrowUp') && this.gameRunning) {
+                    e.preventDefault();
+                    this.jump();
+                }
+            });
         }
-        startGame(){this.gameRunning=true;this.score=0;this.scoreEl&&(this.scoreEl.textContent=this.score);this.startBtn&&(this.startBtn.style.display='none');this.gameOverScr&&(this.gameOverScr.style.display='none');this.spawnObstacles();this.gameLoop()}
-        restartGame(){this.obstacles.forEach(o=>o.parentNode&&o.parentNode.removeChild(o));this.obstacles=[];this.startGame()}
-        jump(){if(!this.isJumping&&this.gameRunning){this.isJumping=true;this.mario.style.bottom='140px';setTimeout(()=>{this.mario.style.bottom='80px';this.isJumping=false},300)}}
-        spawnObstacles(){if(!this.gameRunning)return;const o=document.createElement('div');o.className='obstacle';this.gameContainer.appendChild(o);this.obstacles.push(o);setTimeout(()=>{if(o.parentNode)o.parentNode.removeChild(o);this.obstacles=this.obstacles.filter(obs=>obs!==o)},3000);setTimeout(()=>this.spawnObstacles(),Math.random()*2000+1500)}
-        checkCollisions(){const mRec=this.mario.getBoundingClientRect();this.obstacles.forEach(o=>{const oRec=o.getBoundingClientRect();if(!this.isJumping&&mRec.left<oRec.right&&mRec.right>oRec.left&&mRec.top<oRec.bottom&&mRec.bottom>oRec.top){this.gameOver()}else if(this.isJumping&&mRec.left<oRec.right&&mRec.right>oRec.left&&mRec.top<oRec.bottom&&mRec.bottom>oRec.top){this.score+=10;this.scoreEl&&(this.scoreEl.textContent=this.score);o.style.display='none'}})}
-        gameLoop(){if(this.gameRunning){this.checkCollisions();this.score+=1;this.scoreEl&&(this.scoreEl.textContent=this.score);setTimeout(()=>this.gameLoop(),100)}}
-        gameOver(){this.gameRunning=false;this.finalScoreEl&&(this.finalScoreEl.textContent=this.score);this.gameOverScr&&(this.gameOverScr.style.display='flex')}
+        
+        startGame() {
+            this.gameRunning = true;
+            this.score = 0;
+            if (this.scoreElement) this.scoreElement.textContent = this.score;
+            if (this.startButton) this.startButton.style.display = 'none';
+            if (this.gameOverScreen) this.gameOverScreen.style.display = 'none';
+            
+            this.spawnObstacles();
+            this.gameLoop();
+        }
+        
+        restartGame() {
+            // Clean up existing obstacles
+            this.obstacles.forEach(obstacle => {
+                if (obstacle.parentNode) {
+                    obstacle.parentNode.removeChild(obstacle);
+                }
+            });
+            this.obstacles = [];
+            
+            // Clear any existing intervals
+            if (this.obstacleSpawnId) {
+                clearTimeout(this.obstacleSpawnId);
+            }
+            if (this.gameLoopId) {
+                clearTimeout(this.gameLoopId);
+            }
+            
+            this.startGame();
+        }
+        
+        jump() {
+            if (!this.isJumping && this.gameRunning) {
+                this.isJumping = true;
+                this.mario.style.bottom = '140px';
+                setTimeout(() => {
+                    this.mario.style.bottom = '80px';
+                    this.isJumping = false;
+                }, 300);
+            }
+        }
+        
+        spawnObstacles() {
+            if (!this.gameRunning) return;
+            
+            const obstacle = document.createElement('div');
+            obstacle.className = 'obstacle';
+            this.gameContainer.appendChild(obstacle);
+            this.obstacles.push(obstacle);
+            
+            // Remove obstacle after animation
+            setTimeout(() => {
+                if (obstacle.parentNode) {
+                    obstacle.parentNode.removeChild(obstacle);
+                }
+                this.obstacles = this.obstacles.filter(obs => obs !== obstacle);
+            }, 3000);
+            
+            // Spawn next obstacle
+            this.obstacleSpawnId = setTimeout(() => this.spawnObstacles(), 
+                Math.random() * 2000 + 1500);
+        }
+        
+        checkCollisions() {
+            const marioRect = this.mario.getBoundingClientRect();
+            
+            this.obstacles.forEach(obstacle => {
+                const obstacleRect = obstacle.getBoundingClientRect();
+                
+                // Check for collision
+                if (!this.isJumping &&
+                    marioRect.left < obstacleRect.right &&
+                    marioRect.right > obstacleRect.left &&
+                    marioRect.top < obstacleRect.bottom &&
+                    marioRect.bottom > obstacleRect.top) {
+                    this.gameOver();
+                } else if (this.isJumping &&
+                          marioRect.left < obstacleRect.right &&
+                          marioRect.right > obstacleRect.left &&
+                          marioRect.top < obstacleRect.bottom &&
+                          marioRect.bottom > obstacleRect.top) {
+                    // Successful jump
+                    this.score += 10;
+                    if (this.scoreElement) this.scoreElement.textContent = this.score;
+                    obstacle.style.display = 'none';
+                }
+            });
+        }
+        
+        gameLoop() {
+            if (this.gameRunning) {
+                this.checkCollisions();
+                this.score += 1;
+                if (this.scoreElement) this.scoreElement.textContent = this.score;
+                
+                this.gameLoopId = setTimeout(() => this.gameLoop(), 100);
+            }
+        }
+        
+        gameOver() {
+            this.gameRunning = false;
+            
+            // Clear intervals
+            if (this.obstacleSpawnId) {
+                clearTimeout(this.obstacleSpawnId);
+            }
+            if (this.gameLoopId) {
+                clearTimeout(this.gameLoopId);
+            }
+            
+            if (this.finalScoreElement) this.finalScoreElement.textContent = this.score;
+            if (this.gameOverScreen) this.gameOverScreen.style.display = 'flex';
+        }
     }
-    setTimeout(()=>new MiniGame(),1000);
+    
+    // Initialize game after a short delay
+    setTimeout(() => new MiniGame(), 1000);
 }
 </script>
 </body>
