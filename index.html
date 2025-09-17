@@ -9,33 +9,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --clay-primary: #d7ccc8;
-            --clay-secondary: #bcaaa4;
-            --clay-dark: #8d6e63;
-            --clay-darker: #5d4037;
-            --clay-accent: #a1887f;
-            --clay-highlight: #efdcd5;
-            --clay-shadow: #9e9e9e;
-            --text-primary: #4e342e;
-            --text-secondary: #795548;
-            --accent-primary: #8d6e63;
-            --accent-secondary: #6d4c41;
-            --border-color: #bcaaa4;
-            --tree-color: #7cb342;
+            --bg-light: #f4f7f9;
+            --bg-card: #ffffff;
+            --text-primary: #1d2129;
+            --text-secondary: #5e6778;
+            --accent-primary: #667eea;
+            --accent-secondary: #764ba2;
+            --border-color: #dee2e6;
+            --tree-color: #4a7c59;
             --flower-color: #ff6b6b;
         }
 
         body {
-            background-color: var(--clay-primary);
+            background-color: var(--bg-light);
             color: var(--text-primary);
             font-family: 'Space Mono', monospace;
             margin: 0;
             padding: 0;
             overflow-x: hidden;
             scroll-behavior: smooth;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(239, 220, 213, 0.3) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(188, 170, 164, 0.2) 0%, transparent 20%);
         }
         
         main {
@@ -60,9 +52,9 @@
             right: 0;
             bottom: 0;
             background: 
-                radial-gradient(circle at 20% 80%, rgba(141, 110, 99, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(109, 76, 65, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(161, 136, 127, 0.05) 0%, transparent 50%);
+                radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 107, 107, 0.05) 0%, transparent 50%);
             animation: float-bg 20s ease-in-out infinite;
             z-index: -1;
         }
@@ -74,7 +66,7 @@
         }
         
         #hero, #mission, #dashboard, #charts, #join-us {
-            background-color: rgba(215, 204, 200, 0.9);
+            background-color: rgba(244, 247, 249, 0.9);
         }
 
         /* Navigation */
@@ -83,15 +75,14 @@
             top: 20px;
             right: 20px;
             z-index: 1000;
-            background: rgba(188, 170, 164, 0.8);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(141, 110, 99, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 25px;
             padding: 10px 20px;
             box-shadow: 
-                0 8px 32px rgba(93, 64, 55, 0.15),
-                inset 0 1px 0 rgba(239, 220, 213, 0.5),
-                0 2px 4px rgba(93, 64, 55, 0.2);
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
             display: flex;
             gap: 20px;
             font-family: 'Space Mono', monospace;
@@ -110,16 +101,11 @@
             padding: 8px 12px;
             border-radius: 15px;
             transition: all 0.3s ease;
-            background: rgba(239, 220, 213, 0.3);
-            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5),
-                        0 2px 3px rgba(93, 64, 55, 0.15);
         }
         
         .nav-menu a:hover {
             background: var(--accent-primary);
             color: white;
-            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3),
-                        0 2px 3px rgba(93, 64, 55, 0.2);
         }
         
         @media (max-width: 768px) {
@@ -157,7 +143,6 @@
             text-transform: uppercase;
             color: var(--text-primary);
             margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(93, 64, 55, 0.2);
         }
         .garden-title span {
             position: relative;
@@ -232,7 +217,6 @@
             position: relative;
             z-index: 2;
             max-width: 600px;
-            text-shadow: 1px 1px 2px rgba(239, 220, 213, 0.8);
         }
         
         .scroll-down {
@@ -246,15 +230,14 @@
 
         /* General Content & Widgets */
         .widget {
-            background: rgba(239, 220, 213, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(188, 170, 164, 0.5);
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
             padding: 30px;
             box-shadow: 
-                inset 0 2px 4px rgba(255, 255, 255, 0.7),
-                inset 0 -2px 4px rgba(188, 170, 164, 0.4),
-                0 5px 10px rgba(93, 64, 55, 0.15);
+                0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
             opacity: 0;
             transform: translateY(100px) rotateX(15deg);
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -293,7 +276,6 @@
             margin-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 15px;
-            color: var(--clay-darker);
         }
         
         .section-title {
@@ -301,20 +283,16 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 3rem;
             margin-bottom: 60px;
-            background: rgba(239, 220, 213, 0.7);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px);
-            border: 1px solid rgba(188, 170, 164, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 20px 40px;
             display: inline-block;
-            box-shadow: 
-                inset 0 2px 4px rgba(255, 255, 255, 0.7),
-                inset 0 -2px 4px rgba(188, 170, 164, 0.4),
-                0 5px 10px rgba(93, 64, 55, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             position: relative;
             left: 50%;
             transform: translateX(-50%);
-            color: var(--clay-darker);
         }
         
         .text-content {
@@ -324,15 +302,12 @@
             font-size: 1.1rem;
             line-height: 1.7;
             color: var(--text-secondary);
-            background: rgba(239, 220, 213, 0.7);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px);
-            border: 1px solid rgba(188, 170, 164, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 25px;
             padding: 40px;
-            box-shadow: 
-                inset 0 2px 4px rgba(255, 255, 255, 0.7),
-                inset 0 -2px 4px rgba(188, 170, 164, 0.4),
-                0 5px 10px rgba(93, 64, 55, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         /* Dashboard Section */
@@ -347,13 +322,13 @@
             font-weight: 700;
             color: var(--accent-primary);
             margin-bottom: 10px;
-            text-shadow: 1px 1px 2px rgba(93, 64, 55, 0.2);
         }
         
         .kpi-label {
             color: var(--text-secondary);
             font-size: 1rem;
         }
+        
         
         .chart-container {
             width: 100%;
@@ -379,7 +354,6 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.8rem;
             margin-bottom: 15px;
-            color: var(--clay-darker);
         }
         .cta-button {
             display: inline-block;
@@ -388,22 +362,15 @@
             background-color: var(--accent-primary);
             color: white;
             text-decoration: none;
-            border-radius: 12px;
+            border-radius: 5px;
             font-weight: bold;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            box-shadow: 
-                inset 0 1px 2px rgba(255, 255, 255, 0.4),
-                0 3px 6px rgba(93, 64, 55, 0.2);
-            border: 1px solid rgba(109, 76, 65, 0.3);
         }
         .cta-button:hover {
             background-color: var(--accent-secondary);
             transform: translateY(-2px);
-            box-shadow: 
-                inset 0 1px 2px rgba(255, 255, 255, 0.3),
-                0 4px 8px rgba(93, 64, 55, 0.25);
         }
         
         .email-button {
@@ -415,17 +382,16 @@
             bottom: 120%;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--clay-darker);
+            background: var(--text-primary);
             color: white;
             padding: 8px 12px;
-            border-radius: 8px;
+            border-radius: 4px;
             font-size: 0.9rem;
             white-space: nowrap;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
             z-index: 100;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.16);
         }
         
         .email-tooltip::after {
@@ -435,7 +401,7 @@
             left: 50%;
             transform: translateX(-50%);
             border: 5px solid transparent;
-            border-top-color: var(--clay-darker);
+            border-top-color: var(--text-primary);
         }
         
         .email-button:hover .email-tooltip {
@@ -452,7 +418,7 @@
             right: 0;
             bottom: 0;
             z-index: -1;
-            background: linear-gradient(135deg, var(--clay-secondary) 0%, var(--clay-dark) 50%, var(--clay-accent) 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6b6b 100%);
             overflow: hidden;
         }
         
@@ -466,23 +432,23 @@
         
         .layer-1 {
             background-image: 
-                radial-gradient(circle at 25% 25%, rgba(239, 220, 213, 0.1) 2px, transparent 2px),
-                radial-gradient(circle at 75% 75%, rgba(239, 220, 213, 0.05) 1px, transparent 1px);
+                radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 2px),
+                radial-gradient(circle at 75% 75%, rgba(255,255,255,0.05) 1px, transparent 1px);
             animation-duration: 25s;
         }
         
         .layer-2 {
             background-image: 
-                radial-gradient(circle at 50% 50%, rgba(239, 220, 213, 0.08) 3px, transparent 3px),
-                radial-gradient(circle at 20% 80%, rgba(239, 220, 213, 0.03) 2px, transparent 2px);
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08) 3px, transparent 3px),
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.03) 2px, transparent 2px);
             animation-duration: 30s;
             animation-direction: reverse;
         }
         
         .layer-3 {
             background-image: 
-                linear-gradient(45deg, rgba(239, 220, 213, 0.02) 25%, transparent 25%),
-                linear-gradient(-45deg, rgba(239, 220, 213, 0.02) 25%, transparent 25%);
+                linear-gradient(45deg, rgba(255,255,255,0.02) 25%, transparent 25%),
+                linear-gradient(-45deg, rgba(255,255,255,0.02) 25%, transparent 25%);
             background-size: 100px 100px;
             animation-duration: 35s;
         }
@@ -499,7 +465,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--clay-secondary) 0%, var(--clay-dark) 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             z-index: 9999;
             display: flex;
             align-items: center;
@@ -516,7 +482,6 @@
             margin-bottom: 2rem;
             opacity: 0;
             animation: slideUp 1s ease-out 0.5s forwards;
-            text-shadow: 2px 2px 4px rgba(93, 64, 55, 0.3);
         }
         
         .entrance-subtitle {
@@ -659,17 +624,7 @@
         .grass-1 { left: 5%; animation-delay: 0.5s; }
         .grass-2 { left: 95%; animation-delay: 1s; }
         .grass-3 { left: 50%; animation-delay: 0.2s; }
-         /* artifact */
-    .artifact-frame{
-        width:100%;height:600px;
-        border-radius:12px;overflow:hidden;
-        box-shadow:0 4px 12px rgba(93,64,55,.15);
-        border:1px solid rgba(188,170,164,.5);
-    }
-    .artifact-frame iframe{
-        width:100%;height:100%;
-        border:0;
-    }
+        
         /* Mini Game Styles */
         .mini-game {
             width: 100%;
@@ -677,13 +632,8 @@
             background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 70%, #8FBC8F 70%, #228B22 100%);
             position: relative;
             overflow: hidden;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
-            box-shadow: 
-                inset 0 2px 4px rgba(255, 255, 255, 0.6),
-                inset 0 -2px 4px rgba(0, 0, 0, 0.2),
-                0 5px 10px rgba(93, 64, 55, 0.2);
-            border: 1px solid rgba(188, 170, 164, 0.5);
         }
         
         .game-ground {
@@ -704,7 +654,6 @@
             background: #FF0000;
             border-radius: 4px;
             transition: bottom 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .mario::before {
@@ -737,7 +686,6 @@
             background: #228B22;
             border-radius: 4px;
             animation: moveObstacle 3s linear infinite;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .obstacle::before {
@@ -762,7 +710,6 @@
             border-radius: 50px;
             opacity: 0.8;
             animation: moveClouds 15s linear infinite;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .cloud::before,
@@ -856,18 +803,11 @@
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 10;
-            box-shadow: 
-                inset 0 1px 2px rgba(255, 255, 255, 0.4),
-                0 3px 6px rgba(93, 64, 55, 0.2);
-            border: 1px solid rgba(109, 76, 65, 0.3);
         }
         
         .game-start-button:hover {
             background: var(--accent-secondary);
             transform: translate(-50%, -50%) scale(1.05);
-            box-shadow: 
-                inset 0 1px 2px rgba(255, 255, 255, 0.3),
-                0 4px 8px rgba(93, 64, 55, 0.25);
         }
         
         .game-over-screen {
@@ -884,7 +824,6 @@
             color: white;
             font-family: 'Space Grotesk', sans-serif;
             z-index: 10;
-            border-radius: 12px;
         }
         
         .game-over-title {
@@ -909,55 +848,13 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 
-                inset 0 1px 2px rgba(255, 255, 255, 0.4),
-                0 3px 6px rgba(93, 64, 55, 0.2);
-            border: 1px solid rgba(109, 76, 65, 0.3);
         }
         
         .game-restart-button:hover {
             background: var(--accent-secondary);
             transform: scale(1.05);
-            box-shadow: 
-                inset 0 1px 2px rgba(255, 255, 255, 0.3),
-                0 4px 8px rgba(93, 64, 55, 0.25);
         }
 
-        /* Clay Artifact Section */
-        .artifact-section {
-            margin: 40px 0;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 
-                inset 0 2px 4px rgba(255, 255, 255, 0.7),
-                inset 0 -2px 4px rgba(188, 170, 164, 0.4),
-                0 8px 16px rgba(93, 64, 55, 0.2);
-            border: 1px solid rgba(188, 170, 164, 0.5);
-        }
-
-        .artifact-header {
-            background: rgba(239, 220, 213, 0.8);
-            padding: 15px 20px;
-            border-bottom: 1px solid rgba(188, 170, 164, 0.5);
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.2rem;
-            color: var(--clay-darker);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .artifact-content {
-            background: rgba(239, 220, 213, 0.5);
-            padding: 20px;
-        }
-
-        .artifact-frame {
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(93, 64, 55, 0.15);
-            border: 1px solid rgba(188, 170, 164, 0.5);
-        }
     </style>
 </head>
 <body>
@@ -1003,7 +900,6 @@
         <a href="#dashboard">Platform</a>
         <a href="#houston-intelligence">Houston</a>
         <a href="#investment">Invest</a>
-        <a href="#artifact">Artifact</a>
     </nav>
 
     <main>
@@ -1107,21 +1003,8 @@
                 </div>
             </div>
         </section>
-
-        <!-- New Artifact Section -->
- <!-- sandbox keeps cookies/local-storage isolated -->
-        <iframe src="https://claude.site/public/artifacts/0c5bc1b3-3d8c-4656-918d-dfa0ef53d0d4/embed"
-                title="Claude Artifact"
-                sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox">
-        </iframe>
-    </div>
-</section>            
-                    </div>
-                </div>
-            </div>
-        </section>
     
-        <section id="charts" class="section">
+
             <h2 class="section-title">Research Analytics</h2>
             <div class="dashboard-grid">
                 <div class="widget" style="grid-column: 1 / -1;">
@@ -1351,12 +1234,12 @@
             scene.add(group);
 
             const geometry = new THREE.IcosahedronGeometry(15, 1);
-            const material = new THREE.MeshBasicMaterial({ color: 0x8d6e63, wireframe: true, transparent: true, opacity: 0.6 });
+            const material = new THREE.MeshBasicMaterial({ color: 0x667eea, wireframe: true, transparent: true, opacity: 0.6 });
             const sphere = new THREE.Mesh(geometry, material);
             group.add(sphere);
 
             const nodeGeometry = new THREE.SphereGeometry(1, 8, 8);
-            const nodeMaterial = new THREE.MeshBasicMaterial({ color: 0x6d4c41 });
+            const nodeMaterial = new THREE.MeshBasicMaterial({ color: 0x764ba2 });
             
             for (let i = 0; i < 20; i++) {
                 const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
@@ -1469,14 +1352,14 @@
                             label: 'Traditional Research',
                             data: [120, 135, 142, 158, 165, 172],
                             borderColor: 'var(--text-secondary)',
-                            backgroundColor: 'rgba(121, 85, 72, 0.1)',
+                            backgroundColor: 'rgba(94, 103, 120, 0.1)',
                             fill: true,
                             tension: 0.3
                         }, {
                             label: 'AI-Enhanced Research',
                             data: [45, 89, 156, 234, 387, 542],
                             borderColor: 'var(--accent-primary)',
-                            backgroundColor: 'rgba(141, 110, 99, 0.2)',
+                            backgroundColor: 'rgba(102, 126, 234, 0.2)',
                             fill: true,
                             tension: 0.3
                         }]
@@ -1494,7 +1377,7 @@
                         datasets: [{
                             label: 'Active Projects',
                             data: [680, 420, 380, 240],
-                            backgroundColor: ['#8d6e63', '#6d4c41', '#a1887f', '#7cb342'],
+                            backgroundColor: ['#667eea', '#764ba2', '#ff6b6b', '#7cb342'],
                         }]
                     },
                     options: { ...chartOptions }
@@ -1510,7 +1393,7 @@
                         datasets: [{
                             label: 'Usage Distribution',
                             data: [45, 25, 20, 10],
-                            backgroundColor: ['#8d6e63', '#6d4c41', '#a1887f', '#7cb342'],
+                            backgroundColor: ['#667eea', '#764ba2', '#ff6b6b', '#7cb342'],
                             borderColor: 'var(--bg-card)',
                         }]
                     },
@@ -1522,6 +1405,9 @@
                 });
             }
         }
+        
+        <iframe src="https://claude.site/public/artifacts/0c5bc1b3-3d8c-4656-918d-dfa0ef53d0d4/embed" title="Claude Artifact" width="auto" height="auto" frameborder="0" allow="clipboard-write" allowfullscreen></iframe>
+        
         
         function initMiniGame() {
             class MiniGame {
@@ -1558,7 +1444,7 @@
                         }
                     });
                     
-                    document.addEventListener('keydown', (e) {
+                    document.addEventListener('keydown', (e) => {
                         if ((e.code === 'Space' || e.code === 'ArrowUp') && this.gameRunning) {
                             e.preventDefault();
                             this.jump();
