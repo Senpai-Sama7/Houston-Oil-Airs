@@ -52,7 +52,7 @@ main{position:relative;z-index:2}
         radial-gradient(circle at 20% 80%,rgba(141,110,99,.1) 0%,transparent 50%),
         radial-gradient(circle at 80% 20%,rgba(109,76,65,.1) 0%,transparent 50%),
         radial-gradient(circle at 40% 40%,rgba(161,136,127,.05) 0%,transparent 50%);
-    animation:float-bg 20s ease-in-out infinite;z-index:-1;
+    animation:float-bg 15s ease-in-out infinite;z-index:-1;
 }
 @keyframes float-bg{0%,100%{transform:translateY(0) rotate(0deg)}33%{transform:translateY(-20px) rotate(1deg)}66%{transform:translateY(10px) rotate(-1deg)}}
 
@@ -124,7 +124,7 @@ main{position:relative;z-index:2}
     transition:all .6s cubic-bezier(.4,0,.2,1);
 }
 .widget.visible{opacity:1;transform:translateY(0) rotateX(0deg)}
-.widget::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1) 0%,rgba(255,255,255,.05) 50%,rgba(255,255,255,.1) 100%);border-radius:inherit;z-index:-1;animation:shimmer 3s ease-in-out infinite}
+.widget::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1) 0%,rgba(255,255,255,.05) 50%,rgba(255,255,255,.1) 100%);border-radius:inherit;z-index:-1;animation:shimmer 2s ease-in-out infinite}
 @keyframes shimmer{0%,100%{opacity:.5}50%{opacity:1}}
 .widget-title{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:500;margin-bottom:20px;border-bottom:1px solid var(--border-color);padding-bottom:15px;color:var(--clay-darker)}
 .section-title{text-align:center;font-family:'Space Grotesk',sans-serif;font-size:3rem;margin-bottom:60px;background:rgba(239,220,213,.7);backdrop-filter:blur(15px);border:1px solid rgba(188,170,164,.5);border-radius:20px;padding:20px 40px;display:inline-block;box-shadow:inset 0 2px 4px rgba(255,255,255,.7),inset 0 -2px 4px rgba(188,170,164,.4),0 5px 10px rgba(93,64,55,.15);position:relative;left:50%;transform:translateX(-50%);color:var(--clay-darker)}
@@ -143,44 +143,44 @@ main{position:relative;z-index:2}
 .cta-button{display:inline-block;margin-top:20px;padding:12px 30px;background:var(--accent-primary);color:#fff;text-decoration:none;border-radius:12px;font-weight:bold;transition:all .3s;position:relative;overflow:hidden;box-shadow:inset 0 1px 2px rgba(255,255,255,.4),0 3px 6px rgba(93,64,55,.2);border:1px solid rgba(109,76,65,.3)}
 .cta-button:hover{background:var(--accent-secondary);transform:translateY(-2px);text-decoration:none}
 .email-button{position:relative}
-.email-tooltip{position:absolute;bottom:120%;left:50%;transform:translateX(-50%);background:var(--clay-darker);color:#fff;padding:8px 12px;border-radius:8px;font-size:.9rem;white-space:nowrap;opacity:0;visibility:hidden;transition:all .3s;z-index:100;box-shadow:0 3px 6px rgba(0,0,0,.16)}
+.email-tooltip{position:absolute;bottom:120%;left:50%;transform:translateX(-50%);background:var(--clay-darker);color:#fff;padding:8px 12px;border-radius:8px;font-size:.9rem;white-space:nowrap;opacity:0;visibility:hidden;transition:all .2s;z-index:100;box-shadow:0 3px 6px rgba(0,0,0,.16)}
 .email-tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--clay-darker)}
 .email-button:hover .email-tooltip{opacity:1;visibility:visible;transform:translateX(-50%) translateY(-5px)}
 
 /* entrance overlay */
-.entrance-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--clay-secondary) 0%,var(--clay-dark) 100%);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;animation:fadeOut 3s ease-in-out 2s forwards}
-.entrance-logo{font-family:'Space Grotesk',sans-serif;font-size:4rem;font-weight:700;color:#fff;margin-bottom:2rem;opacity:0;animation:slideUp 1s ease-out .5s forwards;text-shadow:2px 2px 4px rgba(93,64,55,.3)}
+.entrance-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--clay-secondary) 0%,var(--clay-dark) 100%);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;animation:fadeOut 2s ease-in-out 1s forwards}
+.entrance-logo{font-family:'Space Grotesk',sans-serif;font-size:4rem;font-weight:700;color:#fff;margin-bottom:2rem;opacity:0;animation:slideUp .5s ease-out .5s forwards;text-shadow:2px 2px 4px rgba(93,64,55,.3)}
 .entrance-subtitle{font-family:'Space Mono',monospace;font-size:1.2rem;color:rgba(255,255,255,.8);opacity:0;animation:slideUp 1s ease-out 1s forwards}
 .loading-bar{width:300px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin-top:2rem;overflow:hidden}
-.loading-progress{height:100%;background:#fff;width:0;animation:loadProgress 2s ease-in-out forwards}
+.loading-progress{height:100%;background:#fff;width:0;animation:loadProgress 1s ease-in-out forwards}
 @keyframes fadeOut{0%{opacity:1}100%{opacity:0;visibility:hidden}}
 @keyframes slideUp{0%{opacity:0;transform:translateY(30px)}100%{opacity:1;transform:translateY(0)}}
 @keyframes loadProgress{0%{width:0%}100%{width:100%}}
 
 /* garden bed */
 .garden-bed{position:absolute;bottom:0;width:100%;height:25vh}
-.fern{position:absolute;bottom:0;width:10px;height:0;background:var(--tree-color);transform-origin:bottom;animation:grow-fern 8s infinite ease-in-out}
+.fern{position:absolute;bottom:0;width:10px;height:0;background:var(--tree-color);transform-origin:bottom;animation:grow-fern 6s infinite ease-in-out}
 .fern::before,.fern::after{content:'';position:absolute;bottom:10px;width:100%;height:100%;background:inherit}
 .fern::before{transform:skew(30deg)}.fern::after{transform:skew(-30deg)}
 @keyframes grow-fern{0%{height:0}50%{height:100px}100%{height:0}}
-.fern-1{left:15%;animation-delay:0s}.fern-2{left:80%;animation-delay:3s}.fern-3{left:45%;animation-delay:6s}
+.fern-1{left:15%;animation-delay:0s}.fern-2{left:80%;animation-delay:2s}.fern-3{left:45%;animation-delay:6s}
 .flower-bush{position:absolute;bottom:10px}
 .flower-bush .stem{width:5px;height:50px;background:var(--tree-color);position:absolute;bottom:0;left:50%}
-.flower-bush .petal{position:absolute;width:15px;height:15px;background:var(--flower-color);border-radius:50%;bottom:45px;left:calc(50% - 7.5px);transform-origin:center;opacity:0;animation:bloom-flower 10s infinite}
-.flower-bush .petal.p1{transform:translate(-10px,-5px);animation-delay:1s}.flower-bush .petal.p2{transform:translate(10px,-5px);animation-delay:1.5s}.flower-bush .petal.p3{transform:translate(0,10px);animation-delay:2s}
+.flower-bush .petal{position:absolute;width:15px;height:15px;background:var(--flower-color);border-radius:50%;bottom:45px;left:calc(50% - 7.5px);transform-origin:center;opacity:0;animation:bloom-flower 8s infinite}
+.flower-bush .petal.p1{transform:translate(-10px,-5px);animation-delay:1s}.flower-bush .petal.p2{transform:translate(10px,-5px);animation-delay:1s}.flower-bush .petal.p3{transform:translate(0,10px);animation-delay:1s}
 @keyframes bloom-flower{0%,100%{opacity:0;transform:scale(0)}10%,90%{opacity:1;transform:scale(1)}}
 .flower-bush-1{left:30%}.flower-bush-2{left:65%}
-.grass{position:absolute;bottom:0;width:4px;height:60px;background:#7cb342;transform-origin:bottom;border-radius:2px 2px 0 0;animation:sway-grass 5s infinite ease-in-out}
+.grass{position:absolute;bottom:0;width:4px;height:60px;background:#7cb342;transform-origin:bottom;border-radius:2px 2px 0 0;animation:sway-grass 4s infinite ease-in-out}
 @keyframes sway-grass{0%,100%{transform:rotate(0deg)}50%{transform:rotate(10deg)}}
 .grass-1{left:5%;animation-delay:.5s}.grass-2{left:95%;animation-delay:1s}.grass-3{left:50%;animation-delay:.2s}
 
 /* mini-game */
-.mini-game{width:100%;height:300px;background:linear-gradient(to bottom,#87ceeb 0%,#87ceeb 70%,#8fbc8f 70%,#228b22 100%);position:relative;overflow:hidden;border-radius:12px;cursor:pointer;box-shadow:inset 0 2px 4px rgba(255,255,255,.6),inset 0 -2px 4px rgba(0,0,0,.2);border:1px solid rgba(188,170,164,.5)}
+.mini-game{width:auto;height:300px;background:linear-gradient(to bottom,#87ceeb 0%,#87ceeb 70%,#8fbc8f 70%,#228b22 100%);position:relative;overflow:hidden;border-radius:12px;cursor:pointer;box-shadow:inset 0 2px 4px rgba(255,255,255,.6),inset 0 -2px 4px rgba(0,0,0,.2);border:1px solid rgba(188,170,164,.5)}
 .game-ground{position:absolute;bottom:0;width:100%;height:80px;background:#8b4513;border-top:4px solid #654321}
 .mario{position:absolute;bottom:80px;left:50px;width:32px;height:32px;background:#ff0000;border-radius:4px;transition:bottom .3s;box-shadow:0 2px 4px rgba(0,0,0,.3)}
 .mario::before{content:'';position:absolute;top:-8px;left:4px;width:24px;height:16px;background:#8b4513;border-radius:50%}
 .mario::after{content:'';position:absolute;top:8px;left:8px;width:16px;height:16px;background:#0000ff;border-radius:2px}
-.obstacle{position:absolute;bottom:80px;width:24px;height:24px;background:#228b22;border-radius:4px;animation:moveObstacle 3s linear infinite;box-shadow:0 2px 4px rgba(0,0,0,.3)}
+.obstacle{position:absolute;bottom:80px;width:24px;height:24px;background:#228b22;border-radius:4px;animation:moveObstacle 2.5s linear infinite;box-shadow:0 2px 4px rgba(0,0,0,.3)}
 .obstacle::before{content:'';position:absolute;top:-8px;left:4px;width:16px;height:16px;background:#32cd32;border-radius:50%}
 @keyframes moveObstacle{0%{right:-30px}100%{right:100%}}
 .cloud{position:absolute;background:#fff;border-radius:50px;opacity:.8;animation:moveClouds 15s linear infinite;box-shadow:0 2px 4px rgba(0,0,0,.1)}
@@ -469,13 +469,13 @@ function initScrollAnimations() {
             y: 0,
             opacity: 1,
             rotationX: 0,
-            duration: 1.2,
-            delay: index * 0.1,
+            duration: 1,
+            delay: index * 0,
             ease: "power3.out",
             scrollTrigger: {
                 trigger: widget,
-                start: 'top 85%',
-                end: 'bottom 20%',
+                start: 'top 95%',
+                end: 'bottom 10%',
                 toggleActions: 'play none none reverse'
             }
         });
@@ -491,12 +491,12 @@ function initScrollAnimations() {
             y: 0,
             opacity: 1,
             scale: 1,
-            duration: 1,
+            duration: .5,
             ease: "back.out(1.7)",
             scrollTrigger: {
                 trigger: title,
                 start: 'top 90%',
-                end: 'bottom 20%',
+                end: 'bottom 10%',
                 toggleActions: 'play none none reverse'
             }
         });
@@ -510,11 +510,11 @@ function initScrollAnimations() {
         }, {
             y: 0,
             opacity: 1,
-            duration: 0.8,
+            duration: 0.5,
             scrollTrigger: {
                 trigger: content,
                 start: 'top 90%',
-                end: 'bottom 20%',
+                end: 'bottom 10%',
                 toggleActions: 'play none none reverse'
             }
         });
@@ -539,7 +539,7 @@ function initBasicScrollAnimations() {
     widgets.forEach(widget => {
         widget.style.opacity = '0';
         widget.style.transform = 'translateY(100px) rotateX(15deg)';
-        widget.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+        widget.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
         observer.observe(widget);
     });
 }
