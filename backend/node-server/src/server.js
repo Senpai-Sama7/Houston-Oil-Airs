@@ -302,7 +302,7 @@ class RealHighPerformanceWebServer {
                     `# TYPE houston_compensation_paid_total counter`,
                     `houston_compensation_paid_total ${parseFloat(compensationStats.rows[0].total_paid) || 0}`,
                 ];
-                res.send(lines.join('\n'));
+                res.send(lines.join('\n') + '\n');
 
             } catch (error) {
                 console.error('Error getting real metrics:', error);
