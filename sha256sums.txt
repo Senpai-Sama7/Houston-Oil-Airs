@@ -1,0 +1,3 @@
+b909e80eeffff983d9fbafc39183e2f43ad6f9da0afa23a8afe312b75fbf5b8f  evidence/2025-09-19T0858Z_mvn_package.txt
+90f22ee16f50a199c92ebb515f18909c3ff92a23ac293f310a3b9fa663768b3a  evidence/2025-09-19T0900Z_npm_test.txt
+aae4d9686f26bf50f3f584981f6e3028551ca99bb2593a67d36cd8bdfd682c0c  evidence/mvn_clean_package_offline.txt

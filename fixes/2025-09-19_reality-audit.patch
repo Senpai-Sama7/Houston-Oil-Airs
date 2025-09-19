@@ -1,0 +1,82 @@
+diff --git a/REALITY_CHECKLIST.txt b/REALITY_CHECKLIST.txt
+index 98e95bd..c531219 100644
+--- a/REALITY_CHECKLIST.txt
++++ b/REALITY_CHECKLIST.txt
+@@ -1,4 +1,7 @@
+-- [ ] F1 Build java-services with Maven (`mvn clean package`) — UNVERIFIED (needs Maven Central access to resolve spring-boot-starter-parent 3.3.4).
+-- [ ] F2 GET /api/analytics/research-trends — UNVERIFIED (service jar missing because Maven build failed offline).
+-- [ ] F3 POST /api/analytics/network-analysis — UNVERIFIED (service jar missing because Maven build failed offline).
+-- [ ] F4 GET /api/analytics/health — UNVERIFIED (service jar missing because Maven build failed offline).
++- [ ] F1 Build java-services with Maven (`cd backend/java-services && mvn -B -DskipTests package`) — UNVERIFIED (requires outbound HTTPS to download org.springframework.boot:spring-boot-starter-parent:3.3.4).
++- [ ] F2 GET /api/research/visualization-data/:category (`curl -sS http://localhost:3001/api/research/visualization-data/alignment`) — UNVERIFIED (needs PostgreSQL database `houston_ej_ai` with `air_quality` data and Redis cache at `redis://localhost:6379`).
++- [ ] F3 GET /api/research/network-topology (`curl -sS http://localhost:3001/api/research/network-topology`) — UNVERIFIED (same PostgreSQL and Redis services as F2 are unavailable).
++- [ ] F4 POST /api/research/update-metrics (`curl -sS -H 'Content-Type: application/json' -d '{"metrics":[12,18,27,45,3],"device_id":"houston_sensor_001"}' http://localhost:3001/api/research/update-metrics`) — UNVERIFIED (blocked until Redis and PostgreSQL are reachable).
++- [ ] F5 GET /metrics (`curl -sS http://localhost:3001/metrics`) — UNVERIFIED (service start fails without Redis and PostgreSQL backends).
++- [ ] F6 GET /live (`curl -sS http://localhost:3001/live`) — UNVERIFIED (server process did not start because dependencies are missing).
++- [ ] F7 GET /ready (`curl -sS http://localhost:3001/ready`) — UNVERIFIED (server process did not start because dependencies are missing).
+diff --git a/features.json b/features.json
+index d069667..453e78a 100644
+--- a/features.json
++++ b/features.json
+@@ -2,25 +2,43 @@
+   {
+     "id": "F1",
+     "feature": "Build java-services with Maven",
+-    "command": "cd backend/java-services && mvn clean package",
++    "command": "cd backend/java-services && mvn -B -DskipTests package",
+     "expected_signal": "Build logs end with 'BUILD SUCCESS' and a runnable jar appears under target/."
+   },
+   {
+     "id": "F2",
+-    "feature": "GET /api/analytics/research-trends returns recent metrics",
+-    "command": "curl -sS -D - http://localhost:8080/api/analytics/research-trends?category=test&timeframe=24",
+-    "expected_signal": "HTTP 200 with application/json header and a non-empty JSON array payload."
++    "feature": "GET /api/research/visualization-data/:category",
++    "command": "curl -sS -D - http://localhost:3001/api/research/visualization-data/alignment",
++    "expected_signal": "HTTP 200 with application/json header and a JSON body containing research_points[]."
+   },
+   {
+     "id": "F3",
+-    "feature": "POST /api/analytics/network-analysis computes network graph",
+-    "command": "curl -sS -D - -H 'Content-Type: application/json' -d '[\"ai\",\"ml\"]' http://localhost:8080/api/analytics/network-analysis",
+-    "expected_signal": "HTTP 200 with application/json header and a JSON body containing 'nodes' and 'edges'."
++    "feature": "GET /api/research/network-topology",
++    "command": "curl -sS -D - http://localhost:3001/api/research/network-topology",
++    "expected_signal": "HTTP 200 with application/json header and a JSON payload containing nodes[] and edges[]."
+   },
+   {
+     "id": "F4",
+-    "feature": "GET /api/analytics/health reports service status",
+-    "command": "curl -sS -D - http://localhost:8080/api/analytics/health",
+-    "expected_signal": "HTTP 200 with JSON body containing 'status':'healthy'."
++    "feature": "POST /api/research/update-metrics",
++    "command": "curl -sS -D - -H 'Content-Type: application/json' -d '{\\\"metrics\\\":[12,18,27,45,3],\\\"device_id\\\":\\\"houston_sensor_001\\\"}' http://localhost:3001/api/research/update-metrics",
++    "expected_signal": "HTTP 200 with application/json header and body {\"success\":true,...}."
++  },
++  {
++    "id": "F5",
++    "feature": "GET /metrics",
++    "command": "curl -sS -D - http://localhost:3001/metrics",
++    "expected_signal": "HTTP 200 with text/plain; version=0.0.4 header and Prometheus metric lines."
++  },
++  {
++    "id": "F6",
++    "feature": "GET /live",
++    "command": "curl -sS -D - http://localhost:3001/live",
++    "expected_signal": "HTTP 200 with application/json header and body containing {\"status\":\"alive\"}."
++  },
++  {
++    "id": "F7",
++    "feature": "GET /ready",
++    "command": "curl -sS -D - http://localhost:3001/ready",
++    "expected_signal": "HTTP 200 with application/json header and body containing {\"status\":\"ready\"}."
+   }
+ ]
+diff --git a/sha256sums.txt b/sha256sums.txt
+index f67d762..2ba970e 100644
+--- a/sha256sums.txt
++++ b/sha256sums.txt
+@@ -1 +1,3 @@
++b909e80eeffff983d9fbafc39183e2f43ad6f9da0afa23a8afe312b75fbf5b8f  evidence/2025-09-19T0858Z_mvn_package.txt
++90f22ee16f50a199c92ebb515f18909c3ff92a23ac293f310a3b9fa663768b3a  evidence/2025-09-19T0900Z_npm_test.txt
+ aae4d9686f26bf50f3f584981f6e3028551ca99bb2593a67d36cd8bdfd682c0c  evidence/mvn_clean_package_offline.txt
