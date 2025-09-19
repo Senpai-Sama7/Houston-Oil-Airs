@@ -302,7 +302,7 @@ class RealHighPerformanceWebServer {
                     `# TYPE houston_compensation_paid_total counter`,
                     `houston_compensation_paid_total ${parseFloat(compensationStats.rows[0].total_paid) || 0}`,
                 ];
-                res.send(lines.join('\n') + '\n');
+                res.send(lines.join('\n'));
 
             } catch (error) {
                 console.error('Error getting real metrics:', error);
@@ -332,7 +332,7 @@ class RealHighPerformanceWebServer {
                 });
             } catch (error) {
                 console.error('Error serving JSON metrics:', error);
-                this.metricsState.errorCount += 1;
+
                 res.status(500).json({ error: 'metrics_unavailable' });
             }
         });
@@ -446,7 +446,6 @@ class RealHighPerformanceWebServer {
 
     async shutdown() {
         console.log('Shutting down real server...');
-        this.io.close();
         clearInterval(this.streamingInterval);
 
         await Promise.allSettled([

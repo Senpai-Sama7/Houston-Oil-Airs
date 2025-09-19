@@ -124,10 +124,13 @@ BEGIN
     END IF;
     
     -- Update device last_seen
+-- Update device last_seen
     INSERT INTO devices (device_id, device_name, status, last_seen)
     VALUES (NEW.device_id, NEW.device_id, 'active', NEW.time)
     ON CONFLICT (device_id)
-    DO UPDATE SET last_seen = EXCLUDED.last_seen;
+    DO UPDATE SET
+        last_seen = EXCLUDED.last_seen,
+        status = 'active';
     
     RETURN NEW;
 END;
