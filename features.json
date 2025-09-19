@@ -2,25 +2,43 @@
   {
     "id": "F1",
     "feature": "Build java-services with Maven",
-    "command": "cd backend/java-services && mvn clean package",
+    "command": "cd backend/java-services && mvn -B -DskipTests package",
     "expected_signal": "Build logs end with 'BUILD SUCCESS' and a runnable jar appears under target/."
   },
   {
     "id": "F2",
-    "feature": "GET /api/analytics/research-trends returns recent metrics",
-    "command": "curl -sS -D - http://localhost:8080/api/analytics/research-trends?category=test&timeframe=24",
-    "expected_signal": "HTTP 200 with application/json header and a non-empty JSON array payload."
+    "feature": "GET /api/research/visualization-data/:category",
+    "command": "curl -sS -D - http://localhost:3001/api/research/visualization-data/alignment",
+    "expected_signal": "HTTP 200 with application/json header and a JSON body containing research_points[]."
   },
   {
     "id": "F3",
-    "feature": "POST /api/analytics/network-analysis computes network graph",
-    "command": "curl -sS -D - -H 'Content-Type: application/json' -d '[\"ai\",\"ml\"]' http://localhost:8080/api/analytics/network-analysis",
-    "expected_signal": "HTTP 200 with application/json header and a JSON body containing 'nodes' and 'edges'."
+    "feature": "GET /api/research/network-topology",
+    "command": "curl -sS -D - http://localhost:3001/api/research/network-topology",
+    "expected_signal": "HTTP 200 with application/json header and a JSON payload containing nodes[] and edges[]."
   },
   {
     "id": "F4",
-    "feature": "GET /api/analytics/health reports service status",
-    "command": "curl -sS -D - http://localhost:8080/api/analytics/health",
-    "expected_signal": "HTTP 200 with JSON body containing 'status':'healthy'."
+    "feature": "POST /api/research/update-metrics",
+    "command": "curl -sS -D - -H 'Content-Type: application/json' -d '{\\\"metrics\\\":[12,18,27,45,3],\\\"device_id\\\":\\\"houston_sensor_001\\\"}' http://localhost:3001/api/research/update-metrics",
+    "expected_signal": "HTTP 200 with application/json header and body {\"success\":true,...}."
+  },
+  {
+    "id": "F5",
+    "feature": "GET /metrics",
+    "command": "curl -sS -D - http://localhost:3001/metrics",
+    "expected_signal": "HTTP 200 with text/plain; version=0.0.4 header and Prometheus metric lines."
+  },
+  {
+    "id": "F6",
+    "feature": "GET /live",
+    "command": "curl -sS -D - http://localhost:3001/live",
+    "expected_signal": "HTTP 200 with application/json header and body containing {\"status\":\"alive\"}."
+  },
+  {
+    "id": "F7",
+    "feature": "GET /ready",
+    "command": "curl -sS -D - http://localhost:3001/ready",
+    "expected_signal": "HTTP 200 with application/json header and body containing {\"status\":\"ready\"}."
   }
 ]
