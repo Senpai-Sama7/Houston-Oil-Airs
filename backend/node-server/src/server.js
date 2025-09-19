@@ -332,6 +332,7 @@ class RealHighPerformanceWebServer {
                 });
             } catch (error) {
                 console.error('Error serving JSON metrics:', error);
+
                 res.status(500).json({ error: 'metrics_unavailable' });
             }
         });

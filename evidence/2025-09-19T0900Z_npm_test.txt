@@ -1,0 +1,64 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> node-server@1.0.0 test
+> jest --runTestsByPath test/server.test.js
+
+FAIL test/server.test.js (5.719 s)
+  ● Houston EJ-AI Backend Server › Health Endpoints › GET /live should return alive status
+
+    AggregateError:
+
+
+
+  ● Houston EJ-AI Backend Server › Health Endpoints › GET /ready should return ready status
+
+    AggregateError:
+
+
+
+  ● Houston EJ-AI Backend Server › Metrics Endpoints › GET /metrics should return Prometheus metrics
+
+    AggregateError:
+
+
+
+  ● Houston EJ-AI Backend Server › Metrics Endpoints › GET /metrics.json should return JSON metrics
+
+    AggregateError:
+
+
+
+  ● Houston EJ-AI Backend Server › API Endpoints › GET /api/research/visualization-data/alignment should return real data
+
+    AggregateError:
+
+
+
+  ● Houston EJ-AI Backend Server › API Endpoints › GET /api/research/network-topology should return real network data
+
+    AggregateError:
+
+
+
+
+  ● Test suite failed to run
+
+    thrown: "Exceeded timeout of 5000 ms for a hook.
+    Add a timeout value to this test to increase the timeout, if this is a long-running test. See https://jestjs.io/docs/api#testname-fn-timeout."
+
+      28 |   });
+      29 |
+    > 30 |   afterAll(async () => {
+         |   ^
+      31 |     await redisClient.quit();
+      32 |     await pgPool.end();
+      33 |     server.shutdown();
+
+      at afterAll (test/server.test.js:30:3)
+      at Object.describe (test/server.test.js:7:1)
+
+Test Suites: 1 failed, 1 total
+Tests:       6 failed, 6 total
+Snapshots:   0 total
+Time:        5.749 s, estimated 6 s
+Ran all test suites within paths "test/server.test.js".
