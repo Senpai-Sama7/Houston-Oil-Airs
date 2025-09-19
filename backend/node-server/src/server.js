@@ -446,6 +446,7 @@ class RealHighPerformanceWebServer {
 
     async shutdown() {
         console.log('Shutting down real server...');
+        this.io.close();
         clearInterval(this.streamingInterval);
 
         await Promise.allSettled([
