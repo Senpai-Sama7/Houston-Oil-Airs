@@ -1,21 +1,20 @@
-FROM node:18-alpine AS base
+FROM node:20-alpine AS base
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
-FROM openjdk:11-jre-slim AS java-builder
+FROM maven:3.9.6-eclipse-temurin-17 AS java-builder
 WORKDIR /app
 COPY java-services/pom.xml ./
 COPY java-services/src ./src
-RUN apt-get update && apt-get install -y maven
-RUN mvn clean package -DskipTests
+RUN mvn -B -DskipTests clean package
 
-FROM node:18-alpine
+FROM node:20-alpine
 WORKDIR /app
 
 # Install Java runtime for multi-service support
-RUN apk add --no-cache openjdk11-jre
+RUN apk add --no-cache openjdk17-jre-headless
 
 # Copy Node.js dependencies
 COPY --from=base /app/node_modules ./node_modules
