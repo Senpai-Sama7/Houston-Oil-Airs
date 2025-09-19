@@ -3,42 +3,96 @@
     "id": "F1",
     "feature": "Build java-services with Maven",
     "command": "cd backend/java-services && mvn -B -DskipTests package",
-    "expected_signal": "Build logs end with 'BUILD SUCCESS' and a runnable jar appears under target/."
+    "expected_signal": "Build logs end with 'BUILD SUCCESS' and a runnable jar appears under target/.",
+    "status": "UNVERIFIED",
+    "evidence": "evidence/2025-09-19T0858Z_mvn_package.txt"
   },
   {
     "id": "F2",
-    "feature": "GET /api/research/visualization-data/:category",
-    "command": "curl -sS -D - http://localhost:3001/api/research/visualization-data/alignment",
-    "expected_signal": "HTTP 200 with application/json header and a JSON body containing research_points[]."
+    "feature": "GET /api/research/visualization-data/:category returns populated research_points",
+    "command": "curl -sS http://localhost:3001/api/research/visualization-data/alignment",
+    "expected_signal": "HTTP 200 with research_points array containing recent device readings.",
+    "status": "VERIFIED",
+    "evidence": "evidence/20250919T091925Z_curl_visualization_body.json"
   },
   {
     "id": "F3",
-    "feature": "GET /api/research/network-topology",
-    "command": "curl -sS -D - http://localhost:3001/api/research/network-topology",
-    "expected_signal": "HTTP 200 with application/json header and a JSON payload containing nodes[] and edges[]."
+    "feature": "GET /api/research/network-topology emits nodes and edges",
+    "command": "curl -sS http://localhost:3001/api/research/network-topology",
+    "expected_signal": "HTTP 200 with JSON nodes[] and edges[] derived from PostgreSQL data.",
+    "status": "VERIFIED",
+    "evidence": "evidence/20250919T091925Z_curl_topology_body.json"
   },
   {
     "id": "F4",
-    "feature": "POST /api/research/update-metrics",
-    "command": "curl -sS -D - -H 'Content-Type: application/json' -d '{\\\"metrics\\\":[12,18,27,45,3],\\\"device_id\\\":\\\"houston_sensor_001\\\"}' http://localhost:3001/api/research/update-metrics",
-    "expected_signal": "HTTP 200 with application/json header and body {\"success\":true,...}."
+    "feature": "POST /api/research/update-metrics stores sensor readings",
+    "command": "curl -sS -H 'Content-Type: application/json' -d '{\"metrics\":[30,49,28,65,1],\"device_id\":\"houston_sensor_001\"}' http://localhost:3001/api/research/update-metrics",
+    "expected_signal": "HTTP 200 with JSON body {\"success\":true,\"processed\":5} and websocket broadcast.",
+    "status": "VERIFIED",
+    "evidence": "evidence/20250919T091925Z_curl_update_metrics_body.json"
   },
   {
     "id": "F5",
-    "feature": "GET /metrics",
-    "command": "curl -sS -D - http://localhost:3001/metrics",
-    "expected_signal": "HTTP 200 with text/plain; version=0.0.4 header and Prometheus metric lines."
+    "feature": "GET /metrics exposes Prometheus counters",
+    "command": "curl -sS http://localhost:3001/metrics",
+    "expected_signal": "HTTP 200 with text/plain payload including houston_sensor_readings_total.",
+    "status": "VERIFIED",
+    "evidence": "evidence/20250919T091925Z_curl_metrics_body.txt"
   },
   {
     "id": "F6",
-    "feature": "GET /live",
-    "command": "curl -sS -D - http://localhost:3001/live",
-    "expected_signal": "HTTP 200 with application/json header and body containing {\"status\":\"alive\"}."
+    "feature": "GET /metrics.json returns structured metrics",
+    "command": "curl -sS http://localhost:3001/metrics.json",
+    "expected_signal": "HTTP 200 with JSON fields requests_total, uptime_seconds, readings_last_24h.",
+    "status": "VERIFIED",
+    "evidence": "evidence/20250919T091925Z_curl_metrics_json_body.json"
   },
   {
     "id": "F7",
-    "feature": "GET /ready",
-    "command": "curl -sS -D - http://localhost:3001/ready",
-    "expected_signal": "HTTP 200 with application/json header and body containing {\"status\":\"ready\"}."
+    "feature": "GET /live reports process health",
+    "command": "curl -sS http://localhost:3001/live",
+    "expected_signal": "HTTP 200 with JSON {\"status\":\"alive\",\"timestamp\":...}.",
+    "status": "VERIFIED",
+    "evidence": "evidence/20250919T091925Z_curl_live_body.json"
+  },
+  {
+    "id": "F8",
+    "feature": "GET /ready validates dependencies",
+    "command": "curl -sS http://localhost:3001/ready",
+    "expected_signal": "HTTP 200 with JSON reporting database and redis connected.",
+    "status": "VERIFIED",
+    "evidence": "evidence/20250919T091925Z_curl_ready_body.json"
+  },
+  {
+    "id": "F9",
+    "feature": "Run backend/node-server Jest integration suite",
+    "command": "REDIS_PORT=6380 DB_HOST=localhost DB_NAME=houston_ej_ai_test DB_USER=houston DB_PASSWORD=ej_ai_2024 npm test -- --runTestsByPath test/server.test.js",
+    "expected_signal": "All tests green with PASS summary.",
+    "status": "VERIFIED",
+    "evidence": "evidence/20250919T091925Z_npm_test.log"
+  },
+  {
+    "id": "F10",
+    "feature": "Audit production dependencies for vulnerabilities",
+    "command": "cd backend/node-server && npm audit --omit=dev",
+    "expected_signal": "Report ends with 'found 0 vulnerabilities'.",
+    "status": "VERIFIED",
+    "evidence": "evidence/20250919T091925Z_npm_audit.log"
+  },
+  {
+    "id": "F11",
+    "feature": "Scan repository for credentials with gitleaks",
+    "command": "gitleaks detect --no-banner --source . --redact",
+    "expected_signal": "Log states 'no leaks found'.",
+    "status": "VERIFIED",
+    "evidence": "evidence/20250919T091925Z_gitleaks.log"
+  },
+  {
+    "id": "F12",
+    "feature": "Load test /metrics endpoint with wrk",
+    "command": "wrk -t2 -c10 -d15s http://127.0.0.1:3001/metrics",
+    "expected_signal": "Report includes Requests/sec and latency distribution with all responses 200.",
+    "status": "VERIFIED",
+    "evidence": "evidence/20250919T091925Z_wrk_metrics.log"
   }
 ]

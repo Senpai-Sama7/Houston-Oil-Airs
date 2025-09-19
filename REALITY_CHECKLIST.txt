@@ -1,7 +1,12 @@
-- [ ] F1 Build java-services with Maven (`cd backend/java-services && mvn -B -DskipTests package`) — UNVERIFIED (requires outbound HTTPS to download org.springframework.boot:spring-boot-starter-parent:3.3.4).
-- [ ] F2 GET /api/research/visualization-data/:category (`curl -sS http://localhost:3001/api/research/visualization-data/alignment`) — UNVERIFIED (needs PostgreSQL database `houston_ej_ai` with `air_quality` data and Redis cache at `redis://localhost:6379`).
-- [ ] F3 GET /api/research/network-topology (`curl -sS http://localhost:3001/api/research/network-topology`) — UNVERIFIED (same PostgreSQL and Redis services as F2 are unavailable).
-- [ ] F4 POST /api/research/update-metrics (`curl -sS -H 'Content-Type: application/json' -d '{"metrics":[12,18,27,45,3],"device_id":"houston_sensor_001"}' http://localhost:3001/api/research/update-metrics`) — UNVERIFIED (blocked until Redis and PostgreSQL are reachable).
-- [ ] F5 GET /metrics (`curl -sS http://localhost:3001/metrics`) — UNVERIFIED (service start fails without Redis and PostgreSQL backends).
-- [ ] F6 GET /live (`curl -sS http://localhost:3001/live`) — UNVERIFIED (server process did not start because dependencies are missing).
-- [ ] F7 GET /ready (`curl -sS http://localhost:3001/ready`) — UNVERIFIED (server process did not start because dependencies are missing).
+- [ ] F1 Build java-services with Maven (`cd backend/java-services && mvn -B -DskipTests package`) — UNVERIFIED (network egress to Maven Central remains blocked; see evidence/2025-09-19T0858Z_mvn_package.txt).
+- [x] F2 GET /api/research/visualization-data/:category (`curl -sS http://localhost:3001/api/research/visualization-data/alignment`) — VERIFIED (HTTP 200 with research_points populated; see evidence/20250919T091925Z_curl_visualization_body.json).
+- [x] F3 GET /api/research/network-topology (`curl -sS http://localhost:3001/api/research/network-topology`) — VERIFIED (HTTP 200 with nodes and edges; see evidence/20250919T091925Z_curl_topology_body.json).
+- [x] F4 POST /api/research/update-metrics (`curl -sS -H 'Content-Type: application/json' -d '{"metrics":[30,49,28,65,1],"device_id":"houston_sensor_001"}' http://localhost:3001/api/research/update-metrics`) — VERIFIED (HTTP 200 with `{"success":true,"processed":5}`; see evidence/20250919T091925Z_curl_update_metrics_body.json).
+- [x] F5 GET /metrics (`curl -sS http://localhost:3001/metrics`) — VERIFIED (Prometheus text with sensor counters; see evidence/20250919T091925Z_curl_metrics_body.txt).
+- [x] F6 GET /metrics.json (`curl -sS http://localhost:3001/metrics.json`) — VERIFIED (JSON metrics include requests_total and readings_last_24h; see evidence/20250919T091925Z_curl_metrics_json_body.json).
+- [x] F7 GET /live (`curl -sS http://localhost:3001/live`) — VERIFIED (JSON body reports status alive; see evidence/20250919T091925Z_curl_live_body.json).
+- [x] F8 GET /ready (`curl -sS http://localhost:3001/ready`) — VERIFIED (JSON body confirms database and redis connected; see evidence/20250919T091925Z_curl_ready_body.json).
+- [x] F9 Run backend/node-server Jest suite (`REDIS_PORT=6380 DB_NAME=houston_ej_ai_test npm test -- --runTestsByPath test/server.test.js`) — VERIFIED (all tests passed; see evidence/20250919T091925Z_npm_test.log).
+- [x] F10 npm audit for production dependencies (`npm audit --omit=dev`) — VERIFIED (0 vulnerabilities; see evidence/20250919T091925Z_npm_audit.log).
+- [x] F11 Gitleaks secret scan (`gitleaks detect --no-banner --source . --redact`) — VERIFIED (no leaks found; see evidence/20250919T091925Z_gitleaks.log).
+- [x] F12 Load test /metrics with wrk (`wrk -t2 -c10 -d15s http://127.0.0.1:3001/metrics`) — VERIFIED (1,723 req/s with p95 latency under 13ms; see evidence/20250919T091925Z_wrk_metrics.log).
