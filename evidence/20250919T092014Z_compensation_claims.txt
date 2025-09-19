@@ -1,0 +1,6 @@
+               wallet_address               | amount |  status   
+--------------------------------------------+--------+-----------
+ 0x5c4a3b2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b |   0.40 | confirmed
+ 0x6b2f1c4d8a9e0b5f3c1d7e2f4a9b6c3d8e1f2a3b |   0.25 | confirmed
+(2 rows)
+

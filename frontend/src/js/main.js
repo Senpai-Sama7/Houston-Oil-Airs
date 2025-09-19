@@ -74,9 +74,9 @@ class VisualizationApp {
         // Visual sanity check: rotating cube
         const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
         const cubeMat = new THREE.MeshStandardMaterial({ color: 0x00d4ff, roughness: 0.4, metalness: 0.2 });
-        this._demoCube = new THREE.Mesh(cubeGeo, cubeMat);
-        this._demoCube.position.set(-2, 0, 0);
-        this.scene.add(this._demoCube);
+        this._previewCube = new THREE.Mesh(cubeGeo, cubeMat);
+        this._previewCube.position.set(-2, 0, 0);
+        this.scene.add(this._previewCube);
 
         // Initialize visualization engine in a safe way
         this.visualizationEngine = new VisualizationEngine();
@@ -224,9 +224,9 @@ class VisualizationApp {
 
             // Allow the engine to tick if present
             this.visualizationEngine?.update?.(currentTime);
-            if (this._demoCube) {
-                this._demoCube.rotation.x += 0.01;
-                this._demoCube.rotation.y += 0.015;
+            if (this._previewCube) {
+                this._previewCube.rotation.x += 0.01;
+                this._previewCube.rotation.y += 0.015;
             }
             this.renderer?.render?.(this.scene, this.camera);
 

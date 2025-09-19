@@ -16,32 +16,6 @@
 
 ---
 
-## 📚 **Houston Intelligence Documentation**
-
-### 🚀 **AI-Powered Environmental Justice Playbook**
-[**View Document**](docs/AI-Powered-Environmental-Justice-Playbook.md)
-
-A comprehensive advocacy and repair playbook that combines environmental justice with advanced AI visualization. This field-tested guide provides:
-
-- **Co-design Principles** - Community-controlled data sovereignty and dual-key encryption
-- **Community Nervous System** - Hardware/software/trust infrastructure for environmental monitoring
-- **Advanced Visualization Layer** - 3D Houston Human-Health Graph with real-time sensor feeds
-- **Policy Change Pathways** - City, county, state, and federal intervention strategies
-- **Repair & Compensation Toolkit** - Health, property, and financial remediation frameworks
-
-### 🧠 **Houston Urban Intelligence Analysis**
-[**View Document**](docs/Houston-Urban-Intelligence-Analysis.md)
-
-A comprehensive, graph-aware intelligence dossier providing forensic analysis of Houston's urban systems:
-
-- **Network Graph Model** - 15.4M nodes, 71.8M edges mapping the city's social and physical infrastructure
-- **Psychological Profiling** - Multi-persona analysis of Houston's collective identity and trauma responses
-- **Cross-Layer Findings** - Connections between demographics, economics, health, and environmental justice
-- **Red-Team Scenarios** - Security analysis and creative exploitation potential
-- **Policy Interventions** - Data-driven recommendations for systemic change
-
----
-
 ## 🚀 **Quick Start**
 
 ```bash
@@ -58,7 +32,33 @@ make dev-setup
 docker-compose -f docker-compose.ej-ai.yml up -d
 ```
 
-**Live Demo**: [https://houstonoilairs.org](https://senpai-sama7.github.io/Houston-Oil-Airs/)
+## ✅ Backend verification workflow (local shell)
+
+1. **Install services** (Debian/Ubuntu):
+   ```bash
+   sudo apt-get update
+   sudo apt-get install -y postgresql redis-server postgresql-client
+   pg_ctlcluster 16 main start
+   redis-server --daemonize yes
+   ```
+2. **Seed the operational database** (creates schema, functions, and loads `data/air_quality_data.csv`):
+   ```bash
+   ./scripts/bootstrap_db.sh
+   ```
+3. **Launch the backend API** (requires the PostgreSQL and Redis instances from step 1):
+   ```bash
+   ./backend/start.sh
+   ```
+   The service listens on **http://localhost:3001** and exposes:
+   - `POST /api/research/update-metrics`
+   - `GET /api/research/visualization-data/:category`
+   - `GET /api/research/network-topology`
+   - `GET /metrics`
+   - `GET /live`
+   - `GET /ready`
+4. **Shutdown**: interrupt `./backend/start.sh` with `Ctrl+C`, then run `redis-cli shutdown` and `pg_ctlcluster 16 main stop` if you started local daemons in step 1.
+
+**Live Deployment**: [https://houstonoilairs.org](https://senpai-sama7.github.io/Houston-Oil-Airs/)
 
 **Contact Founder & Visionary**: DouglasMitchell@HoustonOilAirs.org
 
@@ -260,7 +260,7 @@ Houston-Oil-Airs/
 │   ├── node-server/              # Node.js API server
 │   ├── java-services/            # Java microservices
 │   └── cpp-engine/               # C++ processing engine
-├── data/                         # Sample data and datasets
+├── data/                         # Seed data and datasets
 ├── database/                     # Database schemas and migrations
 ├── docker/                       # Docker configurations
 ├── docs/                         # Houston Intelligence documentation
@@ -391,6 +391,6 @@ This project is licensed under the [MIT License](LICENSE).
 **Contact**: [DouglasMitchell@HoustonOilAirs.org](mailto:DouglasMitchell@HoustonOilAirs.org?subject=Investment%20Interest%20-%20Houston%20Oil%20Airs)  
 **CashApp**: $Windbreaker713  
 **Business Plan**: Available for serious inquiries  
-**Demo**: Live platform walkthrough available
+**Demonstration**: Live platform walkthrough available
 
 *"Investing in the future of AI research collaboration - accessible, innovative, and impactful."*

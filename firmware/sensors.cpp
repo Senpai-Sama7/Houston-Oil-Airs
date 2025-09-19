@@ -4,7 +4,7 @@
 SensorReading readSensors() {
   SensorReading reading;
   
-  // Simulate sensor readings for demo
+  // Simulate sensor readings for demonstration
   reading.pm25 = random(10, 50);
   reading.pm10 = random(20, 80);
   reading.temperature = random(20, 35);

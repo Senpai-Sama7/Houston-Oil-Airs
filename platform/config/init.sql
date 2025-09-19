@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS compensation_claims (
 CREATE INDEX IF NOT EXISTS idx_air_quality_device_time ON air_quality (device_id, time DESC);
 CREATE INDEX IF NOT EXISTS idx_compensation_wallet ON compensation_claims (wallet_address);
 
--- Insert sample data
+-- Insert reference data
 INSERT INTO air_quality (time, device_id, pm25, pm10, temperature, humidity, health_events, encrypted)
 VALUES 
     (NOW() - INTERVAL '1 hour', 'houston_ej_ai_001', 25.5, 45.2, 28.3, 65.1, 2, true),

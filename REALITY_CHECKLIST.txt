@@ -1,0 +1,9 @@
+- [x] F1 Run `./scripts/bootstrap_db.sh` to apply schema and seed data — VERIFIED (see evidence/20250919T091941Z_bootstrap_db.txt).
+- [x] F2 POST /api/research/update-metrics ingests readings — VERIFIED (see evidence/20250919T091951Z_update_metrics.txt).
+- [x] F3 GET /api/research/visualization-data/alignment returns JSON payload — VERIFIED (see evidence/20250919T091957Z_visualization_alignment.txt).
+- [x] F4 GET /api/research/network-topology returns nodes and edges — VERIFIED (see evidence/20250919T091959Z_network_topology.txt).
+- [x] F5 GET /metrics exposes Prometheus gauges — VERIFIED (see evidence/20250919T092001Z_metrics_endpoint.txt).
+- [x] F6 GET /live reports liveness — VERIFIED (see evidence/20250919T092003Z_live_endpoint.txt).
+- [x] F7 GET /ready reports readiness — VERIFIED (see evidence/20250919T092006Z_ready_endpoint.txt).
+- [x] F8 SELECT latest air_quality rows confirms persisted sensor data — VERIFIED (see evidence/20250919T092009Z_air_quality_rows.txt).
+- [x] F9 SELECT compensation_claims summarizes confirmed payouts — VERIFIED (see evidence/20250919T092014Z_compensation_claims.txt).

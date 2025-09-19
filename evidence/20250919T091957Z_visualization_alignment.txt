@@ -1,0 +1,2 @@
+{"research_points":[{"pos":[0.5199999999999999,0.7600000000000001,0.6699999999999999],"confidence":0.698,"category":"alignment","timestamp":"1758273592.143403","meta":[30.2,52.9,0],"device_id":"houston_sensor_002","encrypted":false},{"pos":[0.7399999999999999,0.8600000000000001,0.8899999999999999],"confidence":0.6759999999999999,"category":"alignment","timestamp":"1758273541.729283","meta":[32.4,58.1,1],"device_id":"houston_sensor_001","encrypted":false}],"total_count":2,"generation_time":1758273597.435}
+HTTP 200

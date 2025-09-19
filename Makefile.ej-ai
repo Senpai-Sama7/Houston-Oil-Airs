@@ -72,9 +72,9 @@ clean:
 	rm -rf platform/edge/esp32/.pio
 	rm -rf node_modules
 
-# Create sample data
-sample-data:
-	@echo "📊 Creating sample data..."
+# Create seed data
+seed-data:
+	@echo "📊 Creating seed data..."
 	mkdir -p data
 	echo "timestamp,pm25,pm10,temperature,humidity,device_id,health_events" > data/air_quality_data.csv
 	echo "$(shell date +%s)000,25.5,45.2,28.3,65.1,houston_sensor_001,2" >> data/air_quality_data.csv
@@ -99,5 +99,5 @@ help:
 	@echo "  make down         - Stop development environment"
 	@echo "  make deploy       - Deploy to production"
 	@echo "  make clean        - Clean build artifacts"
-	@echo "  make sample-data  - Create sample CSV data"
+	@echo "  make seed-data  - Create seed CSV data"
 	@echo "  make validate     - Validate system dependencies"

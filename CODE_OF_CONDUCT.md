@@ -10,7 +10,7 @@ We pledge to act and interact in ways that contribute to an open, welcoming, div
 
 Examples of behavior that contributes to a positive environment for our community include:
 
-* Demonstrating empathy and kindness toward other people
+* Demonstrationnstrating empathy and kindness toward other people
 * Being respectful of differing opinions, viewpoints, and experiences
 * Giving and gracefully accepting constructive feedback
 * Accepting responsibility and apologizing to those affected by our mistakes, and learning from the experience
@@ -64,7 +64,7 @@ Community leaders will follow these Community Impact Guidelines in determining t
 
 ### 4. Permanent Ban
 
-**Community Impact**: Demonstrating a pattern of violation of community standards, including sustained inappropriate behavior, harassment of an individual, or aggression toward or disparagement of classes of individuals.
+**Community Impact**: Demonstrationnstrating a pattern of violation of community standards, including sustained inappropriate behavior, harassment of an individual, or aggression toward or disparagement of classes of individuals.
 
 **Consequence**: A permanent ban from any sort of public interaction within the community.
 

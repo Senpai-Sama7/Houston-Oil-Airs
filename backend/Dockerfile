@@ -1,32 +1,8 @@
-FROM node:18-alpine AS base
-
+FROM node:20-alpine
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-
-FROM openjdk:11-jre-slim AS java-builder
-WORKDIR /app
-COPY java-services/pom.xml ./
-COPY java-services/src ./src
-RUN apt-get update && apt-get install -y maven
-RUN mvn clean package -DskipTests
-
-FROM node:18-alpine
-WORKDIR /app
-
-# Install Java runtime for multi-service support
-RUN apk add --no-cache openjdk11-jre
-
-# Copy Node.js dependencies
-COPY --from=base /app/node_modules ./node_modules
+RUN apk add --no-cache postgresql-client redis
 COPY node-server ./node-server
-
-# Copy Java service
-COPY --from=java-builder /app/target/*.jar ./java-services/
-
-# Copy startup script
 COPY start.sh ./
 RUN chmod +x start.sh
-
-EXPOSE 3001 8080
+EXPOSE 3001
 CMD ["./start.sh"]

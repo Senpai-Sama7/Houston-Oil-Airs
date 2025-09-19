@@ -1,0 +1,7 @@
+Waiting for PostgreSQL localhost:5432...
+PostgreSQL is ready
+Waiting for Redis localhost:6379...
+Redis is ready
+🚀 REAL Houston Oil Airs server running on port 3001
+🔗 WebSocket server ready for REAL data connections
+💾 Database connections: PostgreSQL + Redis

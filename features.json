@@ -1,0 +1,56 @@
+[
+  {
+    "id": "F1",
+    "feature": "Bootstrap PostgreSQL schema and load authenticated sensor data",
+    "command": "./scripts/bootstrap_db.sh",
+    "expected_signal": "Script ends with 'Database bootstrap complete for houston_ej_ai on localhost:5432'."
+  },
+  {
+    "id": "F2",
+    "feature": "POST /api/research/update-metrics ingests live readings",
+    "command": "curl -sS -H 'Content-Type: application/json' -d '{\"metrics\":[30.2,52.9,28.8,63.4,0],\"device_id\":\"houston_sensor_002\"}' http://localhost:3001/api/research/update-metrics",
+    "expected_signal": "HTTP 200 response with JSON {\"success\":true,\"processed\":5}."
+  },
+  {
+    "id": "F3",
+    "feature": "GET /api/research/visualization-data/alignment returns persisted research points",
+    "command": "curl -sS http://localhost:3001/api/research/visualization-data/alignment",
+    "expected_signal": "HTTP 200 with research_points[] array, total_count >= 1, and encrypted=false entries sourced from PostgreSQL."
+  },
+  {
+    "id": "F4",
+    "feature": "GET /api/research/network-topology renders device and compensation graph",
+    "command": "curl -sS http://localhost:3001/api/research/network-topology",
+    "expected_signal": "HTTP 200 with JSON nodes[] and edges[] populated from houston_ej_ai tables."
+  },
+  {
+    "id": "F5",
+    "feature": "GET /metrics exposes Prometheus-compatible gauges",
+    "command": "curl -sS http://localhost:3001/metrics",
+    "expected_signal": "HTTP 200 with text/plain; version=0.0.4 body containing houston_sensor_readings_total and related metrics."
+  },
+  {
+    "id": "F6",
+    "feature": "GET /live confirms process liveness",
+    "command": "curl -sS http://localhost:3001/live",
+    "expected_signal": "HTTP 200 with JSON {\"status\":\"alive\",...}."
+  },
+  {
+    "id": "F7",
+    "feature": "GET /ready verifies database and redis connectivity",
+    "command": "curl -sS http://localhost:3001/ready",
+    "expected_signal": "HTTP 200 with JSON reporting database=connected and redis=connected."
+  },
+  {
+    "id": "F8",
+    "feature": "SELECT latest air_quality readings from PostgreSQL",
+    "command": "env PGPASSWORD=ej_ai_2024 psql 'host=127.0.0.1 port=5432 dbname=houston_ej_ai user=houston' -c 'SELECT time, device_id, pm25, pm10, temperature, humidity FROM air_quality ORDER BY time DESC LIMIT 5;'",
+    "expected_signal": "psql output lists >=1 row with recent timestamps and non-null sensor metrics."
+  },
+  {
+    "id": "F9",
+    "feature": "SELECT confirmed compensation claims from PostgreSQL",
+    "command": "env PGPASSWORD=ej_ai_2024 psql 'host=127.0.0.1 port=5432 dbname=houston_ej_ai user=houston' -c 'SELECT wallet_address, amount, status FROM compensation_claims ORDER BY claim_time DESC;'",
+    "expected_signal": "psql output lists confirmed claims with wallet addresses and non-zero payouts."
+  }
+]
