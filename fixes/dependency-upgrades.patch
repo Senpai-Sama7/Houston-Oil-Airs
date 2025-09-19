@@ -1,0 +1,138 @@
+diff --git a/backend/Dockerfile b/backend/Dockerfile
+index 8c51015..40bece7 100644
+--- a/backend/Dockerfile
++++ b/backend/Dockerfile
+@@ -1,21 +1,20 @@
+-FROM node:18-alpine AS base
++FROM node:20-alpine AS base
+ 
+ WORKDIR /app
+ COPY package*.json ./
+-RUN npm ci --only=production
++RUN npm ci --omit=dev
+ 
+-FROM openjdk:11-jre-slim AS java-builder
++FROM maven:3.9.6-eclipse-temurin-17 AS java-builder
+ WORKDIR /app
+ COPY java-services/pom.xml ./
+ COPY java-services/src ./src
+-RUN apt-get update && apt-get install -y maven
+-RUN mvn clean package -DskipTests
++RUN mvn -B -DskipTests clean package
+ 
+-FROM node:18-alpine
++FROM node:20-alpine
+ WORKDIR /app
+ 
+ # Install Java runtime for multi-service support
+-RUN apk add --no-cache openjdk11-jre
++RUN apk add --no-cache openjdk17-jre-headless
+ 
+ # Copy Node.js dependencies
+ COPY --from=base /app/node_modules ./node_modules
+@@ -29,4 +28,4 @@ COPY start.sh ./
+ RUN chmod +x start.sh
+ 
+ EXPOSE 3001 8080
+-CMD ["./start.sh"]
+\ No newline at end of file
++CMD ["./start.sh"]
+diff --git a/backend/java-services/pom.xml b/backend/java-services/pom.xml
+index e8a0910..618ed42 100644
+--- a/backend/java-services/pom.xml
++++ b/backend/java-services/pom.xml
+@@ -1,38 +1,45 @@
+-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
++<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
++
++    <parent>
++        <groupId>org.springframework.boot</groupId>
++        <artifactId>spring-boot-starter-parent</artifactId>
++        <version>3.3.4</version>
++        <relativePath />
++    </parent>
++
+     <groupId>org.houstonoilairs</groupId>
+     <artifactId>java-services</artifactId>
+-    <version>1.0-SNAPSHOT</version>
+-    <packaging>jar</packaging>
+-
++    <version>1.0.0</version>
+     <name>java-services</name>
+     <description>Java services for Houston Oil Airs</description>
+ 
+     <properties>
+-        <java.version>11</java.version>
++        <java.version>17</java.version>
+     </properties>
+ 
+     <dependencies>
+         <dependency>
+             <groupId>org.springframework.boot</groupId>
+-            <artifactId>spring-boot-starter</artifactId>
+-            <version>2.7.18</version>
++            <artifactId>spring-boot-starter-web</artifactId>
+         </dependency>
+         <dependency>
+             <groupId>org.springframework.boot</groupId>
+-            <artifactId>spring-boot-starter-web</artifactId>
+-            <version>2.7.18</version>
++            <artifactId>spring-boot-starter-actuator</artifactId>
+         </dependency>
+         <dependency>
+             <groupId>org.springframework.boot</groupId>
+-            <artifactId>spring-boot-starter-test</artifactId>
+-            <version>2.7.18</version>
+-            <scope>test</scope>
++            <artifactId>spring-boot-starter-validation</artifactId>
+         </dependency>
+         <dependency>
+             <groupId>org.slf4j</groupId>
+             <artifactId>slf4j-api</artifactId>
+-            <version>1.7.36</version>
++        </dependency>
++        <dependency>
++            <groupId>org.springframework.boot</groupId>
++            <artifactId>spring-boot-starter-test</artifactId>
++            <scope>test</scope>
+         </dependency>
+     </dependencies>
+ 
+@@ -41,12 +48,6 @@
+             <plugin>
+                 <groupId>org.springframework.boot</groupId>
+                 <artifactId>spring-boot-maven-plugin</artifactId>
+-                <version>2.7.18</version>
+-            </plugin>
+-            <plugin>
+-                <groupId>org.apache.maven.plugins</groupId>
+-                <artifactId>maven-resources-plugin</artifactId>
+-                <version>3.3.0</version>
+             </plugin>
+         </plugins>
+     </build>
+diff --git a/backend/start.sh b/backend/start.sh
+index 9ac5fbe..58bc32e 100644
+--- a/backend/start.sh
++++ b/backend/start.sh
+@@ -1,7 +1,14 @@
+ #!/bin/sh
++set -e
+ 
+-# Start Java service in background
+ java -jar java-services/*.jar &
++JAVA_PID=$!
++
++cleanup() {
++  kill "$JAVA_PID" 2>/dev/null || true
++}
++trap cleanup INT TERM
++
++cd node-server
++exec node src/server.js
+ 
+-# Start Node.js service
+-cd node-server && node src/server.js
+\ No newline at end of file
