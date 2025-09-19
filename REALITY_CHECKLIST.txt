@@ -1,12 +1,10 @@
-- [ ] F1 Build java-services with Maven (`cd backend/java-services && mvn -B -DskipTests package`) — UNVERIFIED (network egress to Maven Central remains blocked; see evidence/2025-09-19T0858Z_mvn_package.txt).
-- [x] F2 GET /api/research/visualization-data/:category (`curl -sS http://localhost:3001/api/research/visualization-data/alignment`) — VERIFIED (HTTP 200 with research_points populated; see evidence/20250919T091925Z_curl_visualization_body.json).
-- [x] F3 GET /api/research/network-topology (`curl -sS http://localhost:3001/api/research/network-topology`) — VERIFIED (HTTP 200 with nodes and edges; see evidence/20250919T091925Z_curl_topology_body.json).
-- [x] F4 POST /api/research/update-metrics (`curl -sS -H 'Content-Type: application/json' -d '{"metrics":[30,49,28,65,1],"device_id":"houston_sensor_001"}' http://localhost:3001/api/research/update-metrics`) — VERIFIED (HTTP 200 with `{"success":true,"processed":5}`; see evidence/20250919T091925Z_curl_update_metrics_body.json).
-- [x] F5 GET /metrics (`curl -sS http://localhost:3001/metrics`) — VERIFIED (Prometheus text with sensor counters; see evidence/20250919T091925Z_curl_metrics_body.txt).
-- [x] F6 GET /metrics.json (`curl -sS http://localhost:3001/metrics.json`) — VERIFIED (JSON metrics include requests_total and readings_last_24h; see evidence/20250919T091925Z_curl_metrics_json_body.json).
-- [x] F7 GET /live (`curl -sS http://localhost:3001/live`) — VERIFIED (JSON body reports status alive; see evidence/20250919T091925Z_curl_live_body.json).
-- [x] F8 GET /ready (`curl -sS http://localhost:3001/ready`) — VERIFIED (JSON body confirms database and redis connected; see evidence/20250919T091925Z_curl_ready_body.json).
-- [x] F9 Run backend/node-server Jest suite (`REDIS_PORT=6380 DB_NAME=houston_ej_ai_test npm test -- --runTestsByPath test/server.test.js`) — VERIFIED (all tests passed; see evidence/20250919T091925Z_npm_test.log).
-- [x] F10 npm audit for production dependencies (`npm audit --omit=dev`) — VERIFIED (0 vulnerabilities; see evidence/20250919T091925Z_npm_audit.log).
-- [x] F11 Gitleaks secret scan (`gitleaks detect --no-banner --source . --redact`) — VERIFIED (no leaks found; see evidence/20250919T091925Z_gitleaks.log).
-- [x] F12 Load test /metrics with wrk (`wrk -t2 -c10 -d15s http://127.0.0.1:3001/metrics`) — VERIFIED (1,723 req/s with p95 latency under 13ms; see evidence/20250919T091925Z_wrk_metrics.log).
+- [x] F1 GET /live (`curl -sS http://127.0.0.1:3001/live`) — VERIFIED (HTTP 200 JSON {"status":"alive"}; see evidence/20250919T1015Z/live_body.json).
+- [x] F2 GET /ready (`curl -sS http://127.0.0.1:3001/ready`) — VERIFIED (HTTP 200 JSON with database/redis connected; see evidence/20250919T1015Z/ready_body.json).
+- [x] F3 GET /metrics (`curl -sS http://127.0.0.1:3001/metrics`) — VERIFIED (Prometheus text includes houston_sensor_readings_total; see evidence/20250919T1015Z/metrics_body.txt).
+- [x] F4 GET /metrics.json (`curl -sS http://127.0.0.1:3001/metrics.json`) — VERIFIED (JSON payload contains requests_total and readings_last_24h; see evidence/20250919T1015Z/metrics_json_body.json).
+- [x] F5 GET /api/research/visualization-data/alignment (`curl -sS http://127.0.0.1:3001/api/research/visualization-data/alignment`) — VERIFIED (research_points array with seeded measurements; see evidence/20250919T1015Z/visualization_alignment.json).
+- [x] F6 GET /api/research/network-topology (`curl -sS http://127.0.0.1:3001/api/research/network-topology`) — VERIFIED (nodes[] and edges[] populated from PostgreSQL; see evidence/20250919T1015Z/network_topology.json).
+- [x] F7 POST /api/research/update-metrics (`curl -sS -X POST http://127.0.0.1:3001/api/research/update-metrics -H 'Content-Type: application/json' -d '{"metrics":[35.5,52.1,29.8,63,2],"device_id":"houston_sensor_cli"}'`) — VERIFIED (HTTP 200 {"success":true,"processed":5}; see evidence/20250919T1015Z/update_metrics_response.json).
+- [x] F8 Verify database ingestion (`psql postgresql://houston:ej_ai_2024@localhost/houston_ej_ai -c "SELECT ..."`) — VERIFIED (latest row for houston_sensor_cli matches posted metrics; see evidence/20250919T1015Z/db_latest_cli.tsv).
+- [x] F9 WebSocket subscribe_to_real_data (`node socket.io-client script`) — VERIFIED (real_time_data event with latest metrics; see evidence/20250919T1015Z/websocket_subscribe.txt).
+- [ ] F10 Run Jest integration suite (`npm test -- --runTestsByPath test/server.integration.test.js`) — UNVERIFIED (testcontainers could not find a container runtime; see evidence/20250919T1015Z/npm_test_failure.txt).

@@ -1,0 +1,5 @@
+     device_id      | pm25 | pm10 | temperature | humidity | health_events 
+--------------------+------+------+-------------+----------+---------------
+ houston_sensor_cli | 35.5 | 52.1 |        29.8 |       63 |             2
+(1 row)
+
