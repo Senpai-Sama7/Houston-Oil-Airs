@@ -1,0 +1,26 @@
+[
+  {
+    "id": "F1",
+    "feature": "Build java-services with Maven",
+    "command": "cd backend/java-services && mvn clean package",
+    "expected_signal": "Build logs end with 'BUILD SUCCESS' and a runnable jar appears under target/."
+  },
+  {
+    "id": "F2",
+    "feature": "GET /api/analytics/research-trends returns recent metrics",
+    "command": "curl -sS -D - http://localhost:8080/api/analytics/research-trends?category=test&timeframe=24",
+    "expected_signal": "HTTP 200 with application/json header and a non-empty JSON array payload."
+  },
+  {
+    "id": "F3",
+    "feature": "POST /api/analytics/network-analysis computes network graph",
+    "command": "curl -sS -D - -H 'Content-Type: application/json' -d '[\"ai\",\"ml\"]' http://localhost:8080/api/analytics/network-analysis",
+    "expected_signal": "HTTP 200 with application/json header and a JSON body containing 'nodes' and 'edges'."
+  },
+  {
+    "id": "F4",
+    "feature": "GET /api/analytics/health reports service status",
+    "command": "curl -sS -D - http://localhost:8080/api/analytics/health",
+    "expected_signal": "HTTP 200 with JSON body containing 'status':'healthy'."
+  }
+]
