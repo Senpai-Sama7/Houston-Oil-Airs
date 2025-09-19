@@ -1,0 +1,26 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> node-server@1.0.0 test
+> jest --runTestsByPath test/server.integration.test.js
+
+FAIL test/server.integration.test.js
+  ● Test suite failed to run
+
+    Cannot find module 'testcontainers' from 'test/server.integration.test.js'
+
+      4 | const redis = require('redis');
+      5 | const { Pool } = require('pg');
+    > 6 | const { GenericContainer, Wait } = require('testcontainers');
+        |                                    ^
+      7 |
+      8 | jest.setTimeout(120000);
+      9 |
+
+      at Resolver._throwModNotFoundError (node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.require (test/server.integration.test.js:6:36)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        0.867 s
+Ran all test suites within paths "test/server.integration.test.js".

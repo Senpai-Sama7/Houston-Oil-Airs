@@ -1,9 +1,0 @@
-Running 15s test @ http://127.0.0.1:3001/api/research/visualization-data/alignment
-  2 threads and 2 connections
-  Thread Stats   Avg      Stdev     Max   +/- Stdev
-    Latency     0.99ms    1.50ms  29.26ms   95.15%
-    Req/Sec     1.32k   254.08     2.22k    68.67%
-  39558 requests in 15.02s, 43.57MB read
-  Non-2xx or 3xx responses: 39558
-Requests/sec:   2632.82
-Transfer/sec:      2.90MB

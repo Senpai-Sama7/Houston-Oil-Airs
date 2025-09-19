@@ -1,10 +1,8 @@
-- [x] F1 GET /live (`curl -sS http://127.0.0.1:3001/live`) — VERIFIED (HTTP 200 JSON {"status":"alive"}; see evidence/20250919T1015Z/live_body.json).
-- [x] F2 GET /ready (`curl -sS http://127.0.0.1:3001/ready`) — VERIFIED (HTTP 200 JSON with database/redis connected; see evidence/20250919T1015Z/ready_body.json).
-- [x] F3 GET /metrics (`curl -sS http://127.0.0.1:3001/metrics`) — VERIFIED (Prometheus text includes houston_sensor_readings_total; see evidence/20250919T1015Z/metrics_body.txt).
-- [x] F4 GET /metrics.json (`curl -sS http://127.0.0.1:3001/metrics.json`) — VERIFIED (JSON payload contains requests_total and readings_last_24h; see evidence/20250919T1015Z/metrics_json_body.json).
-- [x] F5 GET /api/research/visualization-data/alignment (`curl -sS http://127.0.0.1:3001/api/research/visualization-data/alignment`) — VERIFIED (research_points array with seeded measurements; see evidence/20250919T1015Z/visualization_alignment.json).
-- [x] F6 GET /api/research/network-topology (`curl -sS http://127.0.0.1:3001/api/research/network-topology`) — VERIFIED (nodes[] and edges[] populated from PostgreSQL; see evidence/20250919T1015Z/network_topology.json).
-- [x] F7 POST /api/research/update-metrics (`curl -sS -X POST http://127.0.0.1:3001/api/research/update-metrics -H 'Content-Type: application/json' -d '{"metrics":[35.5,52.1,29.8,63,2],"device_id":"houston_sensor_cli"}'`) — VERIFIED (HTTP 200 {"success":true,"processed":5}; see evidence/20250919T1015Z/update_metrics_response.json).
-- [x] F8 Verify database ingestion (`psql postgresql://houston:ej_ai_2024@localhost/houston_ej_ai -c "SELECT ..."`) — VERIFIED (latest row for houston_sensor_cli matches posted metrics; see evidence/20250919T1015Z/db_latest_cli.tsv).
-- [x] F9 WebSocket subscribe_to_real_data (`node socket.io-client script`) — VERIFIED (real_time_data event with latest metrics; see evidence/20250919T1015Z/websocket_subscribe.txt).
-- [ ] F10 Run Jest integration suite (`npm test -- --runTestsByPath test/server.integration.test.js`) — UNVERIFIED (testcontainers could not find a container runtime; see evidence/20250919T1015Z/npm_test_failure.txt).
+- [ ] F1 Start Node research server (`cd backend/node-server && node src/server.js`) — UNVERIFIED (requires running Postgres + Redis dependencies; not started in this session).
+- [ ] F2 GET /api/research/visualization-data/:category (`curl -sS http://localhost:3001/api/research/visualization-data/alignment`) — UNVERIFIED (server not running; requires seeded database).
+- [ ] F3 POST /api/research/update-metrics (`curl -sS -H 'Content-Type: application/json' -d '{"metrics":[30,49,28,65,1],"device_id":"sensor_001"}' http://localhost:3001/api/research/update-metrics`) — UNVERIFIED (server not running; requires database write access).
+- [ ] F4 GET /metrics (`curl -sS http://localhost:3001/metrics`) — UNVERIFIED (server not running; dependencies unavailable).
+- [ ] F5 GET /ready (`curl -sS http://localhost:3001/ready`) — UNVERIFIED (server not running; Postgres/Redis endpoints unset).
+- [ ] F6 Run backend/node-server Jest integration suite (`cd backend/node-server && npm test -- --runTestsByPath test/server.integration.test.js`) — UNVERIFIED (fails: missing optional dependency testcontainers; see evidence/2024-01-01T000000Z_npm_test.log).
+- [ ] F7 Build analytics Spring Boot service (`cd backend/java-services && mvn -B -DskipTests package`) — UNVERIFIED (requires Maven dependencies with network access).
+- [ ] F8 POST /api/analytics/network-analysis (`curl -sS -H 'Content-Type: application/json' -d '["alignment","safety"]' http://localhost:8080/api/analytics/network-analysis`) — UNVERIFIED (service not running).
