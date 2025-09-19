@@ -1,0 +1,5 @@
+Fix attempt: install missing dev dependencies (testcontainers, socket.io-client) for Node server tooling.
+Commands:
+1. cd backend/node-server && npm install
+2. cd backend/node-server && npm install socket.io-client
+Outcome: Dependencies installed; still unable to run Jest integration suite because no container runtime is available.
