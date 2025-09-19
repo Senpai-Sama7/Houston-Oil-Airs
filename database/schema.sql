@@ -1,8 +1,20 @@
 -- Houston EJ-AI Platform - REAL Database Schema
 -- TimescaleDB schema for real sensor data and compensation tracking
 
--- Enable TimescaleDB extension
-CREATE EXTENSION IF NOT EXISTS timescaledb;
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_available_extensions WHERE name = 'timescaledb') THEN
+        BEGIN
+            CREATE EXTENSION IF NOT EXISTS timescaledb;
+        EXCEPTION
+            WHEN OTHERS THEN
+                RAISE NOTICE 'TimescaleDB extension reported %; continuing with standard PostgreSQL capabilities.', SQLERRM;
+        END;
+    ELSE
+        RAISE NOTICE 'TimescaleDB extension not available; continuing with standard PostgreSQL capabilities.';
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
 
 -- Air Quality Sensor Data (Time-series)
 CREATE TABLE IF NOT EXISTS air_quality (
@@ -20,8 +32,15 @@ CREATE TABLE IF NOT EXISTS air_quality (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Create hypertable for time-series optimization
-SELECT create_hypertable('air_quality', 'time', if_not_exists => TRUE);
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'timescaledb') THEN
+        PERFORM create_hypertable('air_quality', 'time', if_not_exists => TRUE);
+    ELSE
+        RAISE NOTICE 'TimescaleDB extension absent; leaving air_quality as a standard table.';
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
 
 -- Compensation Claims (Blockchain transactions)
 CREATE TABLE IF NOT EXISTS compensation_claims (
@@ -70,8 +89,8 @@ CREATE INDEX IF NOT EXISTS idx_devices_status ON devices (status, last_seen DESC
 
 -- Views for analytics
 CREATE OR REPLACE VIEW air_quality_hourly AS
-SELECT 
-    time_bucket('1 hour', time) AS hour,
+SELECT
+    date_trunc('hour', time) AS hour,
     device_id,
     AVG(pm25) as avg_pm25,
     AVG(pm10) as avg_pm10,
@@ -79,7 +98,7 @@ SELECT
     AVG(humidity) as avg_humidity,
     SUM(health_events) as total_health_events,
     COUNT(*) as reading_count
-FROM air_quality 
+FROM air_quality
 GROUP BY hour, device_id
 ORDER BY hour DESC;
 
@@ -105,17 +124,20 @@ BEGIN
     END IF;
     
     -- Update device last_seen
-    INSERT INTO devices (device_id, last_seen) 
-    VALUES (NEW.device_id, NEW.time)
-    ON CONFLICT (device_id) 
-    DO UPDATE SET last_seen = NEW.time;
+INSERT INTO devices (device_id, device_name, status, last_seen)
+VALUES (NEW.device_id, NEW.device_id, 'active', NEW.time)
+ON CONFLICT (device_id)
+DO UPDATE SET
+    last_seen = EXCLUDED.last_seen,
+    status = 'active';
     
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER validate_air_quality 
-    BEFORE INSERT ON air_quality 
+DROP TRIGGER IF EXISTS validate_air_quality ON air_quality;
+CREATE TRIGGER validate_air_quality
+    BEFORE INSERT ON air_quality
     FOR EACH ROW EXECUTE FUNCTION validate_air_quality_reading();
 
 -- Function to update wallet statistics
@@ -136,11 +158,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_wallet_stats_trigger ON compensation_claims;
 CREATE TRIGGER update_wallet_stats_trigger
     AFTER INSERT OR UPDATE ON compensation_claims
     FOR EACH ROW EXECUTE FUNCTION update_wallet_stats();
 
--- Sample data for testing
+-- Seed data for deterministic tests
 INSERT INTO devices (device_id, device_name, location_name, location_lat, location_lng, status) VALUES
 ('houston_sensor_001', 'Houston East Sensor', 'East Houston', 29.7604, -95.3698, 'active'),
 ('houston_sensor_002', 'Houston Ship Channel Sensor', 'Ship Channel', 29.7355, -95.2521, 'active'),

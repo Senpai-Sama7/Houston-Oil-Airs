@@ -39,6 +39,13 @@ class RealHighPerformanceWebServer {
         this.redis.on('error', (err) => console.error('Redis error:', err));
         this.redis.connect().catch(err => console.error('Redis connection error:', err));
         
+        this.metricsState = {
+            startTime: Date.now(),
+            requestsTotal: 0,
+            lastRequestAt: null,
+            errorCount: 0
+        };
+
         this.setupMiddleware();
         this.setupRoutes();
         this.setupWebSocket();
@@ -66,6 +73,17 @@ class RealHighPerformanceWebServer {
         
         this.app.use(express.json({ limit: '10mb' }));
         this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+        this.app.use((req, res, next) => {
+            this.metricsState.requestsTotal += 1;
+            this.metricsState.lastRequestAt = Date.now();
+            res.on('finish', () => {
+                if (res.statusCode >= 500) {
+                    this.metricsState.errorCount += 1;
+                }
+            });
+            next();
+        });
         
         const limiter = rateLimit({
             windowMs: 15 * 60 * 1000,
@@ -251,7 +269,7 @@ class RealHighPerformanceWebServer {
         this.app.get('/metrics', async (req, res) => {
             try {
                 const stats = await this.postgres.query(`
-                    SELECT 
+                    SELECT
                         COUNT(*) as total_readings,
                         COUNT(DISTINCT device_id) as active_devices,
                         AVG(pm25) as avg_pm25,
@@ -285,10 +303,36 @@ class RealHighPerformanceWebServer {
                     `houston_compensation_paid_total ${parseFloat(compensationStats.rows[0].total_paid) || 0}`,
                 ];
                 res.send(lines.join('\n'));
-                
+
             } catch (error) {
                 console.error('Error getting real metrics:', error);
                 res.status(500).send('# Error getting metrics');
+            }
+        });
+
+        this.app.get('/metrics.json', async (req, res) => {
+            try {
+                const now = Date.now();
+                const uptimeSeconds = Math.floor((now - this.metricsState.startTime) / 1000);
+                const lastRequest = this.metricsState.lastRequestAt ? new Date(this.metricsState.lastRequestAt).toISOString() : null;
+
+                const stats = await this.postgres.query(`
+                    SELECT COUNT(*) AS total_readings
+                    FROM air_quality
+                    WHERE time >= NOW() - INTERVAL '24 hours'
+                `);
+
+                res.json({
+                    requests_total: this.metricsState.requestsTotal,
+                    uptime_seconds: uptimeSeconds,
+                    last_request_timestamp: lastRequest,
+                    errors_total: this.metricsState.errorCount,
+                    readings_last_24h: parseInt(stats.rows[0].total_readings, 10) || 0,
+                    native: 'fallback'
+                });
+            } catch (error) {
+                console.error('Error serving JSON metrics:', error);
+                res.status(500).json({ error: 'metrics_unavailable' });
             }
         });
         
@@ -332,8 +376,8 @@ class RealHighPerformanceWebServer {
     setupWebSocket() {
         this.io.on('connection', (socket) => {
             console.log('Client connected:', socket.id);
-            
-            socket.on('subscribe_to_real_data', async (params) => {
+
+            socket.on('subscribe_to_real_data', async (_params) => {
                 socket.join('real_data_stream');
                 
                 // Send latest REAL data immediately
@@ -381,19 +425,42 @@ class RealHighPerformanceWebServer {
     }
     
     start(port = process.env.PORT || 3001) {
-        this.server.listen(port, () => {
-            console.log(`🚀 REAL Houston Oil Airs server running on port ${port}`);
-            console.log(`🔗 WebSocket server ready for REAL data connections`);
-            console.log(`💾 Database connections: PostgreSQL + Redis`);
+        return new Promise((resolve, reject) => {
+            const handleError = (error) => {
+                this.server.off('error', handleError);
+                reject(error);
+            };
+
+            this.server.once('error', handleError);
+            this.server.listen(port, () => {
+                this.server.off('error', handleError);
+                this.metricsState.startTime = Date.now();
+                console.log(`🚀 REAL Houston Oil Airs server running on port ${port}`);
+                console.log(`🔗 WebSocket server ready for REAL data connections`);
+                console.log(`💾 Database connections: PostgreSQL + Redis`);
+                resolve(this.server);
+            });
         });
     }
-    
-    shutdown() {
+
+    async shutdown() {
         console.log('Shutting down real server...');
-        this.postgres.end();
-        this.redis.quit();
         clearInterval(this.streamingInterval);
-        this.server.close();
+
+        await Promise.allSettled([
+            this.postgres.end(),
+            this.redis.quit()
+        ]);
+
+        await new Promise((resolve, reject) => {
+            this.server.close((error) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve();
+                }
+            });
+        });
     }
 }
 
@@ -402,17 +469,18 @@ if (require.main === module) {
 
     process.on('SIGINT', () => {
         console.log('Received SIGINT, shutting down gracefully...');
-        server.shutdown();
-        process.exit(0);
+        server.shutdown().finally(() => process.exit(0));
     });
 
     process.on('SIGTERM', () => {
         console.log('Received SIGTERM, shutting down gracefully...');
-        server.shutdown();
-        process.exit(0);
+        server.shutdown().finally(() => process.exit(0));
     });
 
-    server.start();
+    server.start().catch((error) => {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    });
 }
 
 module.exports = RealHighPerformanceWebServer;

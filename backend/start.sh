@@ -1,7 +1,17 @@
 #!/bin/sh
+set -e
 
-# Start Java service in background
 java -jar java-services/*.jar &
+JAVA_PID=$!
 
-# Start Node.js service
-cd node-server && node src/server.js
+cleanup() {
+  echo "Shutting down Java service (PID: $JAVA_PID)..."
+  kill "$JAVA_PID" 2>/dev/null || true
+  wait "$JAVA_PID" 2>/dev/null
+  echo "Java service shut down."
+}
+trap cleanup INT TERM
+
+cd node-server
+exec node src/server.js
+
