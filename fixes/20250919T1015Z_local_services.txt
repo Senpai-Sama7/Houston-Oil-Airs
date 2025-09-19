@@ -1,0 +1,11 @@
+Fix attempt: provide PostgreSQL and Redis locally since Docker/testcontainers unavailable.
+Commands:
+1. sudo apt-get update
+2. sudo apt-get install -y postgresql redis-server
+3. sudo pg_ctlcluster 16 main start
+4. sudo service redis-server start
+5. sudo -u postgres psql -c "CREATE USER houston WITH PASSWORD 'ej_ai_2024';"
+6. sudo -u postgres createdb -O houston houston_ej_ai
+7. psql postgresql://houston:ej_ai_2024@localhost/houston_ej_ai -f database/schema.sql
+8. psql postgresql://houston:ej_ai_2024@localhost/houston_ej_ai -f database/seed_data.sql
+Outcome: PostgreSQL and Redis services running locally; API endpoints validated against them.

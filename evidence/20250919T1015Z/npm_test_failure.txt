@@ -1,0 +1,118 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> node-server@1.0.0 test
+> jest --runTestsByPath test/server.integration.test.js
+
+FAIL test/server.integration.test.js
+  Houston EJ-AI backend integration
+    health
+      ✕ GET /live returns alive status (1 ms)
+      ✕ GET /ready returns ready status with dependencies (1 ms)
+    metrics
+      ✕ GET /metrics exposes Prometheus text
+      ✕ GET /metrics.json exposes structured payload
+    research endpoints
+      ✕ GET /api/research/visualization-data/alignment returns seeded data
+      ✕ GET /api/research/network-topology returns network graph
+
+  ● Houston EJ-AI backend integration › health › GET /live returns alive status
+
+    Could not find a working container runtime strategy
+
+      17 |
+      18 |   beforeAll(async () => {
+    > 19 |     postgresContainer = await new GenericContainer('postgres:16-alpine')
+         |                         ^
+      20 |       .withEnvironment({
+      21 |         POSTGRES_DB: 'houston_ej_ai',
+      22 |         POSTGRES_USER: 'houston',
+
+      at getContainerRuntimeClient (node_modules/testcontainers/src/container-runtime/clients/client.ts:64:9)
+      at GenericContainer.start (node_modules/testcontainers/src/generic-container/generic-container.ts:81:20)
+      at Object.<anonymous> (test/server.integration.test.js:19:25)
+
+  ● Houston EJ-AI backend integration › health › GET /ready returns ready status with dependencies
+
+    Could not find a working container runtime strategy
+
+      17 |
+      18 |   beforeAll(async () => {
+    > 19 |     postgresContainer = await new GenericContainer('postgres:16-alpine')
+         |                         ^
+      20 |       .withEnvironment({
+      21 |         POSTGRES_DB: 'houston_ej_ai',
+      22 |         POSTGRES_USER: 'houston',
+
+      at getContainerRuntimeClient (node_modules/testcontainers/src/container-runtime/clients/client.ts:64:9)
+      at GenericContainer.start (node_modules/testcontainers/src/generic-container/generic-container.ts:81:20)
+      at Object.<anonymous> (test/server.integration.test.js:19:25)
+
+  ● Houston EJ-AI backend integration › metrics › GET /metrics exposes Prometheus text
+
+    Could not find a working container runtime strategy
+
+      17 |
+      18 |   beforeAll(async () => {
+    > 19 |     postgresContainer = await new GenericContainer('postgres:16-alpine')
+         |                         ^
+      20 |       .withEnvironment({
+      21 |         POSTGRES_DB: 'houston_ej_ai',
+      22 |         POSTGRES_USER: 'houston',
+
+      at getContainerRuntimeClient (node_modules/testcontainers/src/container-runtime/clients/client.ts:64:9)
+      at GenericContainer.start (node_modules/testcontainers/src/generic-container/generic-container.ts:81:20)
+      at Object.<anonymous> (test/server.integration.test.js:19:25)
+
+  ● Houston EJ-AI backend integration › metrics › GET /metrics.json exposes structured payload
+
+    Could not find a working container runtime strategy
+
+      17 |
+      18 |   beforeAll(async () => {
+    > 19 |     postgresContainer = await new GenericContainer('postgres:16-alpine')
+         |                         ^
+      20 |       .withEnvironment({
+      21 |         POSTGRES_DB: 'houston_ej_ai',
+      22 |         POSTGRES_USER: 'houston',
+
+      at getContainerRuntimeClient (node_modules/testcontainers/src/container-runtime/clients/client.ts:64:9)
+      at GenericContainer.start (node_modules/testcontainers/src/generic-container/generic-container.ts:81:20)
+      at Object.<anonymous> (test/server.integration.test.js:19:25)
+
+  ● Houston EJ-AI backend integration › research endpoints › GET /api/research/visualization-data/alignment returns seeded data
+
+    Could not find a working container runtime strategy
+
+      17 |
+      18 |   beforeAll(async () => {
+    > 19 |     postgresContainer = await new GenericContainer('postgres:16-alpine')
+         |                         ^
+      20 |       .withEnvironment({
+      21 |         POSTGRES_DB: 'houston_ej_ai',
+      22 |         POSTGRES_USER: 'houston',
+
+      at getContainerRuntimeClient (node_modules/testcontainers/src/container-runtime/clients/client.ts:64:9)
+      at GenericContainer.start (node_modules/testcontainers/src/generic-container/generic-container.ts:81:20)
+      at Object.<anonymous> (test/server.integration.test.js:19:25)
+
+  ● Houston EJ-AI backend integration › research endpoints › GET /api/research/network-topology returns network graph
+
+    Could not find a working container runtime strategy
+
+      17 |
+      18 |   beforeAll(async () => {
+    > 19 |     postgresContainer = await new GenericContainer('postgres:16-alpine')
+         |                         ^
+      20 |       .withEnvironment({
+      21 |         POSTGRES_DB: 'houston_ej_ai',
+      22 |         POSTGRES_USER: 'houston',
+
+      at getContainerRuntimeClient (node_modules/testcontainers/src/container-runtime/clients/client.ts:64:9)
+      at GenericContainer.start (node_modules/testcontainers/src/generic-container/generic-container.ts:81:20)
+      at Object.<anonymous> (test/server.integration.test.js:19:25)
+
+Test Suites: 1 failed, 1 total
+Tests:       6 failed, 6 total
+Snapshots:   0 total
+Time:        1.487 s, estimated 2 s
+Ran all test suites within paths "test/server.integration.test.js".
