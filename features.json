@@ -161,13 +161,22 @@
       "expected": "No import errors",
       "status": "UNVERIFIED",
       "evidence": null
+    },
+    {
+      "id": "F24",
+      "component": "Frontend",
+      "feature": "Notion Research Board Embed",
+      "command": "grep -n 'opalescent-physician' index.html",
+      "expected": "Iframe embed present in landing page",
+      "status": "VERIFIED",
+      "evidence": "evidence/notion_embed_grep.txt"
     }
   ],
   "summary": {
-    "total_features": 18,
-    "verified": 5,
+    "total_features": 19,
+    "verified": 6,
     "unverified": 13,
-    "success_rate": "27.8%"
+    "success_rate": "31.6%"
   },
   "blockers": [
     "Maven not installed (required for Java services)",

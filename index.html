@@ -129,6 +129,8 @@ main{position:relative;z-index:2}
 .widget-title{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:500;margin-bottom:20px;border-bottom:1px solid var(--border-color);padding-bottom:15px;color:var(--clay-darker)}
 .section-title{text-align:center;font-family:'Space Grotesk',sans-serif;font-size:3rem;margin-bottom:60px;background:rgba(239,220,213,.7);backdrop-filter:blur(15px);border:1px solid rgba(188,170,164,.5);border-radius:20px;padding:20px 40px;display:inline-block;box-shadow:inset 0 2px 4px rgba(255,255,255,.7),inset 0 -2px 4px rgba(188,170,164,.4),0 5px 10px rgba(93,64,55,.15);position:relative;left:50%;transform:translateX(-50%);color:var(--clay-darker)}
 .text-content{max-width:800px;margin:0 auto 60px;text-align:center;font-size:1.1rem;line-height:1.7;color:var(--text-secondary);background:rgba(239,220,213,.7);backdrop-filter:blur(15px);border:1px solid rgba(188,170,164,.5);border-radius:25px;padding:40px;box-shadow:inset 0 2px 4px rgba(255,255,255,.7),inset 0 -2px 4px rgba(188,170,164,.4),0 5px 10px rgba(93,64,55,.15)}
+.notion-embed-container{max-width:1200px;margin:0 auto 40px;background:rgba(239,220,213,.7);backdrop-filter:blur(12px);border:1px solid rgba(188,170,164,.5);border-radius:20px;box-shadow:inset 0 2px 4px rgba(255,255,255,.7),inset 0 -2px 4px rgba(188,170,164,.4),0 5px 10px rgba(93,64,55,.15);overflow:hidden}
+.notion-embed-container iframe{width:100%;height:600px;border:0;display:block}
 
 /* dashboard */
 .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
@@ -340,6 +342,19 @@ main{position:relative;z-index:2}
         <div class="widget cta-card"><h3>Researchers</h3><p>Access cutting-edge visualization tools and collaborate on groundbreaking AI research projects.</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Research%20Collaboration%20Inquiry" class="cta-button email-button">Start Research<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
         <div class="widget cta-card"><h3>Developers</h3><p>Contribute to our open-source platform and help build the future of AI research tools.</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Development%20Contribution%20Interest" class="cta-button email-button">Contribute Code<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
         <div class="widget cta-card"><h3>Institutions</h3><p>Deploy our enterprise-ready platform in your organization and accelerate your research capabilities.</p><a href="mailto:DouglasMitchell@HoustonOilAirs.org?subject=Enterprise%20Deployment%20Inquiry" class="cta-button email-button">Deploy Platform<div class="email-tooltip">DouglasMitchell@HoustonOilAirs.org</div></a></div>
+    </div>
+</section>
+
+<!-- RESEARCH BOARD EMBED -->
+<section id="research-board" class="section">
+    <h2 class="section-title">Live Research Board</h2>
+    <p class="text-content">
+        Explore the latest updates from our collaborative workspace. This embedded Notion board provides a real-time window into
+        our environmental justice research pipeline, showcasing documents, datasets, and ongoing initiatives maintained by the
+        Houston Oil Airs team.
+    </p>
+    <div class="notion-embed-container">
+        <iframe src="https://opalescent-physician-f6e.notion.site/ebd/ada6f52783d5417bacfe87e06b0b6896" width="100%" height="600" frameborder="0" allowfullscreen></iframe>
     </div>
 </section>
 
