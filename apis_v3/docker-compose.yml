@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  houston-api:
+    build: .
+    env_file: .env
+    ports:
+      - "8000:8000"

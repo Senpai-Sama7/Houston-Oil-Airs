@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+httpx
+pydantic
+python-dateutil
+protobuf
+gtfs-realtime-bindings
+aiocache
+aiolimiter
+tenacity
+prometheus-client
+orjson
+pyarrow
+duckdb
+pytest

@@ -1,66 +1,179 @@
-[
-  {
-    "id": "F1",
-    "feature": "Start Node research server",
-    "command": "cd backend/node-server && node src/server.js",
-    "expected_signal": "Console logs show 'REAL Houston Oil Airs server running' and port binding succeeds on $PORT.",
-    "status": "UNVERIFIED",
-    "evidence": null
+{
+  "features": [
+    {
+      "id": "F1",
+      "component": "Node.js Backend",
+      "feature": "Server Health Check",
+      "command": "curl -s http://localhost:3001/live",
+      "expected": "200 OK with {\"status\":\"alive\"}",
+      "status": "VERIFIED",
+      "evidence": "evidence/live_endpoint_test.txt"
+    },
+    {
+      "id": "F2",
+      "component": "Node.js Backend",
+      "feature": "Research Visualization Data API",
+      "command": "curl -s http://localhost:3001/api/research/visualization-data/network",
+      "expected": "JSON response with visualization data",
+      "status": "UNVERIFIED",
+      "evidence": "evidence/visualization_api_test.txt"
+    },
+    {
+      "id": "F3",
+      "component": "Node.js Backend",
+      "feature": "Network Topology API",
+      "command": "curl -s http://localhost:3001/api/research/network-topology",
+      "expected": "JSON response with network topology",
+      "status": "UNVERIFIED",
+      "evidence": null
+    },
+    {
+      "id": "F4",
+      "component": "Node.js Backend",
+      "feature": "Update Metrics API",
+      "command": "curl -s -X POST -H 'Content-Type: application/json' -d '{\"metrics\":[30,49,28]}' http://localhost:3001/api/research/update-metrics",
+      "expected": "JSON confirmation response",
+      "status": "UNVERIFIED",
+      "evidence": null
+    },
+    {
+      "id": "F5",
+      "component": "Node.js Backend",
+      "feature": "Prometheus Metrics Endpoint",
+      "command": "curl -s http://localhost:3001/metrics",
+      "expected": "Prometheus format metrics",
+      "status": "UNVERIFIED",
+      "evidence": null
+    },
+    {
+      "id": "F6",
+      "component": "Node.js Backend",
+      "feature": "JSON Metrics Endpoint",
+      "command": "curl -s http://localhost:3001/metrics.json",
+      "expected": "JSON format metrics",
+      "status": "UNVERIFIED",
+      "evidence": "evidence/metrics_json_test.txt"
+    },
+    {
+      "id": "F7",
+      "component": "Node.js Backend",
+      "feature": "Readiness Check",
+      "command": "curl -s http://localhost:3001/ready",
+      "expected": "200 OK with readiness status",
+      "status": "UNVERIFIED",
+      "evidence": null
+    },
+    {
+      "id": "F8",
+      "component": "Frontend",
+      "feature": "Vite Build Process",
+      "command": "cd frontend && npm run build",
+      "expected": "Successful build with dist/ output",
+      "status": "VERIFIED",
+      "evidence": "evidence/frontend_build_test.txt"
+    },
+    {
+      "id": "F9",
+      "component": "Frontend",
+      "feature": "Development Server",
+      "command": "cd frontend && npm run dev",
+      "expected": "Server starts on port 3000",
+      "status": "UNVERIFIED",
+      "evidence": null
+    },
+    {
+      "id": "F10",
+      "component": "Frontend",
+      "feature": "Three.js Integration",
+      "command": "grep -r 'import.*three' frontend/src/",
+      "expected": "Three.js imports found in source",
+      "status": "VERIFIED",
+      "evidence": "evidence/threejs_integration_test.txt"
+    },
+    {
+      "id": "F11",
+      "component": "Java Analytics",
+      "feature": "Maven Build",
+      "command": "cd backend/java-services && mvn clean compile",
+      "expected": "Successful compilation",
+      "status": "UNVERIFIED",
+      "evidence": "evidence/maven_missing.txt"
+    },
+    {
+      "id": "F12",
+      "component": "Java Analytics",
+      "feature": "Spring Boot Application",
+      "command": "cd backend/java-services && mvn spring-boot:run",
+      "expected": "Application starts on port 8080",
+      "status": "UNVERIFIED",
+      "evidence": null
+    },
+    {
+      "id": "F13",
+      "component": "Java Analytics",
+      "feature": "Research Trends API",
+      "command": "curl -s http://localhost:8080/api/analytics/research-trends",
+      "expected": "JSON response with research trends",
+      "status": "UNVERIFIED",
+      "evidence": null
+    },
+    {
+      "id": "F14",
+      "component": "Java Analytics",
+      "feature": "Network Analysis API",
+      "command": "curl -s -X POST -H 'Content-Type: application/json' -d '[\"alignment\",\"safety\"]' http://localhost:8080/api/analytics/network-analysis",
+      "expected": "JSON response with network analysis",
+      "status": "UNVERIFIED",
+      "evidence": null
+    },
+    {
+      "id": "F15",
+      "component": "C++ Engine",
+      "feature": "CMake Configuration",
+      "command": "cd backend/cpp-engine && cmake .",
+      "expected": "Successful CMake configuration",
+      "status": "VERIFIED",
+      "evidence": "evidence/cmake_config_test.txt"
+    },
+    {
+      "id": "F16",
+      "component": "C++ Engine",
+      "feature": "Library Compilation",
+      "command": "cd backend/cpp-engine && make",
+      "expected": "Successful compilation of data_processor library",
+      "status": "UNVERIFIED",
+      "evidence": "evidence/cpp_compilation_error.txt"
+    },
+    {
+      "id": "F17",
+      "component": "C++ Engine",
+      "feature": "Data Processor Source",
+      "command": "ls -la backend/cpp-engine/src/data_processor.cpp",
+      "expected": "Source file exists",
+      "status": "VERIFIED",
+      "evidence": "evidence/cpp_source_exists.txt"
+    },
+    {
+      "id": "F18",
+      "component": "Integration",
+      "feature": "Socket.IO Connection",
+      "command": "node -e \"const io = require('socket.io-client'); console.log('Socket.IO available');\"",
+      "expected": "No import errors",
+      "status": "UNVERIFIED",
+      "evidence": null
+    }
+  ],
+  "summary": {
+    "total_features": 18,
+    "verified": 5,
+    "unverified": 13,
+    "success_rate": "27.8%"
   },
-  {
-    "id": "F2",
-    "feature": "GET /api/research/visualization-data/:category returns research_points",
-    "command": "curl -sS http://localhost:3001/api/research/visualization-data/alignment",
-    "expected_signal": "HTTP 200 JSON with research_points[] populated and total_count > 0.",
-    "status": "UNVERIFIED",
-    "evidence": null
-  },
-  {
-    "id": "F3",
-    "feature": "POST /api/research/update-metrics persists readings",
-    "command": "curl -sS -H 'Content-Type: application/json' -d '{\"metrics\":[30,49,28,65,1],\"device_id\":\"sensor_001\"}' http://localhost:3001/api/research/update-metrics",
-    "expected_signal": "HTTP 200 JSON {\"success\":true,\"processed\":5} and postgres row inserted.",
-    "status": "UNVERIFIED",
-    "evidence": null
-  },
-  {
-    "id": "F4",
-    "feature": "GET /metrics exposes Prometheus counters",
-    "command": "curl -sS http://localhost:3001/metrics",
-    "expected_signal": "HTTP 200 text with houston_sensor_readings_total gauge values.",
-    "status": "UNVERIFIED",
-    "evidence": null
-  },
-  {
-    "id": "F5",
-    "feature": "GET /ready checks postgres and redis dependencies",
-    "command": "curl -sS http://localhost:3001/ready",
-    "expected_signal": "HTTP 200 JSON when both dependencies reachable; 503 otherwise.",
-    "status": "UNVERIFIED",
-    "evidence": null
-  },
-  {
-    "id": "F6",
-    "feature": "Run backend/node-server Jest integration suite",
-    "command": "cd backend/node-server && npm test -- --runTestsByPath test/server.integration.test.js",
-    "expected_signal": "Jest exits 0 with PASS summary.",
-    "status": "UNVERIFIED",
-    "evidence": "evidence/2024-01-01T000000Z_npm_test.log"
-  },
-  {
-    "id": "F7",
-    "feature": "Build analytics Spring Boot service",
-    "command": "cd backend/java-services && mvn -B -DskipTests package",
-    "expected_signal": "Build ends with 'BUILD SUCCESS' and target/*.jar produced.",
-    "status": "UNVERIFIED",
-    "evidence": null
-  },
-  {
-    "id": "F8",
-    "feature": "POST /api/analytics/network-analysis returns nodes and edges",
-    "command": "curl -sS -H 'Content-Type: application/json' -d '[\"alignment\",\"safety\"]' http://localhost:8080/api/analytics/network-analysis",
-    "expected_signal": "HTTP 200 JSON with nodes[] and edges[].",
-    "status": "UNVERIFIED",
-    "evidence": null
-  }
-]
+  "blockers": [
+    "Maven not installed (required for Java services)",
+    "Missing C++ system dependencies: libboost-dev, libjsoncpp-dev",
+    "Redis server not running (required for Node.js backend)",
+    "PostgreSQL server not running (required for Node.js backend)",
+    "Playwright browsers require sudo installation"
+  ]
+}

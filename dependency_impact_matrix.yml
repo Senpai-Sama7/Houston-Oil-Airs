@@ -1,0 +1,82 @@
+# Dependency Impact Matrix - Houston Oil Airs Platform
+# Expert Panel Recommendation: Karl Wiegers - Requirements clarity and dependency relationships
+
+critical_path_analysis:
+  level_1_blockers:
+    - name: "Maven Installation"
+      blocker_type: "missing_tool"
+      affected_components:
+        - "Java Analytics Service"
+      affected_features: ["F11", "F12", "F13", "F14"]
+      business_impact: "Analytics functionality completely unavailable"
+      estimated_fix_time: "15 minutes"
+      fix_commands:
+        - "sudo apt-get update"
+        - "sudo apt-get install maven"
+        - "mvn --version"
+
+    - name: "Database Infrastructure"
+      blocker_type: "missing_services"
+      services: ["Redis", "PostgreSQL"]
+      affected_components:
+        - "Node.js Backend API Server"
+      affected_features: ["F2", "F3", "F4", "F6", "F7"]
+      business_impact: "All data operations fail, API returns 500 errors"
+      estimated_fix_time: "45 minutes"
+      fix_commands:
+        - "sudo apt-get install redis-server postgresql postgresql-contrib"
+        - "sudo systemctl start redis postgresql"
+        - "sudo -u postgres createdb houston_ej_ai"
+
+  level_2_blockers:
+    - name: "C++ System Dependencies"
+      blocker_type: "missing_libraries"
+      libraries: ["libboost-dev", "libjsoncpp-dev"]
+      affected_components:
+        - "C++ Processing Engine"
+      affected_features: ["F16"]
+      business_impact: "High-performance data processing unavailable"
+      estimated_fix_time: "30 minutes"
+      fix_commands:
+        - "sudo apt-get install libboost-all-dev libjsoncpp-dev"
+        - "cd backend/cpp-engine/build && make"
+
+    - name: "Browser Dependencies"
+      blocker_type: "missing_system_tools"
+      affected_components:
+        - "Frontend Testing"
+      affected_features: ["F9", "Frontend E2E Tests"]
+      business_impact: "Cannot validate UI functionality automatically"
+      estimated_fix_time: "20 minutes"
+      fix_commands:
+        - "sudo npx playwright install-deps"
+        - "sudo npx playwright install"
+
+dependency_cascade_analysis:
+  scenario_1: "Maven installed first"
+    - step: "Install Maven (15min)"
+    - result: "Java Analytics Service becomes buildable"
+    - cascade: "F11-F14 become testable"
+    - business_value: "Analytics features ready for verification"
+
+  scenario_2: "Database infrastructure first"
+    - step: "Install Redis + PostgreSQL (45min)"
+    - result: "Node.js backend fully functional"
+    - cascade: "F2-F7 become verifiable, health checks pass"
+    - business_value: "Core API functionality restored"
+
+critical_path_recommendation:
+  order: ["Database Infrastructure", "Maven Installation", "C++ Dependencies", "Browser Dependencies"]
+  rationale: "Database affects most features (F2-F7), Maven enables analytics (F11-F14)"
+  total_time_estimate: "2 hours"
+  success_criteria: "90% feature verification rate achieved"
+
+risk_assessment:
+  high_risk:
+    - "Database schema initialization may require additional configuration"
+    - "Network connectivity issues could prevent Maven dependency downloads"
+
+  mitigation_strategies:
+    - "Test database connectivity before feature verification"
+    - "Use Maven offline mode if network issues persist"
+    - "Document exact PostgreSQL database setup commands"

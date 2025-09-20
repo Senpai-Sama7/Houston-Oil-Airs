@@ -1,0 +1,17 @@
+╭───────────────────────────────────────────────────╮
+│ ✻ Welcome to Claude Code!                         │
+│                                                   │
+│   /help for help, /status for your current setup  │
+│                                                   │
+│   cwd: /home/donovan/Houston-Oil-Airs/apis_v3     │
+╰───────────────────────────────────────────────────╯
+═════════════════════════════════════════════════════════ Conversation compacted · ctrl+o for history ════════════════════════════════════════════════════════
+
+> /compact 
+  ⎿  Compacted (ctrl+o to see full summary)
+  ⎿  Read Makefile (9 lines)
+  ⎿  Read requirements.txt (16 lines)
+  ⎿  Read README.md (29 lines)
+  ⎿  Read apis/app.py (140 lines)
+  ⎿  Read .env.example (13 lines)
+

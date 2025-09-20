@@ -1,0 +1,126 @@
+name: Archive Feeds
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install httpx python-dateutil protobuf gtfs-realtime-bindings pyarrow duckdb
+      - name: Pull feeds
+        env:
+          AIRNOW_API_KEY: ${{ secrets.AIRNOW_API_KEY }}
+          PURPLEAIR_API_KEY: ${{ secrets.PURPLEAIR_API_KEY }}
+          AQICN_API_KEY: ${{ secrets.AQICN_API_KEY }}
+          METRO_API_KEY: ${{ secrets.METRO_API_KEY }}
+          METRO_VEHICLE_POS_URL: ${{ secrets.METRO_VEHICLE_POS_URL }}
+          METRO_TRIP_UPDATES_URL: ${{ secrets.METRO_TRIP_UPDATES_URL }}
+        run: |
+          python - <<'PY'
+          import os, json, pathlib, httpx, pyarrow as pa, pyarrow.parquet as pq
+          from datetime import datetime, timezone
+          from google.transit import gtfs_realtime_pb2
+
+          def dump_json(name, data):
+              ts = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+              outdir = pathlib.Path('data')/name
+              outdir.mkdir(parents=True, exist_ok=True)
+              with open(outdir/(ts+'.json'), 'w') as f:
+                  json.dump(data, f)
+
+          def dump_parquet(name, records):
+              ts = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+              outdir = pathlib.Path('data_parquet')/name
+              outdir.mkdir(parents=True, exist_ok=True)
+              table = pa.Table.from_pylist(records)
+              pq.write_table(table, outdir/(ts+'.parquet'))
+
+          async def jget(url, headers=None, params=None):
+              async with httpx.AsyncClient(timeout=30) as c:
+                  r = await c.get(url, headers=headers or {}, params=params or {})
+                  r.raise_for_status()
+                  try:
+                      return r.json()
+                  except Exception:
+                      return {"raw": r.text}
+
+          import asyncio
+          async def main():
+              base = 'https://traffic.houstontranstar.org/api'
+              for path in ['incidents_sample.json','laneclosures_sample.json','roadwayfloodwarning_sample.json','speedsegments_sample.json']:
+                  data = await jget(f"{base}/{path}")
+                  dump_json('transtar_'+path.split('_')[0], data)
+
+              dump_json('nws_alerts', await jget('https://api.weather.gov/alerts/active/area/TX'))
+              dump_json('openaq_houston', await jget('https://api.openaq.org/v3/latest?city=Houston'))
+
+              key = os.environ.get('AIRNOW_API_KEY')
+              if key:
+                  airnow = await jget('https://www.airnowapi.org/aq/observation/zipCode/current/', params={
+                      'format':'application/json','zipCode':'77002','distance':25,'API_KEY':key
+                  })
+                  dump_json('airnow_77002', airnow)
+
+              pkey = os.environ.get('PURPLEAIR_API_KEY')
+              if pkey:
+                  pa_resp = await jget('https://api.purpleair.com/v1/sensors', headers={'X-API-Key':pkey}, params={
+                      'fields':'name,latitude,longitude,pm2.5_atm','nwlat':30.20,'nwlon':-95.90,'selat':29.40,'selon':-94.90
+                  })
+                  dump_json('purpleair_bbox', pa_resp)
+
+              dump_json('usgs_sites', await jget('https://api.waterdata.usgs.gov/ogcapi/v0/collections/monitoring-locations/items?f=json&state=US:TX&county=US:48201'))
+
+              async with httpx.AsyncClient(timeout=30) as c:
+                  r = await c.get('https://www.ndbc.noaa.gov/data/latest_obs/42035.txt'); r.raise_for_status()
+                  dump_json('ndbc_42035', { 'raw': r.text })
+
+              vurl = os.environ.get('METRO_VEHICLE_POS_URL'); turl = os.environ.get('METRO_TRIP_UPDATES_URL'); key = os.environ.get('METRO_API_KEY')
+              headers={'Ocp-Apim-Subscription-Key': key} if key else {}
+              if vurl:
+                  async with httpx.AsyncClient(timeout=30) as c:
+                      r = await c.get(vurl, headers=headers); r.raise_for_status()
+                      feed = gtfs_realtime_pb2.FeedMessage(); feed.ParseFromString(r.content)
+                      ents = []
+                      for e in feed.entity:
+                          if e.HasField("vehicle"):
+                              v=e.vehicle; ents.append({
+                                  "id": e.id,
+                                  "lat": getattr(getattr(v, "position", None), "latitude", None),
+                                  "lon": getattr(getattr(v, "position", None), "longitude", None),
+                                  "ts": getattr(v, "timestamp", None),
+                                  "route": getattr(getattr(v, "trip", None), "route_id", None),
+                              })
+                      dump_json('metro_vehicle_positions', {"count": len(ents)})
+                      if ents: dump_parquet('metro_vehicle_positions', ents)
+              if turl:
+                  async with httpx.AsyncClient(timeout=30) as c:
+                      r = await c.get(turl, headers=headers); r.raise_for_status()
+                      feed = gtfs_realtime_pb2.FeedMessage(); feed.ParseFromString(r.content)
+                      trips = []
+                      for e in feed.entity:
+                          if e.HasField("trip_update"):
+                              tu=e.trip_update; trips.append({
+                                  "id": e.id,
+                                  "trip_id": getattr(getattr(tu, "trip", None), "trip_id", None),
+                                  "route_id": getattr(getattr(tu, "trip", None), "route_id", None),
+                                  "ts": getattr(tu, "timestamp", None),
+                                  "updates": len(getattr(tu, "stop_time_update", []))
+                              })
+                      dump_json('metro_trip_updates', {"count": len(trips)})
+                      if trips: dump_parquet('metro_trip_updates', trips)
+
+          asyncio.run(main())
+          PY
+      - name: Commit
+        run: |
+          git config user.name 'github-actions'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A
+          git commit -m "chore(data): archive feeds v3.1" || echo "nothing to commit"
+          git push

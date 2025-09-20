@@ -1,0 +1,314 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Houston Oil Airs Evidence Collection Schema",
+  "description": "Structured evidence validation schema - Expert Panel Enhancement",
+  "type": "object",
+  "properties": {
+    "evidence_metadata": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "type": "string",
+          "const": "2.0"
+        },
+        "collection_timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "collector_version": {
+          "type": "string"
+        },
+        "expert_panel_reviewed": {
+          "type": "boolean"
+        }
+      },
+      "required": ["schema_version", "collection_timestamp"]
+    },
+
+    "feature_evidence": {
+      "type": "object",
+      "properties": {
+        "feature_id": {
+          "type": "string",
+          "pattern": "^F[0-9]+|E2E_[0-9]+$"
+        },
+        "feature_name": {
+          "type": "string",
+          "minLength": 5
+        },
+        "component": {
+          "type": "string",
+          "enum": ["Frontend", "Node.js Backend", "Java Analytics", "C++ Engine", "Integration"]
+        },
+        "verification_status": {
+          "type": "string",
+          "enum": ["VERIFIED", "UNVERIFIED", "FAILED", "BLOCKED"]
+        },
+
+        "quantitative_results": {
+          "type": "object",
+          "properties": {
+            "execution_time_ms": {
+              "type": "number",
+              "minimum": 0
+            },
+            "response_time_ms": {
+              "type": "number",
+              "minimum": 0
+            },
+            "http_status_code": {
+              "type": "integer",
+              "minimum": 100,
+              "maximum": 599
+            },
+            "file_size_bytes": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "memory_usage_mb": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+
+        "acceptance_criteria": {
+          "type": "object",
+          "properties": {
+            "performance_thresholds": {
+              "type": "object",
+              "properties": {
+                "max_response_time_ms": {"type": "number"},
+                "max_build_time_seconds": {"type": "number"},
+                "max_memory_usage_mb": {"type": "number"},
+                "min_throughput_rps": {"type": "number"}
+              }
+            },
+            "quality_gates": {
+              "type": "object",
+              "properties": {
+                "zero_critical_vulnerabilities": {"type": "boolean"},
+                "lighthouse_performance_score": {"type": "number", "minimum": 0, "maximum": 100},
+                "test_coverage_percentage": {"type": "number", "minimum": 0, "maximum": 100}
+              }
+            },
+            "functional_requirements": {
+              "type": "object",
+              "properties": {
+                "required_response_fields": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "expected_data_types": {
+                  "type": "object"
+                },
+                "business_logic_validation": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+
+        "actual_results": {
+          "type": "object",
+          "properties": {
+            "command_executed": {
+              "type": "string",
+              "minLength": 5
+            },
+            "exit_code": {
+              "type": "integer"
+            },
+            "stdout": {
+              "type": "string"
+            },
+            "stderr": {
+              "type": "string"
+            },
+            "response_body": {
+              "oneOf": [
+                {"type": "string"},
+                {"type": "object"},
+                {"type": "array"}
+              ]
+            },
+            "file_artifacts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {"type": "string"},
+                  "size_bytes": {"type": "integer"},
+                  "checksum": {"type": "string"},
+                  "type": {"type": "string"}
+                },
+                "required": ["path", "checksum"]
+              }
+            }
+          },
+          "required": ["command_executed"]
+        },
+
+        "failure_scenarios": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "scenario_name": {
+                "type": "string",
+                "enum": ["database_connection_loss", "high_load", "malformed_input", "timeout", "memory_pressure"]
+              },
+              "trigger_method": {"type": "string"},
+              "expected_behavior": {"type": "string"},
+              "actual_behavior": {"type": "string"},
+              "recovery_time_ms": {"type": "number"},
+              "fallback_activated": {"type": "boolean"}
+            },
+            "required": ["scenario_name", "expected_behavior", "actual_behavior"]
+          }
+        },
+
+        "operational_metrics": {
+          "type": "object",
+          "properties": {
+            "monitoring_endpoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "endpoint": {"type": "string"},
+                  "status": {"type": "string", "enum": ["UP", "DOWN", "DEGRADED"]},
+                  "response_time_ms": {"type": "number"}
+                }
+              }
+            },
+            "resource_consumption": {
+              "type": "object",
+              "properties": {
+                "cpu_percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "memory_usage_mb": {"type": "number", "minimum": 0},
+                "disk_usage_percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "network_io_kbps": {"type": "number", "minimum": 0}
+              }
+            },
+            "error_rates": {
+              "type": "object",
+              "properties": {
+                "http_4xx_rate": {"type": "number", "minimum": 0, "maximum": 1},
+                "http_5xx_rate": {"type": "number", "minimum": 0, "maximum": 1},
+                "exception_count": {"type": "integer", "minimum": 0}
+              }
+            }
+          }
+        },
+
+        "evidence_integrity": {
+          "type": "object",
+          "properties": {
+            "checksums": {
+              "type": "object",
+              "properties": {
+                "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+                "md5": {"type": "string", "pattern": "^[a-f0-9]{32}$"}
+              }
+            },
+            "digital_signature": {"type": "string"},
+            "tamper_evident": {"type": "boolean"},
+            "collection_environment": {
+              "type": "object",
+              "properties": {
+                "hostname": {"type": "string"},
+                "os_version": {"type": "string"},
+                "tool_versions": {
+                  "type": "object",
+                  "properties": {
+                    "node": {"type": "string"},
+                    "npm": {"type": "string"},
+                    "java": {"type": "string"},
+                    "cmake": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "required": ["checksums", "tamper_evident"]
+        }
+      },
+      "required": ["feature_id", "feature_name", "component", "verification_status", "actual_results", "evidence_integrity"]
+    },
+
+    "dependency_analysis": {
+      "type": "object",
+      "properties": {
+        "critical_path": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "dependency_name": {"type": "string"},
+              "status": {"type": "string", "enum": ["AVAILABLE", "MISSING", "INCOMPATIBLE"]},
+              "affected_features": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "business_impact": {"type": "string"},
+              "estimated_fix_time_minutes": {"type": "integer", "minimum": 0}
+            },
+            "required": ["dependency_name", "status", "affected_features"]
+          }
+        },
+        "cascade_impact": {
+          "type": "object",
+          "properties": {
+            "total_blocked_features": {"type": "integer", "minimum": 0},
+            "estimated_total_fix_time_hours": {"type": "number", "minimum": 0},
+            "critical_path_sequence": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+
+    "quality_assessment": {
+      "type": "object",
+      "properties": {
+        "specification_quality_scores": {
+          "type": "object",
+          "properties": {
+            "clarity_score": {"type": "number", "minimum": 0, "maximum": 10},
+            "completeness_score": {"type": "number", "minimum": 0, "maximum": 10},
+            "testability_score": {"type": "number", "minimum": 0, "maximum": 10},
+            "production_readiness_score": {"type": "number", "minimum": 0, "maximum": 10}
+          }
+        },
+        "expert_panel_review": {
+          "type": "object",
+          "properties": {
+            "wiegers_requirements_assessment": {"type": "string"},
+            "nygard_operational_assessment": {"type": "string"},
+            "crispin_testing_assessment": {"type": "string"},
+            "adzic_specification_assessment": {"type": "string"},
+            "overall_recommendation": {"type": "string"}
+          }
+        },
+        "improvement_roadmap": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "priority": {"type": "string", "enum": ["IMMEDIATE", "SHORT_TERM", "LONG_TERM"]},
+              "improvement": {"type": "string"},
+              "estimated_effort_hours": {"type": "number"},
+              "business_value": {"type": "string", "enum": ["HIGH", "MEDIUM", "LOW"]}
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["evidence_metadata", "feature_evidence", "dependency_analysis", "quality_assessment"]
+}

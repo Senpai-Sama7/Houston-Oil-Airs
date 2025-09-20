@@ -1,8 +1,94 @@
-- [ ] F1 Start Node research server (`cd backend/node-server && node src/server.js`) — UNVERIFIED (requires running Postgres + Redis dependencies; not started in this session).
-- [ ] F2 GET /api/research/visualization-data/:category (`curl -sS http://localhost:3001/api/research/visualization-data/alignment`) — UNVERIFIED (server not running; requires seeded database).
-- [ ] F3 POST /api/research/update-metrics (`curl -sS -H 'Content-Type: application/json' -d '{"metrics":[30,49,28,65,1],"device_id":"sensor_001"}' http://localhost:3001/api/research/update-metrics`) — UNVERIFIED (server not running; requires database write access).
-- [ ] F4 GET /metrics (`curl -sS http://localhost:3001/metrics`) — UNVERIFIED (server not running; dependencies unavailable).
-- [ ] F5 GET /ready (`curl -sS http://localhost:3001/ready`) — UNVERIFIED (server not running; Postgres/Redis endpoints unset).
-- [ ] F6 Run backend/node-server Jest integration suite (`cd backend/node-server && npm test -- --runTestsByPath test/server.integration.test.js`) — UNVERIFIED (fails: missing optional dependency testcontainers; see evidence/2024-01-01T000000Z_npm_test.log).
-- [ ] F7 Build analytics Spring Boot service (`cd backend/java-services && mvn -B -DskipTests package`) — UNVERIFIED (requires Maven dependencies with network access).
-- [ ] F8 POST /api/analytics/network-analysis (`curl -sS -H 'Content-Type: application/json' -d '["alignment","safety"]' http://localhost:8080/api/analytics/network-analysis`) — UNVERIFIED (service not running).
+# REALITY CHECKLIST - Houston Oil Airs Platform
+
+## Prerequisites Status
+- [x] Node.js v22.19.0 ≥18.0.0 (VERIFIED)
+- [x] npm v10.9.3 ≥9.0.0 (VERIFIED)
+- [x] Java 21.0.8 available (VERIFIED)
+- [x] CMake 3.31.6 available (VERIFIED)
+- [ ] Maven (mvn command not found - MISSING)
+- [ ] libboost-dev, libjsoncpp-dev (C++ dependencies - MISSING)
+- [ ] Redis server (required for Node.js backend - MISSING)
+- [ ] PostgreSQL server (required for Node.js backend - MISSING)
+
+## Component Build/Start Status
+
+### Frontend (Vite + Three.js)
+- [x] Dependencies install (VERIFIED - npm install --ignore-scripts succeeded)
+- [x] Build process (VERIFIED - vite build succeeded, 5.66s)
+- [ ] Image optimization (UNVERIFIED - imagemin command not found)
+- [ ] Playwright browser install (UNVERIFIED - requires sudo)
+- [x] Entry point exists (VERIFIED - src/js/main.js found with Three.js imports)
+
+### Node.js Backend API Server
+- [x] Dependencies install (VERIFIED - npm install succeeded, 0 vulnerabilities)
+- [x] Server starts (VERIFIED - port 3001 listening)
+- [x] Health endpoint (VERIFIED - /live returns 200, {"status":"alive"})
+- [ ] API endpoints (UNVERIFIED - database errors, {"error":"Database error"})
+- [ ] Database connectivity (UNVERIFIED - Redis/PostgreSQL not available)
+- [x] Express routes defined (VERIFIED - 7 endpoints found in server.js)
+- [x] Ultimate API integration (VERIFIED - integration module created and server updated)
+
+### Java Analytics Service
+- [ ] Maven build (UNVERIFIED - mvn command not available)
+- [x] Spring Boot endpoints defined (VERIFIED - 3 @RequestMapping found)
+- [ ] Service startup (UNVERIFIED - cannot build without Maven)
+- [x] Java compatibility (VERIFIED - Java 21 > required Java 17)
+
+### C++ Processing Engine
+- [x] CMake configuration (VERIFIED - CMakeLists.txt found)
+- [x] Build system setup (VERIFIED - cmake . succeeds)
+- [ ] Dependency resolution (UNVERIFIED - jsoncpp not found)
+- [ ] Library compilation (UNVERIFIED - blocked by missing dependencies)
+- [x] Source code exists (VERIFIED - src/data_processor.cpp found)
+
+### Houston Ultimate API Pack
+- [x] APIs v1 service (VERIFIED - FastAPI running on port 8000)
+- [x] Health endpoint (VERIFIED - /health returns {"ok": true})
+- [x] Houston data endpoints (VERIFIED - 15+ endpoints for traffic, air quality, weather)
+- [x] Node.js integration module (VERIFIED - ultimate-api-integration.js created)
+- [ ] APIs v3.1 service (BLOCKED - dependency installation issues)
+- [ ] Production features (BLOCKED - rate limiting, caching require v3.1)
+- [x] Houston-specific config (VERIFIED - pre-configured for Houston area APIs)
+
+## Feature Verification Status
+
+### API Endpoints (Node.js)
+- [x] GET /live - Health check (VERIFIED - 200 OK)
+- [ ] GET /ready - Readiness check (UNVERIFIED - not tested)
+- [ ] GET /api/research/visualization-data/:category (UNVERIFIED - 500 database error)
+- [ ] GET /api/research/network-topology (UNVERIFIED - not tested)
+- [ ] POST /api/research/update-metrics (UNVERIFIED - not tested)
+- [ ] GET /metrics - Prometheus metrics (UNVERIFIED - not tested)
+- [ ] GET /metrics.json - JSON metrics (UNVERIFIED - HTML error response)
+
+### Frontend Features
+- [x] Three.js integration (VERIFIED - imports found in main.js)
+- [x] Socket.IO client (VERIFIED - dependency in package.json)
+- [x] Vite build system (VERIFIED - vite.config.js configured)
+- [x] Legacy browser support (VERIFIED - @vitejs/plugin-legacy configured)
+- [ ] UI functionality (UNVERIFIED - requires manual testing)
+
+### Java Analytics Features
+- [x] Spring Boot framework (VERIFIED - pom.xml Spring Boot 3.3.4)
+- [x] REST endpoints defined (VERIFIED - @GetMapping/@PostMapping found)
+- [ ] Analytics processing (UNVERIFIED - cannot run without Maven)
+
+### C++ Processing Features
+- [x] Data processor module (VERIFIED - data_processor.cpp exists)
+- [x] JSON integration planned (VERIFIED - JsonCpp in CMakeLists.txt)
+- [x] Boost integration planned (VERIFIED - Boost in CMakeLists.txt)
+- [ ] FFI native binding (UNVERIFIED - blocked by compilation)
+
+## Deployment Status
+- [ ] Docker builds (UNVERIFIED - not tested)
+- [ ] Kubernetes deployments (UNVERIFIED - not tested)
+- [ ] Production configuration (UNVERIFIED - not tested)
+
+## Overall Assessment
+**Status: NOT READY - Missing Critical Dependencies**
+
+**Blockers:**
+1. Maven required for Java service builds
+2. System packages: libboost-dev, libjsoncpp-dev for C++ engine
+3. Redis and PostgreSQL servers for backend functionality
+4. Playwright browser dependencies for frontend testing

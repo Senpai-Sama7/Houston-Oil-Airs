@@ -8,6 +8,7 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const Redis = require('redis');
 const { Pool } = require('pg');
+const UltimateAPIIntegration = require('./ultimate-api-integration');
 
 class RealHighPerformanceWebServer {
     constructor() {
@@ -38,7 +39,10 @@ class RealHighPerformanceWebServer {
 
         this.redis.on('error', (err) => console.error('Redis error:', err));
         this.redis.connect().catch(err => console.error('Redis connection error:', err));
-        
+
+        // Initialize Ultimate API Integration
+        this.ultimateAPI = new UltimateAPIIntegration();
+
         this.metricsState = {
             startTime: Date.now(),
             requestsTotal: 0,
@@ -94,6 +98,72 @@ class RealHighPerformanceWebServer {
     }
     
     setupRoutes() {
+        // Ultimate API Data Integration Routes
+        this.app.get('/api/ultimate/houston-dashboard', async (req, res) => {
+            this.metricsState.requestsTotal++;
+            this.metricsState.lastRequestAt = Date.now();
+
+            try {
+                const dashboard = await this.ultimateAPI.getHoustonDataDashboard();
+                res.json(dashboard);
+            } catch (error) {
+                this.metricsState.errorCount++;
+                res.status(500).json({ error: error.message });
+            }
+        });
+
+        this.app.get('/api/ultimate/traffic', async (req, res) => {
+            this.metricsState.requestsTotal++;
+            this.metricsState.lastRequestAt = Date.now();
+
+            try {
+                const trafficData = await this.ultimateAPI.getTrafficData();
+                res.json(trafficData);
+            } catch (error) {
+                this.metricsState.errorCount++;
+                res.status(500).json({ error: error.message });
+            }
+        });
+
+        this.app.get('/api/ultimate/air-quality', async (req, res) => {
+            this.metricsState.requestsTotal++;
+            this.metricsState.lastRequestAt = Date.now();
+
+            try {
+                const airQuality = await this.ultimateAPI.getAirQualityData();
+                res.json(airQuality);
+            } catch (error) {
+                this.metricsState.errorCount++;
+                res.status(500).json({ error: error.message });
+            }
+        });
+
+        this.app.get('/api/ultimate/weather', async (req, res) => {
+            this.metricsState.requestsTotal++;
+            this.metricsState.lastRequestAt = Date.now();
+
+            try {
+                const weather = await this.ultimateAPI.getWeatherData();
+                res.json(weather);
+            } catch (error) {
+                this.metricsState.errorCount++;
+                res.status(500).json({ error: error.message });
+            }
+        });
+
+        this.app.get('/api/ultimate/health', async (req, res) => {
+            try {
+                const health = await this.ultimateAPI.healthCheck();
+                res.json(health);
+            } catch (error) {
+                res.status(503).json({
+                    ultimateApi: 'unhealthy',
+                    error: error.message,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        });
+
         // REAL visualization data from database
         this.app.get('/api/research/visualization-data/:category', async (req, res) => {
             try {

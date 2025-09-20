@@ -1,0 +1,11 @@
+{
+  "purpleair_bbox": {
+    "nwlat": 30.2,
+    "nwlon": -95.9,
+    "selat": 29.4,
+    "selon": -94.9
+  },
+  "nws_zone": "TXZ213",
+  "ndbc_station": "42035",
+  "example_zip": "77002"
+}
