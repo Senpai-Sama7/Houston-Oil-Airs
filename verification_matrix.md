@@ -18,6 +18,7 @@
 |----|---------|---------|-----------------|---------|---------------|
 | F8 | Vite Build Process | `cd frontend && npm run build` | Successful build | ✅ VERIFIED | Build succeeded in 5.66s |
 | F10 | Three.js Integration | `grep -r 'import.*three' frontend/src/` | Three.js imports found | ✅ VERIFIED | evidence/threejs_integration_test.txt |
+| F24 | Notion Research Board Embed | `grep -n 'opalescent-physician' index.html` | Iframe embed present | ✅ VERIFIED | evidence/notion_embed_grep.txt |
 | F9 | Development Server | `cd frontend && npm run dev` | Server starts on port 3000 | ❌ UNVERIFIED | Not tested |
 
 ### Node.js Backend API Server
