@@ -66,6 +66,7 @@
 - [x] Socket.IO client (VERIFIED - dependency in package.json)
 - [x] Vite build system (VERIFIED - vite.config.js configured)
 - [x] Legacy browser support (VERIFIED - @vitejs/plugin-legacy configured)
+- [x] Notion research board embed (VERIFIED - grep -n 'opalescent-physician' index.html)
 - [ ] UI functionality (UNVERIFIED - requires manual testing)
 
 ### Java Analytics Features
