@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - Houston EJ-AI Platform</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 500px;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+    button {
+      background: white;
+      color: #667eea;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+    .icon {
+      font-size: 5rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon" role="img" aria-label="Offline icon">📡</div>
+    <h1>You're Offline</h1>
+    <p>
+      It looks like you've lost your internet connection. 
+      Some features of the Houston EJ-AI Platform require an active connection.
+    </p>
+    <button onclick="window.location.reload()">Try Again</button>
+    <p style="font-size: 0.9rem; margin-top: 2rem;">
+      Don't worry - your data is safe and will sync when you're back online.
+    </p>
+  </div>
+</body>
+</html>
