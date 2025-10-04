@@ -73,7 +73,7 @@ export function logError(error: ApiError, context?: Record<string, any>): void {
   console.error('API Error:', JSON.stringify(logData, null, 2));
 }
 
-export function createErrorResponse(error: ApiError) {
+export function createErrorResponse(error: ApiError): { success: false; error: string; code?: string; timestamp: number } {
   return {
     success: false,
     error: error.message,

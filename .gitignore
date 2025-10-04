@@ -5,6 +5,8 @@ pnpm-lock.yaml
 yarn.lock
 dist/
 .vite/
+.next/
+*.tsbuildinfo
 
 # Java/Maven
 backend/java-services/target/

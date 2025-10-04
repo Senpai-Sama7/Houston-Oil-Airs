@@ -127,7 +127,7 @@ export function validateApiKey(apiKey: string): void {
   }
 }
 
-export function rateLimitCheck(identifier: string, windowMs: number = 60000, maxRequests: number = 10): boolean {
+export function rateLimitCheck(_identifier: string, _windowMs: number = 60000, _maxRequests: number = 10): boolean {
   // In production, this would use Redis or a proper rate limiting service
   // For now, this is a placeholder that always returns true
   // TODO: Implement proper rate limiting with Redis

@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 
 export default function CompensationPanel() {
   const [walletAddress, setWalletAddress] = useState('');
-  const [claimAmount, setClaimAmount] = useState(0.01);
-  const [isEligible, setIsEligible] = useState(true);
+  const claimAmount = 0.01;
+  const isEligible = true;
 
   const handleClaim = async () => {
     if (!walletAddress) {

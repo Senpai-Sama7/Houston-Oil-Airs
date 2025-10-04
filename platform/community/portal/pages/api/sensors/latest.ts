@@ -3,7 +3,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { Pool } from 'pg';
 import fs from 'fs';
 import path from 'path';
-import { SensorData } from '../../../types';
 import { handleApiError, logError, createErrorResponse } from '../../../utils/errorHandler';
 
 interface SensorData {
