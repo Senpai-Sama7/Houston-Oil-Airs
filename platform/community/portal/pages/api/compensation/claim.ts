@@ -51,7 +51,7 @@ export default async function handler(
   }
 
   try {
-    const { walletAddress, amount, timestamp }: ClaimRequest = req.body;
+    const { walletAddress, amount }: ClaimRequest = req.body;
 
     // Validate request
     if (!walletAddress || !ethers.isAddress(walletAddress)) {

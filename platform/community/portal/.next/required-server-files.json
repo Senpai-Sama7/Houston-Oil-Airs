@@ -10,11 +10,12 @@
       "ignoreBuildErrors": false,
       "tsconfigPath": "tsconfig.json"
     },
+    "typedRoutes": false,
     "distDir": ".next",
     "cleanDistDir": true,
     "assetPrefix": "",
     "cacheMaxMemorySize": 52428800,
-    "configOrigin": "default",
+    "configOrigin": "next.config.js",
     "useFileSystemPublicRoutes": true,
     "generateEtags": true,
     "pageExtensions": [
@@ -25,7 +26,6 @@
     ],
     "poweredByHeader": true,
     "compress": true,
-    "analyticsId": "",
     "images": {
       "deviceSizes": [
         640,
@@ -47,24 +47,29 @@
         256,
         384
       ],
-      "path": "/_next/image",
+      "path": "/_next/image/",
       "loader": "default",
       "loaderFile": "",
       "domains": [],
       "disableStaticImages": false,
       "minimumCacheTTL": 60,
       "formats": [
-        "image/webp"
+        "image/webp",
+        "image/avif"
       ],
       "dangerouslyAllowSVG": false,
       "contentSecurityPolicy": "script-src 'none'; frame-src 'none'; sandbox;",
-      "contentDispositionType": "inline",
-      "remotePatterns": [],
+      "contentDispositionType": "attachment",
+      "remotePatterns": [
+        {
+          "protocol": "https",
+          "hostname": "localhost"
+        }
+      ],
       "unoptimized": false
     },
     "devIndicators": {
-      "buildActivity": true,
-      "buildActivityPosition": "bottom-right"
+      "position": "bottom-left"
     },
     "onDemandEntries": {
       "maxInactiveAge": 60000,
@@ -75,21 +80,24 @@
     },
     "basePath": "",
     "sassOptions": {},
-    "trailingSlash": false,
+    "trailingSlash": true,
     "i18n": null,
     "productionBrowserSourceMaps": false,
-    "optimizeFonts": true,
     "excludeDefaultMomentLocales": true,
     "serverRuntimeConfig": {},
     "publicRuntimeConfig": {},
     "reactProductionProfiling": false,
-    "reactStrictMode": null,
+    "reactStrictMode": true,
+    "reactMaxHeadersLength": 6000,
     "httpAgentOptions": {
       "keepAlive": true
     },
-    "outputFileTracing": true,
+    "logging": {},
+    "compiler": {
+      "removeConsole": true
+    },
+    "expireTime": 31536000,
     "staticPageGenerationTimeout": 60,
-    "swcMinify": true,
     "modularizeImports": {
       "@mui/icons-material": {
         "transform": "@mui/icons-material/{{member}}"
@@ -98,13 +106,59 @@
         "transform": "lodash/{{member}}"
       }
     },
+    "outputFileTracingRoot": "/home/runner/work/Houston-Oil-Airs/Houston-Oil-Airs",
     "experimental": {
+      "useSkewCookie": false,
+      "cacheLife": {
+        "default": {
+          "stale": 300,
+          "revalidate": 900,
+          "expire": 4294967294
+        },
+        "seconds": {
+          "stale": 30,
+          "revalidate": 1,
+          "expire": 60
+        },
+        "minutes": {
+          "stale": 300,
+          "revalidate": 60,
+          "expire": 3600
+        },
+        "hours": {
+          "stale": 300,
+          "revalidate": 3600,
+          "expire": 86400
+        },
+        "days": {
+          "stale": 300,
+          "revalidate": 86400,
+          "expire": 604800
+        },
+        "weeks": {
+          "stale": 300,
+          "revalidate": 604800,
+          "expire": 2592000
+        },
+        "max": {
+          "stale": 300,
+          "revalidate": 2592000,
+          "expire": 4294967294
+        }
+      },
+      "cacheHandlers": {},
+      "cssChunking": true,
       "multiZoneDraftMode": false,
-      "prerenderEarlyExit": false,
+      "appNavFailHandling": false,
+      "prerenderEarlyExit": true,
       "serverMinification": true,
       "serverSourceMaps": false,
       "linkNoTouchStart": false,
       "caseSensitiveRoutes": false,
+      "clientSegmentCache": false,
+      "clientParamParsing": false,
+      "dynamicOnHover": false,
+      "preloadEntriesOnStart": true,
       "clientRouterFilter": true,
       "clientRouterFilterRedirects": false,
       "fetchCacheKeyPrefix": "",
@@ -113,6 +167,11 @@
       "manualClientBasePath": false,
       "cpus": 3,
       "memoryBasedWorkersCount": false,
+      "imgOptConcurrency": null,
+      "imgOptTimeoutInSeconds": 7,
+      "imgOptMaxInputPixels": 268402689,
+      "imgOptSequentialRead": null,
+      "imgOptSkipMetadata": null,
       "isrFlushToDisk": true,
       "workerThreads": false,
       "optimizeCss": false,
@@ -124,25 +183,34 @@
       "craCompat": false,
       "esmExternals": true,
       "fullySpecified": false,
-      "outputFileTracingRoot": "/home/donovan/Houston-Oil-Airs/platform/community/portal",
       "swcTraceProfiling": false,
       "forceSwcTransforms": false,
       "largePageDataBytes": 128000,
-      "adjustFontFallbacks": false,
-      "adjustFontFallbacksWithSizeAdjust": false,
-      "typedRoutes": false,
-      "instrumentationHook": false,
-      "bundlePagesExternals": false,
+      "typedEnv": false,
       "parallelServerCompiles": false,
       "parallelServerBuildTraces": false,
       "ppr": false,
-      "missingSuspenseWithCSRBailout": true,
+      "authInterrupts": false,
+      "webpackMemoryOptimizations": false,
       "optimizeServerReact": true,
-      "useEarlyImport": false,
+      "viewTransition": false,
+      "routerBFCache": false,
+      "removeUncaughtErrorAndRejectionListeners": false,
+      "validateRSCRequestHeaders": false,
       "staleTimes": {
-        "dynamic": 30,
+        "dynamic": 0,
         "static": 300
       },
+      "serverComponentsHmrCache": true,
+      "staticGenerationMaxConcurrency": 8,
+      "staticGenerationMinPagesPerWorker": 25,
+      "cacheComponents": false,
+      "inlineCss": false,
+      "useCache": false,
+      "globalNotFound": false,
+      "devtoolSegmentExplorer": true,
+      "browserDebugInfoInTerminal": false,
+      "optimizeRouterScrolling": false,
       "optimizePackageImports": [
         "lucide-react",
         "date-fns",
@@ -164,6 +232,25 @@
         "@mui/icons-material",
         "recharts",
         "react-use",
+        "effect",
+        "@effect/schema",
+        "@effect/platform",
+        "@effect/platform-node",
+        "@effect/platform-browser",
+        "@effect/platform-bun",
+        "@effect/sql",
+        "@effect/sql-mssql",
+        "@effect/sql-mysql2",
+        "@effect/sql-pg",
+        "@effect/sql-sqlite-node",
+        "@effect/sql-sqlite-bun",
+        "@effect/sql-sqlite-wasm",
+        "@effect/sql-sqlite-react-native",
+        "@effect/rpc",
+        "@effect/rpc-http",
+        "@effect/typeclass",
+        "@effect/experimental",
+        "@effect/opentelemetry",
         "@material-ui/core",
         "@material-ui/icons",
         "@tabler/icons-react",
@@ -204,23 +291,41 @@
       "trustHostHeader": false,
       "isExperimentalCompile": false
     },
-    "configFileName": "next.config.js"
+    "htmlLimitedBots": "[\\w-]+-Google|Google-[\\w-]+|Chrome-Lighthouse|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti|googleweblight",
+    "bundlePagesRouterDependencies": false,
+    "configFileName": "next.config.js",
+    "turbopack": {
+      "root": "/home/runner/work/Houston-Oil-Airs/Houston-Oil-Airs"
+    },
+    "_originalRewrites": {
+      "beforeFiles": [],
+      "afterFiles": [
+        {
+          "source": "/api/health",
+          "destination": "/api/sensors/latest"
+        }
+      ],
+      "fallback": []
+    }
   },
-  "appDir": "/home/donovan/Houston-Oil-Airs/platform/community/portal",
-  "relativeAppDir": "",
+  "appDir": "/home/runner/work/Houston-Oil-Airs/Houston-Oil-Airs/platform/community/portal",
+  "relativeAppDir": "platform/community/portal",
   "files": [
     ".next/routes-manifest.json",
     ".next/server/pages-manifest.json",
     ".next/build-manifest.json",
     ".next/prerender-manifest.json",
+    ".next/server/functions-config-manifest.json",
     ".next/server/middleware-manifest.json",
     ".next/server/middleware-build-manifest.js",
     ".next/server/middleware-react-loadable-manifest.js",
     ".next/react-loadable-manifest.json",
-    ".next/server/font-manifest.json",
+    ".next/dynamic-css-manifest.json",
+    ".next/server/dynamic-css-manifest.js",
     ".next/BUILD_ID",
     ".next/server/next-font-manifest.js",
-    ".next/server/next-font-manifest.json"
+    ".next/server/next-font-manifest.json",
+    ".next/required-server-files.json"
   ],
   "ignore": [
     "node_modules/next/dist/compiled/@ampproject/toolbox-optimizer/**/*"

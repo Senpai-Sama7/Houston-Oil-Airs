@@ -1,6 +1,5 @@
 // Real-time air quality dashboard
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface SensorData {
   pm25: number;
