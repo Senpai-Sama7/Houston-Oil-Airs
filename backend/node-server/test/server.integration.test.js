@@ -16,11 +16,14 @@ describe('Houston EJ-AI backend integration', () => {
   let baseUrl;
 
   beforeAll(async () => {
+    // Use environment variable for test password, with a secure default for CI
+    const testPassword = process.env.TEST_DB_PASSWORD || 'test_password_do_not_use_in_prod';
+    
     postgresContainer = await new GenericContainer('postgres:16-alpine')
       .withEnvironment({
         POSTGRES_DB: 'houston_ej_ai',
         POSTGRES_USER: 'houston',
-        POSTGRES_PASSWORD: 'ej_ai_2024',
+        POSTGRES_PASSWORD: testPassword,
       })
       .withExposedPorts(5432)
       .withWaitStrategy(Wait.forLogMessage('database system is ready to accept connections'))
@@ -35,7 +38,7 @@ describe('Houston EJ-AI backend integration', () => {
       port: postgresContainer.getMappedPort(5432),
       database: 'houston_ej_ai',
       user: 'houston',
-      password: 'ej_ai_2024',
+      password: testPassword,
     };
 
     pgPool = new Pool(pgConfig);
